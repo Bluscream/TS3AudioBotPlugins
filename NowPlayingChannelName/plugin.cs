@@ -2,6 +2,7 @@
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
+using TS3Client.Full;
 
 namespace NowPlayingChannelName
 {
@@ -9,7 +10,7 @@ namespace NowPlayingChannelName
     public class PluginInfo
     {
         public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "Sends a message to the current channel everytime the track changes.";
+        public const string Description = "Sets the name of the current channel everytime the track changes.";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
         public const int Version = 2;
@@ -17,7 +18,8 @@ namespace NowPlayingChannelName
 
     public class NowPlayingChannelName : ITabPlugin
     {
-        MainBot bot;
+        private MainBot bot;
+        private Ts3FullClient lib;
 
         public bool Enabled { get; private set; }
 
@@ -42,6 +44,7 @@ namespace NowPlayingChannelName
 
         public void Initialize(MainBot mainBot) {
             bot = mainBot;
+            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -50,8 +53,9 @@ namespace NowPlayingChannelName
             if (!Enabled) { return; }
             PluginLog(Log.Level.Debug, "Track changed. sending now playing to current channel");
             var title = e.ResourceData.ResourceTitle;
-            bot.QueryConnection.SendChannelMessage("Now playing " + title);
-		}
+            var whoami = lib.WhoAmI().ChannelId;
+            whoami.ChannelId
+        }
 
         public void Dispose() {
             bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
@@ -59,7 +63,7 @@ namespace NowPlayingChannelName
         }
 
         [Command("NowPlayingChannelName toggle", PluginInfo.Description)]
-        public string CommandToggleNowPlayingChannelChat() {
+        public string CommandToggleNowPlayingChannelName() {
             Enabled = !Enabled;
             return PluginInfo.Name + " is now " + Enabled.ToString();
         }
