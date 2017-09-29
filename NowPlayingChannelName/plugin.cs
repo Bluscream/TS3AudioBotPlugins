@@ -3,7 +3,7 @@ using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
 
-namespace NowPlayingChannelChat
+namespace NowPlayingChannelName
 {
 
     public class PluginInfo
@@ -15,7 +15,7 @@ namespace NowPlayingChannelChat
         public const int Version = 2;
     }
 
-    public class NowPlayingChannelChat : ITabPlugin
+    public class NowPlayingChannelName : ITabPlugin
     {
         MainBot bot;
 
@@ -58,7 +58,7 @@ namespace NowPlayingChannelChat
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
-        [Command("nowplayingchannelchat toggle", PluginInfo.Description)]
+        [Command("NowPlayingChannelName toggle", PluginInfo.Description)]
         public string CommandToggleNowPlayingChannelChat() {
             Enabled = !Enabled;
             return PluginInfo.Name + " is now " + Enabled.ToString();

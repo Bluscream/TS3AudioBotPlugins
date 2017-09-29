@@ -57,7 +57,7 @@ namespace NowPlayingPrivateChat
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
-        [Command("NowPlayingPrivateChat toggle", PluginInfo.Description)]
+        [Command("nowplayingprivatechat", PluginInfo.Description)]
         public string CommandToggleNowPlayingPrivateChat(ushort ClientID) {
             if (clid == 0)
             {

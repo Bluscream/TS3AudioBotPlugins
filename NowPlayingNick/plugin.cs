@@ -3,19 +3,19 @@ using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
 
-namespace NowPlayingChannelChat
+namespace NowPlayingNick
 {
 
     public class PluginInfo
     {
         public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "Sends a message to the current channel everytime the track changes.";
+        public const string Description = "Sets the bot's nickname to the current track everytime it changes.";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
         public const int Version = 2;
     }
 
-    public class NowPlayingChannelChat : ITabPlugin
+    public class NowPlayingNick : ITabPlugin
     {
         MainBot bot;
 
@@ -48,9 +48,9 @@ namespace NowPlayingChannelChat
 
         private void PlayManager_AfterResourceStarted(object sender, PlayInfoEventArgs e) {
             if (!Enabled) { return; }
-            PluginLog(Log.Level.Debug, "Track changed. sending now playing to current channel");
+            PluginLog(Log.Level.Debug, "Track changed. setting new track title as nickname");
             var title = e.ResourceData.ResourceTitle;
-            bot.QueryConnection.SendChannelMessage("Now playing " + title);
+            bot.QueryConnection.ChangeName(title);
 		}
 
         public void Dispose() {
@@ -58,8 +58,8 @@ namespace NowPlayingChannelChat
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
-        [Command("nowplayingchannelchat toggle", PluginInfo.Description)]
-        public string CommandToggleNowPlayingChannelChat() {
+        [Command("nowplayingnick toggle", PluginInfo.Description)]
+        public string CommandToggleNowPlayingNick() {
             Enabled = !Enabled;
             return PluginInfo.Name + " is now " + Enabled.ToString();
         }
