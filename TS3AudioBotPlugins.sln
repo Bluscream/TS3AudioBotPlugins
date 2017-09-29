@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoChannelCommander", "Aut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFollow", "AutoFollow\AutoFollow.csproj", "{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NowPlayingPrivateChat", "NowPlayingPrivateChat\NowPlayingPrivateChat.csproj", "{437CB0C7-D2DD-4543-8AC3-F662CC1516AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Release|Any CPU.Build.0 = Release|Any CPU
+		{437CB0C7-D2DD-4543-8AC3-F662CC1516AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{437CB0C7-D2DD-4543-8AC3-F662CC1516AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{437CB0C7-D2DD-4543-8AC3-F662CC1516AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{437CB0C7-D2DD-4543-8AC3-F662CC1516AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
