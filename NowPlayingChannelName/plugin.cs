@@ -53,8 +53,8 @@ namespace NowPlayingChannelName
             if (!Enabled) { return; }
             PluginLog(Log.Level.Debug, "Track changed. sending now playing to current channel");
             var title = e.ResourceData.ResourceTitle;
-            var whoami = lib.WhoAmI().ChannelId;
-            whoami.ChannelId
+            var ownChannelId = lib.WhoAmI().ChannelId;
+            lib.Send() /* TODO: make stuff */
         }
 
         public void Dispose() {
