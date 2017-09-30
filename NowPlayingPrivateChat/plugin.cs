@@ -24,20 +24,7 @@ namespace NowPlayingPrivateChat
         public PluginInfo pluginInfo = new PluginInfo();
 
         public void PluginLog(Log.Level logLevel, string Message) {
-            switch (logLevel)
-            {
-                case Log.Level.Debug:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case Log.Level.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                case Log.Level.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-            }
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
-            Console.ResetColor();
         }
 
         public void Initialize(MainBot mainBot) {
@@ -46,7 +33,9 @@ namespace NowPlayingPrivateChat
             clid = 0;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
-        private void PlayManager_AfterResourceStarted(object sender, PlayInfoEventArgs e) {
+        private void PlayManager_AfterResourceStarted(object sender, PlayInfoEventArgs e)
+        {
+            if (clid == 0) return;
             PluginLog(Log.Level.Debug, "Track changed. sending now playing to client " + clid);
             var title = e.ResourceData.ResourceTitle;
 			bot.QueryConnection.SendMessage("Now playing " + title, clid);
