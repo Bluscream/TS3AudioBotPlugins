@@ -15,7 +15,7 @@ namespace AutoFollow
         public const string Description = "Automatically follows someone (. ) (. ).";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 2;
+        public const int Version = 1;
     }
 
     public class AutoFollow : ITabPlugin
@@ -46,8 +46,7 @@ namespace AutoFollow
 			    bot.QueryConnection.MoveTo(client.TargetChannelId);
 			    return;
 			}
-			
-		}
+				}
 
         public void Dispose() {
             lib.OnClientMoved -= Lib_OnClientMoved;

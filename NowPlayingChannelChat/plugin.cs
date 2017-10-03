@@ -12,7 +12,7 @@ namespace NowPlayingChannelChat
         public const string Description = "Sends a message to the current channel everytime the track changes.";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 2;
+        public const int Version = 1;
     }
 
     public class NowPlayingChannelChat : ITabPlugin

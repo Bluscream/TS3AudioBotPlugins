@@ -12,7 +12,7 @@ namespace NowPlayingPrivateChat
         public const string Description = "Sends a message to a client of your choice everytime the track changes.";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 2;
+        public const int Version = 1;
     }
 
     public class NowPlayingPrivateChat : ITabPlugin

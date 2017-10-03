@@ -15,7 +15,7 @@ namespace AutoChannelCommander
         public const string Description = "Automatically requests Channel Commander.";
         public const string Url = "";
         public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 2;
+        public const int Version = 1;
     }
 
     public class AutoChannelCommander : ITabPlugin
