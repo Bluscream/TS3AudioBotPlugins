@@ -51,13 +51,11 @@ namespace AutoChannelCommander
         private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
             if (!Enabled) { return; }
 			foreach (var client in e) {
-			    if (lib.ClientId == client.ClientId) {
-			        PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
-			        bot.QueryConnection.SetChannelCommander(true);
-			        return;
-			    }
+			    if (lib.ClientId != client.ClientId) continue;
+			    PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
+			    bot.QueryConnection.SetChannelCommander(true);
+			    return;
 			}
-			
 		}
 
         public void Tick() {

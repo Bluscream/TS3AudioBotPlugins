@@ -10,6 +10,7 @@ using TS3Client.Messages;
 using TS3AudioBot.CommandSystem;
 using TS3AudioBot.Helper;
 using System.Reflection;
+using TS3Client.Commands;
 using TS3Client.Full;
 
 namespace TestPlugin
@@ -40,7 +41,7 @@ namespace TestPlugin
             bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
             var lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            lib.SendGlobalMessage("hallo");
+            //lib.SendGlobalMessage("hallo");
 
         }
 
@@ -87,6 +88,17 @@ namespace TestPlugin
         public string CommandTPRequest(string name, int number) {
             var owner = bot.QueryConnection.GetClientByName("Bluscream").UnwrapThrow();
             return "Hi " + name + ", you choose " + number + ". My owner is " + owner.Uid;
+        }
+
+        [Command("rawcmd")]
+        [RequiredParameters(1)]
+        public string CommandRawCmd(ExecutionInformation info, string cmd, params string[] cmdpara) {
+            var lib = info.Bot.QueryConnection.GetLowLibrary<TS3Client.Full.Ts3FullClient>();
+            try {
+                var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
+                    cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
+                return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
+            } catch (TS3Client.Ts3CommandException ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
         }
     }
 }

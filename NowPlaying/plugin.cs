@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using NowPlaying.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
+using TS3Client;
 using TS3Client.Commands;
 using TS3Client.Full;
 
@@ -21,13 +23,11 @@ namespace NowPlaying {
 
     public class NowPlaying : ITabPlugin
     {
-        MainBot bot;
+        private MainBot bot;
         private Ts3FullClient lib;
         public PluginInfo pluginInfo = new PluginInfo();
 
-        public void PluginLog(Log.Level logLevel, string Message) {
-            Log.Write(logLevel, PluginInfo.Name + ": " + Message);
-        }
+        public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
         public void Initialize(MainBot mainBot) {
             bot = mainBot;
@@ -75,12 +75,14 @@ namespace NowPlaying {
             if (!string.IsNullOrWhiteSpace(Settings.Default.PrivateChat)) {
 				try {
 					PluginLog(Log.Level.Warning, "Private Chat currently not implemented!");
-					/*var result = bot.QueryConnection.ClientBufferRequest(client => client.ClientId == id);
-					if (result.Ok) return result;
-					foreach (var uid in Settings.Default.PrivateChatUIDs)
-					{
-						bot.QueryConnection.SendMessage(ParseNowPlayingString(Settings.Default.Pr, e));
-					}*/
+				    var clientbuffer = lib.ClientList(ClientListOptions.uid).ToList();
+				    foreach (var client in clientbuffer) {
+				        foreach (var uid in Settings.Default.PrivateChatUIDs) {
+				            if (client.Uid == uid) {
+				                bot.QueryConnection.SendMessage(ParseNowPlayingString(Settings.Default.PrivateChat, e), client.ClientId);
+				            }
+				        }
+                    }
 	            } catch (Exception ex) { PluginLog(Log.Level.Warning, "Exeption thrown while trying to send private Message: " + ex.Message); }
             }
             if (!string.IsNullOrWhiteSpace(Settings.Default.NickName)) {
@@ -90,10 +92,10 @@ namespace NowPlaying {
 		}
             if (!string.IsNullOrWhiteSpace(Settings.Default.PluginCommand)) {
 				try {
-					PluginLog(Log.Level.Warning, "Plugin Commands currently not implemented!");
-					//lib.Send("");
-				} catch (Exception ex) { PluginLog(Log.Level.Warning, "Exeption thrown while trying to send Plugin Command: " + ex.Message);
-				}
+					lib.Send("plugincmd", new CommandParameter("name", "TS3AudioBot"),
+                        new CommandParameter("targetmode", 0),
+                        new CommandParameter("data", ParseNowPlayingString(Settings.Default.PluginCommand, e)));
+				} catch (Exception ex) { PluginLog(Log.Level.Warning, "Exeption thrown while trying to send Plugin Command: " + ex.Message); }
             }
             if (!string.IsNullOrWhiteSpace(Settings.Default.MetaData)) {
 				try {

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3Client.Messages;
 using TS3AudioBot.CommandSystem;
 using TS3Client.Full;
 
-namespace AutoFollow
-{
+namespace AutoFollow {
 
     public class PluginInfo
     {

@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3Client.Messages;
 using TS3AudioBot.CommandSystem;
 using TS3AudioBot.Helper;
-using TS3AudioBot.Algorithm;
 using TS3Client.Commands;
 using TS3Client.Full;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-using TS3Client;
 
 namespace MetaData
 {
