@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
 using NowPlaying.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
 using TS3Client.Commands;
 using TS3Client.Full;
-using TS3Client.Messages;
 
-namespace NowPlaying
-{
+namespace NowPlaying {
 
     public class PluginInfo
     {
@@ -27,7 +23,6 @@ namespace NowPlaying
     {
         MainBot bot;
         private Ts3FullClient lib;
-
         public PluginInfo pluginInfo = new PluginInfo();
 
         public void PluginLog(Log.Level logLevel, string Message) {
@@ -45,15 +40,14 @@ namespace NowPlaying
         {
             return input
                 .Replace("{title}", e.ResourceData.ResourceTitle)
-                .Replace("{invoker}",
-                    "[URL=client://" + e.Invoker.ClientId + "/" + e.Invoker.ClientUid + "]" + e.Invoker.NickName +
-                    "[/URL]")
+                .Replace("{invoker}", "[URL=client://" + e.Invoker.ClientId + "/" + e.Invoker.ClientUid + "]" + e.Invoker.NickName + "[/URL]")
                 .Replace("{invokeruid}", e.Invoker.ClientUid)
                 .Replace("{volume}", e.MetaData.Volume.ToString())
                 .Replace("{resourceid}", e.ResourceData.ResourceId)
                 .Replace("{uniqueid}", e.ResourceData.UniqueId)
-                .Replace("{playuri}", e.PlayResource.PlayUri);
-                // TODO: Length, etc
+                .Replace("{playuri}", e.PlayResource.PlayUri)
+                .Replace("{length}", 2.0m.ToString(bot.PlayerConnection.Length.ToString()));
+            // TODO: Length, etc
         }
 
         private void PlayManager_AfterResourceStarted(object sender, PlayInfoEventArgs e) {

@@ -4,6 +4,7 @@ using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3Client.Messages;
 using TS3AudioBot.CommandSystem;
+using TS3AudioBot.Helper;
 using TS3Client.Full;
 
 namespace AutoChannelCommander
@@ -22,8 +23,9 @@ namespace AutoChannelCommander
     {
         private MainBot bot;
 	    private Ts3FullClient lib;
-
-		public bool Enabled { get; private set; }
+        public TickWorker Timer { get; private set; }
+        public bool Enabled { get; private set; }
+        public bool CCState = false;
 
         public PluginInfo pluginInfo = new PluginInfo();
 
@@ -34,7 +36,8 @@ namespace AutoChannelCommander
         public void Initialize(MainBot mainBot) {
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-			lib.OnClientMoved += Lib_OnClientMoved;
+            Timer = TickPool.RegisterTick(Tick, TimeSpan.FromMilliseconds(500), false);
+            lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnConnected += Lib_OnConnected;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -47,10 +50,8 @@ namespace AutoChannelCommander
 
         private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
             if (!Enabled) { return; }
-			foreach (var client in e)
-			{
-			    if (lib.ClientId == client.ClientId)
-			    {
+			foreach (var client in e) {
+			    if (lib.ClientId == client.ClientId) {
 			        PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
 			        bot.QueryConnection.SetChannelCommander(true);
 			        return;
@@ -59,16 +60,27 @@ namespace AutoChannelCommander
 			
 		}
 
+        public void Tick() {
+            CCState = !CCState;
+            bot.QueryConnection.SetChannelCommander(CCState);
+        }
+
         public void Dispose() {
             lib.OnClientMoved -= Lib_OnClientMoved;
             lib.OnConnected -= Lib_OnConnected;
+            TickPool.UnregisterTicker(Timer);
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
         [Command("autochannelcommander toggle", PluginInfo.Description)]
         public string CommandToggleAutoChannelCommander() {
             Enabled = !Enabled;
+            bot.QueryConnection.SetChannelCommander(Enabled);
             return PluginInfo.Name + " is now " + Enabled.ToString();
+        }
+        [Command("autochannelcommander blink", "")]
+        public void CommandAutoChannelCommander() {
+            Timer.Active = !Timer.Active;
         }
     }
 }
