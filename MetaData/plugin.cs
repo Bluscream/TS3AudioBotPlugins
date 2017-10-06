@@ -88,8 +88,9 @@ namespace MetaData
             if (!Enabled) { return; }
             PluginLog(Log.Level.Debug, "Our client is now connected, setting meta data");
             SetMetaData();
-            //Timer = RegisterTick(() => SetMetaData(), TimeSpan.FromSeconds(60), true);
-        }
+	        lib.Send("clientupdate", new CommandParameter("client_badges", "overwolf=0:badges=94ec66de-5940-4e38-b002-970df0cf6c94"));
+			//Timer = RegisterTick(() => SetMetaData(), TimeSpan.FromSeconds(60), true);
+		}
 
         public void SetRandomBadge() {
             //var i = Random.Next(0, badges.Length);
