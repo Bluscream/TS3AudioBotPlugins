@@ -47,7 +47,7 @@ namespace NowPlaying {
                 .Replace("{uniqueid}", e.ResourceData.UniqueId)
                 .Replace("{playuri}", e.PlayResource.PlayUri)
                 .Replace("{length}", 2.0m.ToString(bot.PlayerConnection.Length.ToString()));
-            // TODO: Length, etc
+                // TODO: Length, etc
         }
 
         private void PlayManager_AfterResourceStarted(object sender, PlayInfoEventArgs e) {

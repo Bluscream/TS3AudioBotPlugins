@@ -22,7 +22,7 @@ namespace PMRedirect
     public class PMRedirect : ITabPlugin {
 
         public PluginInfo pluginInfo = new PluginInfo();
-        MainBot bot;
+        private MainBot bot;
         private Ts3FullClient lib;
 
         public void PluginLog(Log.Level logLevel, string Message) {
@@ -44,7 +44,7 @@ namespace PMRedirect
         private void Lib_OnTextMessageReceived(object sender, System.Collections.Generic.IEnumerable<TS3Client.Messages.TextMessage> e) {
             foreach (var msg in e)
             {
-                if (msg.Target != TextMessageTargetMode.Private) continue;
+                if (msg.Target != TextMessageTargetMode.Private || msg.InvokerId == lib.WhoAmI().ClientId) continue;
                 var clientbuffer = lib.ClientList(ClientListOptions.uid).ToList();
                 foreach (var client in clientbuffer)
                 {
