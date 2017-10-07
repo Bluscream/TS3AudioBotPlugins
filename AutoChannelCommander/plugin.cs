@@ -36,7 +36,7 @@ namespace AutoChannelCommander
         public void Initialize(MainBot mainBot) {
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            Timer = TickPool.RegisterTick(Tick, TimeSpan.FromMilliseconds(500), false);
+            Timer = TickPool.RegisterTick(Tick, TimeSpan.FromSeconds(3), false);
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnConnected += Lib_OnConnected;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");

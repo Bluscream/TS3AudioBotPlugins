@@ -65,8 +65,6 @@ namespace NowPlaying {
                 bot.QueryConnection.SendServerMessage(ParseNowPlayingString(Settings.Default.ServerChat, e));
 	            } catch (Exception ex) { PluginLog(Log.Level.Warning, "Exeption thrown while trying to send Server Message: " + ex.Message); }
 			}
-			PluginLog(Log.Level.Debug, "Debug:");
-			PluginLog(Log.Level.Debug, (!string.IsNullOrWhiteSpace(Settings.Default.ChannelChat)).ToString());
             if (!string.IsNullOrWhiteSpace(Settings.Default.ChannelChat)) {
 				try {
 					bot.QueryConnection.SendChannelMessage(ParseNowPlayingString(Settings.Default.ChannelChat, e));
