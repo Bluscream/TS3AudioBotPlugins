@@ -72,7 +72,6 @@ namespace NowPlaying {
 		}
             if (!string.IsNullOrWhiteSpace(Settings.Default.PrivateChat)) {
 				try {
-					PluginLog(Log.Level.Warning, "Private Chat currently not implemented!");
 				    var clientbuffer = lib.ClientList(ClientListOptions.uid).ToList();
 				    foreach (var client in clientbuffer) {
 				        foreach (var uid in Settings.Default.PrivateChatUIDs) {
