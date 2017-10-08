@@ -22,7 +22,7 @@ namespace ClientQuery.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClientQuery.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClientQuery.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace ClientQuery.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -69,7 +69,7 @@ namespace ClientQuery.Properties {
         ///   auth apikey=AAAA-BBBB-CCCC-DDDD-EEEE
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string auth {
+        internal static string auth {
             get {
                 return ResourceManager.GetString("auth", resourceCulture);
             }
@@ -87,7 +87,7 @@ namespace ClientQuery.Properties {
         ///   banid=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string banadd {
+        internal static string banadd {
             get {
                 return ResourceManager.GetString("banadd", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace ClientQuery.Properties {
         ///   banclient clid=4 time=3600
         ///    [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string banclient {
+        internal static string banclient {
             get {
                 return ResourceManager.GetString("banclient", resourceCulture);
             }
@@ -123,7 +123,7 @@ namespace ClientQuery.Properties {
         ///   bandel banid=3
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string bandel {
+        internal static string bandel {
             get {
                 return ResourceManager.GetString("bandel", resourceCulture);
             }
@@ -138,7 +138,7 @@ namespace ClientQuery.Properties {
         ///   bandelall
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string bandelall {
+        internal static string bandelall {
             get {
                 return ResourceManager.GetString("bandelall", resourceCulture);
             }
@@ -155,7 +155,7 @@ namespace ClientQuery.Properties {
         ///   invokeruid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= reason enforcements=0
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string banlist {
+        internal static string banlist {
             get {
                 return ResourceManager.GetString("banlist", resourceCulture);
             }
@@ -173,7 +173,7 @@ namespace ClientQuery.Properties {
         ///   channeladdperm cid=16 permsid=i_client_needed_join_power permvalue=50
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channeladdperm {
+        internal static string channeladdperm {
             get {
                 return ResourceManager.GetString("channeladdperm", resourceCulture);
             }
@@ -191,7 +191,7 @@ namespace ClientQuery.Properties {
         ///   channelclientaddperm cid=12 cldbid=3 permsid=i_icon_id permvalue=100
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelclientaddperm {
+        internal static string channelclientaddperm {
             get {
                 return ResourceManager.GetString("channelclientaddperm", resourceCulture);
             }
@@ -209,7 +209,7 @@ namespace ClientQuery.Properties {
         ///   channelclientdelperm cid=12 cldbid=3 permsid=i_icon_id|permsid=b_icon_manage
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelclientdelperm {
+        internal static string channelclientdelperm {
             get {
                 return ResourceManager.GetString("channelclientdelperm", resourceCulture);
             }
@@ -230,7 +230,7 @@ namespace ClientQuery.Properties {
         ///-uid:
         ///client_unique [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string channelclientlist {
+        internal static string channelclientlist {
             get {
                 return ResourceManager.GetString("channelclientlist", resourceCulture);
             }
@@ -247,7 +247,7 @@ namespace ClientQuery.Properties {
         ///   permvalue=50 permnegated=0 permskip=0|permid=21415 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelclientpermlist {
+        internal static string channelclientpermlist {
             get {
                 return ResourceManager.GetString("channelclientpermlist", resourceCulture);
             }
@@ -265,7 +265,7 @@ namespace ClientQuery.Properties {
         ///   path=test\/subtest password=secret
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelconnectinfo {
+        internal static string channelconnectinfo {
             get {
                 return ResourceManager.GetString("channelconnectinfo", resourceCulture);
             }
@@ -285,7 +285,7 @@ namespace ClientQuery.Properties {
         ///   cid=16
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelcreate {
+        internal static string channelcreate {
             get {
                 return ResourceManager.GetString("channelcreate", resourceCulture);
             }
@@ -301,7 +301,7 @@ namespace ClientQuery.Properties {
         ///   channeldelete cid=16 force=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channeldelete {
+        internal static string channeldelete {
             get {
                 return ResourceManager.GetString("channeldelete", resourceCulture);
             }
@@ -317,7 +317,7 @@ namespace ClientQuery.Properties {
         ///   channeldelperm cid=16 permsid=i_icon_id|permsid=i_client_needed_talk_power
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channeldelperm {
+        internal static string channeldelperm {
             get {
                 return ResourceManager.GetString("channeldelperm", resourceCulture);
             }
@@ -332,7 +332,7 @@ namespace ClientQuery.Properties {
         ///   channeledit cid=15 channel_codec_quality=3 channel_description=My\stext
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channeledit {
+        internal static string channeledit {
             get {
                 return ResourceManager.GetString("channeledit", resourceCulture);
             }
@@ -350,7 +350,7 @@ namespace ClientQuery.Properties {
         ///   cgid=13
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgroupadd {
+        internal static string channelgroupadd {
             get {
                 return ResourceManager.GetString("channelgroupadd", resourceCulture);
             }
@@ -368,7 +368,7 @@ namespace ClientQuery.Properties {
         ///   channelgroupaddperm cgid=78 permsid=b_icon_manage permvalue=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgroupaddperm {
+        internal static string channelgroupaddperm {
             get {
                 return ResourceManager.GetString("channelgroupaddperm", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace ClientQuery.Properties {
         ///   cid=2 cldbid=9 cgid=9|cid=2 cldbid=24 cgid=9|cid=2 cldbid=47 cgid=9
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgroupclientlist {
+        internal static string channelgroupclientlist {
             get {
                 return ResourceManager.GetString("channelgroupclientlist", resourceCulture);
             }
@@ -403,7 +403,7 @@ namespace ClientQuery.Properties {
         ///   channelgroupdel cgid=13
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgroupdel {
+        internal static string channelgroupdel {
             get {
                 return ResourceManager.GetString("channelgroupdel", resourceCulture);
             }
@@ -421,7 +421,7 @@ namespace ClientQuery.Properties {
         ///   channelgroupdelperm cgid=16 permid=17276|permid=21415
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgroupdelperm {
+        internal static string channelgroupdelperm {
             get {
                 return ResourceManager.GetString("channelgroupdelperm", resourceCulture);
             }
@@ -437,7 +437,7 @@ namespace ClientQuery.Properties {
         ///   cgid=1 name=Channel\sAdmin type=2 iconid=100 savedb=1|cgid=2 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgrouplist {
+        internal static string channelgrouplist {
             get {
                 return ResourceManager.GetString("channelgrouplist", resourceCulture);
             }
@@ -454,7 +454,7 @@ namespace ClientQuery.Properties {
         ///   permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelgrouppermlist {
+        internal static string channelgrouppermlist {
             get {
                 return ResourceManager.GetString("channelgrouppermlist", resourceCulture);
             }
@@ -472,7 +472,7 @@ namespace ClientQuery.Properties {
         ///   channel_topic=Default\sChannel\shas\sno\stopic channel_flag_are_subscribed=0
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channellist {
+        internal static string channellist {
             get {
                 return ResourceManager.GetString("channellist", resourceCulture);
             }
@@ -491,7 +491,7 @@ namespace ClientQuery.Properties {
         ///   channelmove cid=16 cpid=1 order=0
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelmove {
+        internal static string channelmove {
             get {
                 return ResourceManager.GetString("channelmove", resourceCulture);
             }
@@ -507,7 +507,7 @@ namespace ClientQuery.Properties {
         ///   cid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string channelpermlist {
+        internal static string channelpermlist {
             get {
                 return ResourceManager.GetString("channelpermlist", resourceCulture);
             }
@@ -531,7 +531,7 @@ namespace ClientQuery.Properties {
         ///channel_maxclients
         ///channel_ma [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string channelvariable {
+        internal static string channelvariable {
             get {
                 return ResourceManager.GetString("channelvariable", resourceCulture);
             }
@@ -549,7 +549,7 @@ namespace ClientQuery.Properties {
         ///   clientaddperm cldbid=16 permsid=i_client_talk_power permvalue=5 permskip=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientaddperm {
+        internal static string clientaddperm {
             get {
                 return ResourceManager.GetString("clientaddperm", resourceCulture);
             }
@@ -564,7 +564,7 @@ namespace ClientQuery.Properties {
         ///   clientdbdelete cldbid=56
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientdbdelete {
+        internal static string clientdbdelete {
             get {
                 return ResourceManager.GetString("clientdbdelete", resourceCulture);
             }
@@ -579,7 +579,7 @@ namespace ClientQuery.Properties {
         ///   clientdbedit cldbid=56 client_description=Best\sguy\sever!
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientdbedit {
+        internal static string clientdbedit {
             get {
                 return ResourceManager.GetString("clientdbedit", resourceCulture);
             }
@@ -597,7 +597,7 @@ namespace ClientQuery.Properties {
         ///   client_nickname=MuhChy client_created=1259147468 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientdblist {
+        internal static string clientdblist {
             get {
                 return ResourceManager.GetString("clientdblist", resourceCulture);
             }
@@ -613,7 +613,7 @@ namespace ClientQuery.Properties {
         ///   clientdelperm cldbid=16 permsid=i_icon_id|permsid=b_icon_manage
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientdelperm {
+        internal static string clientdelperm {
             get {
                 return ResourceManager.GetString("clientdelperm", resourceCulture);
             }
@@ -629,7 +629,7 @@ namespace ClientQuery.Properties {
         ///   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientgetdbidfromuid {
+        internal static string clientgetdbidfromuid {
             get {
                 return ResourceManager.GetString("clientgetdbidfromuid", resourceCulture);
             }
@@ -645,7 +645,7 @@ namespace ClientQuery.Properties {
         ///   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= clid=1 name=Janko
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientgetids {
+        internal static string clientgetids {
             get {
                 return ResourceManager.GetString("clientgetids", resourceCulture);
             }
@@ -662,7 +662,7 @@ namespace ClientQuery.Properties {
         ///   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientgetnamefromdbid {
+        internal static string clientgetnamefromdbid {
             get {
                 return ResourceManager.GetString("clientgetnamefromdbid", resourceCulture);
             }
@@ -679,7 +679,7 @@ namespace ClientQuery.Properties {
         ///   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientgetnamefromuid {
+        internal static string clientgetnamefromuid {
             get {
                 return ResourceManager.GetString("clientgetnamefromuid", resourceCulture);
             }
@@ -696,7 +696,7 @@ namespace ClientQuery.Properties {
         ///   notifyclientuidfromclid schandlerid=5 clid=7 cluid=Fp430hbE43dHtZklxfiHkWJeQBg= nickname=TheInvisibleMan
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientgetuidfromclid {
+        internal static string clientgetuidfromclid {
             get {
                 return ResourceManager.GetString("clientgetuidfromclid", resourceCulture);
             }
@@ -717,7 +717,7 @@ namespace ClientQuery.Properties {
         ///Example:
         ///   c [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string clientkick {
+        internal static string clientkick {
             get {
                 return ResourceManager.GetString("clientkick", resourceCulture);
             }
@@ -735,7 +735,7 @@ namespace ClientQuery.Properties {
         ///Here is a list of the additional display paramters you will receive for
         ///each of the possi [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string clientlist {
+        internal static string clientlist {
             get {
                 return ResourceManager.GetString("clientlist", resourceCulture);
             }
@@ -752,7 +752,7 @@ namespace ClientQuery.Properties {
         ///   clientmove cid=3 clid=5|clid=6
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientmove {
+        internal static string clientmove {
             get {
                 return ResourceManager.GetString("clientmove", resourceCulture);
             }
@@ -768,7 +768,7 @@ namespace ClientQuery.Properties {
         ///   clientmute clid=5|clid=6
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientmute {
+        internal static string clientmute {
             get {
                 return ResourceManager.GetString("clientmute", resourceCulture);
             }
@@ -785,7 +785,7 @@ namespace ClientQuery.Properties {
         ///applies to all server connection handlers. Possible event values are listed
         ///below, add [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string clientnotifyregister {
+        internal static string clientnotifyregister {
             get {
                 return ResourceManager.GetString("clientnotifyregister", resourceCulture);
             }
@@ -800,7 +800,7 @@ namespace ClientQuery.Properties {
         ///   clientnotifyunregister
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientnotifyunregister {
+        internal static string clientnotifyunregister {
             get {
                 return ResourceManager.GetString("clientnotifyunregister", resourceCulture);
             }
@@ -816,7 +816,7 @@ namespace ClientQuery.Properties {
         ///   cldbid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientpermlist {
+        internal static string clientpermlist {
             get {
                 return ResourceManager.GetString("clientpermlist", resourceCulture);
             }
@@ -831,7 +831,7 @@ namespace ClientQuery.Properties {
         ///   clientpoke msg=Wake\sup! clid=5
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientpoke {
+        internal static string clientpoke {
             get {
                 return ResourceManager.GetString("clientpoke", resourceCulture);
             }
@@ -846,7 +846,7 @@ namespace ClientQuery.Properties {
         ///   clientunmute clid=5|clid=6
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string clientunmute {
+        internal static string clientunmute {
             get {
                 return ResourceManager.GetString("clientunmute", resourceCulture);
             }
@@ -864,7 +864,7 @@ namespace ClientQuery.Properties {
         ///client_input_muted:          0 or 1, mutes or unmutes microphone
         ///client_output_muted:         0 or 1, mutes or unmutes speakers/he [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string clientupdate {
+        internal static string clientupdate {
             get {
                 return ResourceManager.GetString("clientupdate", resourceCulture);
             }
@@ -887,7 +887,7 @@ namespace ClientQuery.Properties {
         ///client_input_hardware
         ///client_ [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string clientvariable {
+        internal static string clientvariable {
             get {
                 return ResourceManager.GetString("clientvariable", resourceCulture);
             }
@@ -902,7 +902,7 @@ namespace ClientQuery.Properties {
         ///   complainadd tcldbid=3 message=Bad\sguy!
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string complainadd {
+        internal static string complainadd {
             get {
                 return ResourceManager.GetString("complainadd", resourceCulture);
             }
@@ -918,7 +918,7 @@ namespace ClientQuery.Properties {
         ///   complaindel tcldbid=3 fcldbid=4
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string complaindel {
+        internal static string complaindel {
             get {
                 return ResourceManager.GetString("complaindel", resourceCulture);
             }
@@ -934,7 +934,7 @@ namespace ClientQuery.Properties {
         ///   complaindelall tcldbid=3
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string complaindelall {
+        internal static string complaindelall {
             get {
                 return ResourceManager.GetString("complaindelall", resourceCulture);
             }
@@ -951,7 +951,7 @@ namespace ClientQuery.Properties {
         ///   tcldbid=3 tname=Julian fcldbid=56 fname=Sven message=Bad\sguy! ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string complainlist {
+        internal static string complainlist {
             get {
                 return ResourceManager.GetString("complainlist", resourceCulture);
             }
@@ -967,7 +967,7 @@ namespace ClientQuery.Properties {
         ///   schandlerid=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string currentschandlerid {
+        internal static string currentschandlerid {
             get {
                 return ResourceManager.GetString("currentschandlerid", resourceCulture);
             }
@@ -982,7 +982,7 @@ namespace ClientQuery.Properties {
         ///   ftcreatedir cid=2 cpw= dirname=\/My\sDirectory
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftcreatedir {
+        internal static string ftcreatedir {
             get {
                 return ResourceManager.GetString("ftcreatedir", resourceCulture);
             }
@@ -997,7 +997,7 @@ namespace ClientQuery.Properties {
         ///   ftdeletefile cid=2 cpw= name=\/Pic1.PNG|name=\/Pic2.PNG
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftdeletefile {
+        internal static string ftdeletefile {
             get {
                 return ResourceManager.GetString("ftdeletefile", resourceCulture);
             }
@@ -1015,7 +1015,7 @@ namespace ClientQuery.Properties {
         ///   size=563783 datetime=1259425462 type=1|name=Pic2.PNG ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftgetfileinfo {
+        internal static string ftgetfileinfo {
             get {
                 return ResourceManager.GetString("ftgetfileinfo", resourceCulture);
             }
@@ -1033,7 +1033,7 @@ namespace ClientQuery.Properties {
         ///   size=563783 datetime=1259425462 type=1|name=Pic2.PNG ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftgetfilelist {
+        internal static string ftgetfilelist {
             get {
                 return ResourceManager.GetString("ftgetfilelist", resourceCulture);
             }
@@ -1052,7 +1052,7 @@ namespace ClientQuery.Properties {
         ///   ftinitdownload clientftfid=1 name=\/image.iso cid=5 cpw= seekpos=0
         ///   clientftfid=1 serv [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string ftinitdownload {
+        internal static string ftinitdownload {
             get {
                 return ResourceManager.GetString("ftinitdownload", resourceCulture);
             }
@@ -1071,7 +1071,7 @@ namespace ClientQuery.Properties {
         ///Example:
         ///   ftinitupload clientftfid=1 name=\/image.iso cid=5 cpw= size=67346 [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string ftinitupload {
+        internal static string ftinitupload {
             get {
                 return ResourceManager.GetString("ftinitupload", resourceCulture);
             }
@@ -1090,7 +1090,7 @@ namespace ClientQuery.Properties {
         ///   sizedone=450756 clientftfid=2 serverftfid=6 sender=0 status=1 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftlist {
+        internal static string ftlist {
             get {
                 return ResourceManager.GetString("ftlist", resourceCulture);
             }
@@ -1109,7 +1109,7 @@ namespace ClientQuery.Properties {
         ///   ftrenamefile cid=2 cpw= tcid=3 tcpw= oldname=\/Pic3.PNG newname=\/Pic3.PNG
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftrenamefile {
+        internal static string ftrenamefile {
             get {
                 return ResourceManager.GetString("ftrenamefile", resourceCulture);
             }
@@ -1124,7 +1124,7 @@ namespace ClientQuery.Properties {
         ///   ftstop serverftfid=2 delete=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string ftstop {
+        internal static string ftstop {
             get {
                 return ResourceManager.GetString("ftstop", resourceCulture);
             }
@@ -1140,7 +1140,7 @@ namespace ClientQuery.Properties {
         ///   passwordhash=phoa3XHa3HQDeuXkTuMHE9uadFE=
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string hashpassword {
+        internal static string hashpassword {
             get {
                 return ResourceManager.GetString("hashpassword", resourceCulture);
             }
@@ -1160,7 +1160,7 @@ namespace ClientQuery.Properties {
         ///   banclient                   | ban a client from the server 
         ///   bandelall                   | delete all [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string help {
+        internal static string help {
             get {
                 return ResourceManager.GetString("help", resourceCulture);
             }
@@ -1175,7 +1175,7 @@ namespace ClientQuery.Properties {
         ///   messageadd cluid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= subject=Hi! message=Hello?!?
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string messageadd {
+        internal static string messageadd {
             get {
                 return ResourceManager.GetString("messageadd", resourceCulture);
             }
@@ -1190,7 +1190,7 @@ namespace ClientQuery.Properties {
         ///   messagedel msgid=4
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string messagedel {
+        internal static string messagedel {
             get {
                 return ResourceManager.GetString("messagedel", resourceCulture);
             }
@@ -1207,7 +1207,7 @@ namespace ClientQuery.Properties {
         ///   msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Hi! message=Hello?!?
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string messageget {
+        internal static string messageget {
             get {
                 return ResourceManager.GetString("messageget", resourceCulture);
             }
@@ -1224,7 +1224,7 @@ namespace ClientQuery.Properties {
         ///   msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Test flag_read=0 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string messagelist {
+        internal static string messagelist {
             get {
                 return ResourceManager.GetString("messagelist", resourceCulture);
             }
@@ -1240,7 +1240,7 @@ namespace ClientQuery.Properties {
         ///   messageupdateflag msgid=4 flag=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string messageupdateflag {
+        internal static string messageupdateflag {
             get {
                 return ResourceManager.GetString("messageupdateflag", resourceCulture);
             }
@@ -1259,7 +1259,7 @@ namespace ClientQuery.Properties {
         ///0: Server Group;      id1=serverGroupID, id2=0
         ///1: Global Client;     id1=clientDBID,    id [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string permoverview {
+        internal static string permoverview {
             get {
                 return ResourceManager.GetString("permoverview", resourceCulture);
             }
@@ -1274,7 +1274,7 @@ namespace ClientQuery.Properties {
         ///   quit
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string quit {
+        internal static string quit {
             get {
                 return ResourceManager.GetString("quit", resourceCulture);
             }
@@ -1294,7 +1294,7 @@ namespace ClientQuery.Properties {
         ///   sendtextmessage targetmode=2 msg=Hello\sChannel
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string sendtextmessage {
+        internal static string sendtextmessage {
             get {
                 return ResourceManager.GetString("sendtextmessage", resourceCulture);
             }
@@ -1311,7 +1311,7 @@ namespace ClientQuery.Properties {
         ///   ip=localhost port=9987 password=secret
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string serverconnectinfo {
+        internal static string serverconnectinfo {
             get {
                 return ResourceManager.GetString("serverconnectinfo", resourceCulture);
             }
@@ -1327,7 +1327,7 @@ namespace ClientQuery.Properties {
         ///   schandlerid=2|schandlerid=3|schandlerid=4
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string serverconnectionhandlerlist {
+        internal static string serverconnectionhandlerlist {
             get {
                 return ResourceManager.GetString("serverconnectionhandlerlist", resourceCulture);
             }
@@ -1345,7 +1345,7 @@ namespace ClientQuery.Properties {
         ///   sgid=13
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupadd {
+        internal static string servergroupadd {
             get {
                 return ResourceManager.GetString("servergroupadd", resourceCulture);
             }
@@ -1361,7 +1361,7 @@ namespace ClientQuery.Properties {
         ///   servergroupaddclient sgid=16 cldbid=3
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupaddclient {
+        internal static string servergroupaddclient {
             get {
                 return ResourceManager.GetString("servergroupaddclient", resourceCulture);
             }
@@ -1379,7 +1379,7 @@ namespace ClientQuery.Properties {
         ///Example:
         ///   servergroupaddperm sgid=13 permsid=i_channel_join_power permvalue=50 permnegated=0 permskip=0|permsid=i_client_talk_ [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string servergroupaddperm {
+        internal static string servergroupaddperm {
             get {
                 return ResourceManager.GetString("servergroupaddperm", resourceCulture);
             }
@@ -1398,7 +1398,7 @@ namespace ClientQuery.Properties {
         ///   cldbid=7|cldbid=8|cldbid=9|cldbid=11|cldbid=13|cldbid=16|cldbid=18
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupclientlist {
+        internal static string servergroupclientlist {
             get {
                 return ResourceManager.GetString("servergroupclientlist", resourceCulture);
             }
@@ -1414,7 +1414,7 @@ namespace ClientQuery.Properties {
         ///   servergroupdel sgid=13
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupdel {
+        internal static string servergroupdel {
             get {
                 return ResourceManager.GetString("servergroupdel", resourceCulture);
             }
@@ -1429,7 +1429,7 @@ namespace ClientQuery.Properties {
         ///   servergroupdelclient sgid=16 cldbid=3
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupdelclient {
+        internal static string servergroupdelclient {
             get {
                 return ResourceManager.GetString("servergroupdelclient", resourceCulture);
             }
@@ -1446,7 +1446,7 @@ namespace ClientQuery.Properties {
         ///   servergroupdelperm sgid=16 permid=i_channel_join_power|permid=i_client_talk_power
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupdelperm {
+        internal static string servergroupdelperm {
             get {
                 return ResourceManager.GetString("servergroupdelperm", resourceCulture);
             }
@@ -1464,7 +1464,7 @@ namespace ClientQuery.Properties {
         ///   type=1 iconid=0 savedb=1|sgid=11 ...
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergrouplist {
+        internal static string servergrouplist {
             get {
                 return ResourceManager.GetString("servergrouplist", resourceCulture);
             }
@@ -1480,7 +1480,7 @@ namespace ClientQuery.Properties {
         ///   permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 permvalue=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergrouppermlist {
+        internal static string servergrouppermlist {
             get {
                 return ResourceManager.GetString("servergrouppermlist", resourceCulture);
             }
@@ -1497,7 +1497,7 @@ namespace ClientQuery.Properties {
         ///   name=Server\sAdmin sgid=6 cldbid=18
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string servergroupsbyclientid {
+        internal static string servergroupsbyclientid {
             get {
                 return ResourceManager.GetString("servergroupsbyclientid", resourceCulture);
             }
@@ -1522,7 +1522,7 @@ namespace ClientQuery.Properties {
         ///virtualserver_hostbanner_gfx_interval
         ///virtualserver_prior [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string servervariable {
+        internal static string servervariable {
             get {
                 return ResourceManager.GetString("servervariable", resourceCulture);
             }
@@ -1537,7 +1537,7 @@ namespace ClientQuery.Properties {
         ///   setclientchannelgroup cgid=13 cid=15 cldbid=20
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string setclientchannelgroup {
+        internal static string setclientchannelgroup {
             get {
                 return ResourceManager.GetString("setclientchannelgroup", resourceCulture);
             }
@@ -1554,7 +1554,7 @@ namespace ClientQuery.Properties {
         ///The tokencustomset parameter allows you to specify a set of custom client 
         ///properties. This feature can be used when generating tokens to co [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string tokenadd {
+        internal static string tokenadd {
             get {
                 return ResourceManager.GetString("tokenadd", resourceCulture);
             }
@@ -1569,7 +1569,7 @@ namespace ClientQuery.Properties {
         ///   tokendelete token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string tokendelete {
+        internal static string tokendelete {
             get {
                 return ResourceManager.GetString("tokendelete", resourceCulture);
             }
@@ -1590,7 +1590,7 @@ namespace ClientQuery.Properties {
         ///   tokenlist
         ///   token=88CV [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string tokenlist {
+        internal static string tokenlist {
             get {
                 return ResourceManager.GetString("tokenlist", resourceCulture);
             }
@@ -1607,7 +1607,7 @@ namespace ClientQuery.Properties {
         ///   tokenuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string tokenuse {
+        internal static string tokenuse {
             get {
                 return ResourceManager.GetString("tokenuse", resourceCulture);
             }
@@ -1628,7 +1628,7 @@ namespace ClientQuery.Properties {
         ///   selected schandlerid=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string use {
+        internal static string use {
             get {
                 return ResourceManager.GetString("use", resourceCulture);
             }
@@ -1644,7 +1644,7 @@ namespace ClientQuery.Properties {
         ///   verifychannelpassword cid=17 password=carrot
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string verifychannelpassword {
+        internal static string verifychannelpassword {
             get {
                 return ResourceManager.GetString("verifychannelpassword", resourceCulture);
             }
@@ -1660,7 +1660,7 @@ namespace ClientQuery.Properties {
         ///   verifyserverpassword password=carrot
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string verifyserverpassword {
+        internal static string verifyserverpassword {
             get {
                 return ResourceManager.GetString("verifyserverpassword", resourceCulture);
             }
@@ -1680,7 +1680,7 @@ namespace ClientQuery.Properties {
         ///   clid=56 cid=1
         ///   error id=0 msg=ok.
         /// </summary>
-        public static string whoami {
+        internal static string whoami {
             get {
                 return ResourceManager.GetString("whoami", resourceCulture);
             }
