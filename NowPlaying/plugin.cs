@@ -21,11 +21,11 @@ namespace NowPlaying {
         public const int Version = 1;
     }
 
-    public class NowPlaying : ITabPlugin
-    {
+    public class NowPlaying : ITabPlugin {
+
+        public PluginInfo pluginInfo = new PluginInfo();
         private MainBot bot;
         private Ts3FullClient lib;
-        public PluginInfo pluginInfo = new PluginInfo();
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 

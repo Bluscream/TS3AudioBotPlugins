@@ -38,6 +38,7 @@ namespace AutoChannelCommander
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnConnected += Lib_OnConnected;
+            Timer = TickPool.RegisterTick(Tick, TimeSpan.FromSeconds(1), false);
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
@@ -63,6 +64,8 @@ namespace AutoChannelCommander
         }
 
         public void Dispose() {
+            Timer.Active = false;
+            TickPool.UnregisterTicker(Timer);
             lib.OnClientMoved -= Lib_OnClientMoved;
             lib.OnConnected -= Lib_OnConnected;
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
@@ -75,17 +78,10 @@ namespace AutoChannelCommander
             return PluginInfo.Name + " is now " + Enabled.ToString();
         }
         [Command("autochannelcommander blink", "")]
+        [RequiredParameters(0)]
         public void CommandAutoChannelCommander(int interval) {
-            if (Timer == null)
-            {
-                Timer = TickPool.RegisterTick(Tick, TimeSpan.FromMilliseconds(interval), true);
-            }
-            else
-            {
-                Timer.Active = false;
-                TickPool.UnregisterTicker(Timer);
-                Timer = new TickWorker(Tick, TimeSpan.Zero);
-            }
+            //Timer.Interval = TimeSpan.FromMilliseconds(interval); TODO: Change Interval dynamically
+            Timer.Active = !Timer.Active;
         }
     }
 }

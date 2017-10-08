@@ -15,33 +15,29 @@ using TS3Client.Full;
 
 namespace TestPlugin
 {
-    public class TestPlugin : ITabPlugin
-    {
-        MainBot bot;
+    public class TestPlugin : ITabPlugin {
 
-        public class PluginInfo
-        {
+        public class PluginInfo {
             public static readonly string Name = typeof(PluginInfo).Namespace;
             public const string Description = "Sends a message to the current channel everytime the track changes.";
             public const string URL = "";
             public const string Author = "Bluscream <admin@timo.de.vc>";
             public const int Version = 1337;
         }
+        private MainBot bot;
+        private Ts3FullClient lib;
 
-        public void PluginLog(Log.Level logLevel, string Message) {
-            Log.Write(logLevel, PluginInfo.Name + ": " + Message);
-        }
+        public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
         public void Initialize(MainBot mainBot) {
             bot = mainBot;
             bot.RightsManager.RegisterRights("TestPlugin.dummyperm");
+            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.QueryConnection.OnClientConnect += QueryConnection_OnClientConnect;
             bot.QueryConnection.OnClientDisconnect += QueryConnection_OnClientDisconnect;
             bot.QueryConnection.OnMessageReceived += QueryConnection_OnMessageReceived;
             bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
-            var lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            //lib.SendGlobalMessage("hallo");
 
         }
 
@@ -93,7 +89,6 @@ namespace TestPlugin
         [Command("rawcmd")]
         [RequiredParameters(1)]
         public string CommandRawCmd(ExecutionInformation info, string cmd, params string[] cmdpara) {
-            var lib = info.Bot.QueryConnection.GetLowLibrary<TS3Client.Full.Ts3FullClient>();
             try {
                 var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
                     cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());

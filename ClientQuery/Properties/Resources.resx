@@ -1,0 +1,1549 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="auth" xml:space="preserve">
+    <value>Usage: auth apikey={string}
+
+Authenticates connecting application with API key of user.
+
+Example:
+   auth apikey=AAAA-BBBB-CCCC-DDDD-EEEE
+   error id=0 msg=ok</value>
+  </data>
+  <data name="banadd" xml:space="preserve">
+    <value>Usage: banadd [ip={regexp}] [name={regexp}] [uid={clientUID}] 
+       [time={timeInSeconds}] [banreason={text}]
+
+Adds a new ban rule on the selected virtual server. All parameters are optional 
+but at least one of the following must be set: ip, name, or uid.
+
+Example:
+   banadd ip=1.2.3.4 banreason=just\s4\sfun
+   banid=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="banclient" xml:space="preserve">
+    <value>Usage: banclient clid={clientID}|cldbid={clientDatabaseID}|uid={clientUID} \
+                 [time={timeInSeconds}] [banreason={text}]
+
+Bans the client specified with ID clid from the server. Please note that this 
+will create two separate ban rules for the targeted clients IP address and his 
+unique identifier.
+
+Note that banning via cldbid parameter requires a 3.0.1 server version.
+Note that banning via uid parameter requires a 3.0.2 server version.
+
+Example:
+   banclient clid=4 time=3600
+   banid=2
+   banid=3
+   error id=0 msg=ok</value>
+  </data>
+  <data name="bandel" xml:space="preserve">
+    <value>Usage: bandel banid={banID}
+
+Deletes the ban rule with ID banid from the server.
+
+Example:
+   bandel banid=3
+   error id=0 msg=ok</value>
+  </data>
+  <data name="bandelall" xml:space="preserve">
+    <value>Usage: bandelall
+
+Deletes all active ban rules from the server.
+
+Example:
+   bandelall
+   error id=0 msg=ok</value>
+  </data>
+  <data name="banlist" xml:space="preserve">
+    <value>Usage: banlist
+
+Displays a list of active bans on the selected virtual server.
+
+Example:
+   banlist
+   banid=7 ip=1.2.3.4 created=1259444002242 invokername=Sven invokercldbid=56 
+   invokeruid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= reason enforcements=0
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channeladdperm" xml:space="preserve">
+    <value>Usage: channeladdperm cid={channelID} ( permid={permID}|permsid={permName}
+       permvalue={permValue} )...
+
+Adds a set of specified permissions to a channel. Multiple permissions can be 
+added by providing the two parameters of each permission. A permission can be 
+specified by permid or permsid.
+
+Example:
+   channeladdperm cid=16 permsid=i_client_needed_join_power permvalue=50
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelclientaddperm" xml:space="preserve">
+    <value>Usage: channelclientaddperm cid={channelID} cldbid={clientDBID} 
+       ( permid={permID}|permsid={permName} permvalue={permValue} )...
+
+Adds a set of specified permissions to a client in a specific channel. Multiple 
+permissions can be added by providing the two parameters of each permission. A 
+permission can be specified by permid or permsid.
+
+Example:
+   channelclientaddperm cid=12 cldbid=3 permsid=i_icon_id permvalue=100
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelclientdelperm" xml:space="preserve">
+    <value>Usage: channelclientdelperm cid={channelID} cldbid={clientDBID}
+       permid={permID}|permsid={permName}...
+
+Removes a set of specified permissions from a client in a specific channel. 
+Multiple permissions can be removed at once. A permission can be specified 
+by permid or permsid.
+
+Example:
+   channelclientdelperm cid=12 cldbid=3 permsid=i_icon_id|permsid=b_icon_manage
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelclientlist" xml:space="preserve">
+    <value>Usage: channelclientlist cid=&lt;cID&gt; [-uid] [-away] [-voice] [-groups] [-icon] [-country]
+
+Displays a list of clients that are in the channel specified by the cid
+parameter. Included information is the clientID, client database id, nickname,
+channelID and client type.
+Please take note that you can only view clients in channels that you are
+currently subscribed to.
+
+Here is a list of the additional display paramters you will receive for
+each of the possible modifier parameters.
+
+-uid:
+client_unique_identifier
+
+-away:
+client_away
+client_away_message
+
+-voice:
+client_flag_talking
+client_input_muted
+client_output_muted
+client_input_hardware
+client_output_hardware
+client_talk_power
+client_is_talker
+client_is_priority_speaker
+client_is_recording
+client_is_channel_commander
+client_is_muted
+
+-groups:
+client_servergroups
+client_channel_group_id
+
+-icon:
+client_icon_id
+
+-country:
+client_country
+
+Example:
+  channelclientlist cid=184
+  clid=4 cid=184 client_database_id=35 client_nickname=MuhChy client_type=0
+  error id=0 msg=ok</value>
+  </data>
+  <data name="channelclientpermlist" xml:space="preserve">
+    <value>Usage: channelclientpermlist cid={channelID} cldbid={clientDBID} [-permsid]
+
+Displays a list of permissions defined for a client in a specific channel.
+
+Example:
+   channelclientpermlist cid=12 cldbid=3
+   cid=12 cldbid=3 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276 
+   permvalue=50 permnegated=0 permskip=0|permid=21415 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelconnectinfo" xml:space="preserve">
+    <value>Usage: channelconnectinfo [cid={channelid}]
+
+Get channel connection information for specified channelid from the currently
+selected server connection handler. If no channelid is provided, information
+for the current channel will be received.
+
+Example:
+   channelconnectinfo
+   path=test\/subtest password=secret
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelcreate" xml:space="preserve">
+    <value>Usage: channelcreate channel_name={channelName} [channel_properties...]
+
+Creates a new channel using the given properties and displays its ID.
+
+N.B. The channel_password property needs a hashed password as a value.
+The hash is a sha1 hash of the password, encoded in base64. You can 
+use the "hashpassword" command to get the correct value.
+
+Example:
+   channelcreate channel_name=My\sChannel channel_topic=My\sTopic
+   cid=16
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channeldelete" xml:space="preserve">
+    <value>Usage: channeldelete cid={channelID} force={1|0}
+
+Deletes an existing channel by ID. If force is set to 1, the channel will be 
+deleted even if there are clients within.
+
+Example:
+   channeldelete cid=16 force=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channeldelperm" xml:space="preserve">
+    <value>Usage: channeldelperm cid=123 permid={permID}|permsid={permName}...
+
+Removes a set of specified permissions from a channel. Multiple permissions 
+can be removed at once. A permission can be specified by permid or permsid.
+
+Example:
+   channeldelperm cid=16 permsid=i_icon_id|permsid=i_client_needed_talk_power
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channeledit" xml:space="preserve">
+    <value>Usage: channeledit cid={channelID} [channel_properties...]
+
+Changes a channels configuration using given properties.
+
+Example:
+   channeledit cid=15 channel_codec_quality=3 channel_description=My\stext
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgroupadd" xml:space="preserve">
+    <value>Usage: channelgroupadd name={groupName} [type={groupDbType}]
+
+Creates a new channel group using a given name and displays its ID. The 
+optional type parameter can be used to create ServerQuery groups and template 
+groups.
+
+Example:
+   channelgroupadd name=Channel\sAdmin
+   cgid=13
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgroupaddperm" xml:space="preserve">
+    <value>Usage: channelgroupaddperm cgid={groupID} ( permid={permID}|permsid={permName}
+       permvalue={permValue} )...
+
+Adds a set of specified permissions to a channel group. Multiple permissions 
+can be added by providing the two parameters of each permission. A permission 
+can be specified by permid or permsid.
+
+Example:
+   channelgroupaddperm cgid=78 permsid=b_icon_manage permvalue=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgroupclientlist" xml:space="preserve">
+    <value>Usage: channelgroupclientlist [cid={channelID}] [cldbid={clientDBID}] 
+       [cgid={groupID}]
+
+Displays all the client and/or channel IDs currently assigned to channel 
+groups. All three parameters are optional so you're free to choose the most 
+suitable combination for your requirements.
+
+Example:
+   channelgroupclientlist cid=2 cgid=9
+   cid=2 cldbid=9 cgid=9|cid=2 cldbid=24 cgid=9|cid=2 cldbid=47 cgid=9
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgroupdel" xml:space="preserve">
+    <value>Usage: channelgroupdel cgid={groupID} force={1|0}
+
+Deletes a channel group by ID. If force is set to 1, the channel group will be 
+deleted even if there are clients within.
+
+Example:
+   channelgroupdel cgid=13
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgroupdelperm" xml:space="preserve">
+    <value>Usage: channelgroupdelperm cgid={groupID} [permid={permID}...] 
+       [permsid={permName}...]
+
+Removes a set of specified permissions from the channel group. Multiple 
+permissions can be removed at once. A permission can be specified by 
+permid or permsid.
+
+Example:
+   channelgroupdelperm cgid=16 permid=17276|permid=21415
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgrouplist" xml:space="preserve">
+    <value>Usage: channelgrouplist
+
+Displays a list of channel groups available on the selected virtual server.
+
+Example:
+   channelgrouplist
+   cgid=1 name=Channel\sAdmin type=2 iconid=100 savedb=1|cgid=2 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelgrouppermlist" xml:space="preserve">
+    <value>Usage: channelgrouppermlist cgid={groupID} [-permsid]
+
+Displays a list of permissions assigned to the channel group specified 
+with cgid.
+
+Example:
+   channelgrouppermlist cgid=13
+   permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channellist" xml:space="preserve">
+    <value>Usage: channellist [-topic] [-flags] [-voice] [-icon] [-limits]
+
+Displays a list of channels on a server you are connected to including their
+ID, order, name, etc. The output can be modified using several command options.
+
+Example:
+   channellist -topic
+   cid=23 pid=0 channel_order=0 channel_name=Default\/Channel
+   channel_topic=Default\sChannel\shas\sno\stopic channel_flag_are_subscribed=0
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelmove" xml:space="preserve">
+    <value>Usage: channelmove cid={channelID} cpid={channelParentID} 
+       [order={channelSortOrder}]
+
+Moves a channel to a new parent channel with the ID cpid. If order is 
+specified, the channel will be sorted right under the channel with the 
+specified ID. If order is set to 0, the channel will be sorted right below 
+the new parent.
+
+Example:
+   channelmove cid=16 cpid=1 order=0
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelpermlist" xml:space="preserve">
+    <value>Usage: channelpermlist cid={channelID} [-permsid]
+
+Displays a list of permissions defined for a channel.
+
+Example:
+   channelpermlist cid=2
+   cid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="channelvariable" xml:space="preserve">
+    <value>Usage: channelvariable ( cid={channelID} properties )...
+
+Retrieves channel variables from the client (no network usage). For each channel
+you can specify one or more properties that should be queried, and this whole
+block of channelID and properties can be repeated to get information about
+multiple channels with one call of channelvariable.
+
+Available properties are:
+channel_name
+channel_topic
+channel_description
+channel_codec
+channel_codec_quality
+channel_order
+channel_maxclients
+channel_maxfamilyclients
+channel_flag_permanent
+channel_flag_semi_permanent
+channel_flag_default
+channel_flag_password
+channel_codec_latency_factor
+channel_codec_is_unencrypted
+channel_flag_maxclients_unlimited
+channel_flag_maxfamilyclients_unlimited
+channel_flag_maxfamilyclients_inherited
+channel_flag_are_subscribed
+channel_needed_talk_power
+channel_forced_silence
+channel_name_phonetic
+channel_icon_id
+
+Example:
+   channelvariable cid=5 channel_topic channel_flag_permanent channel_codec
+   cid=5 channel_topic=123 channel_flag_permanent=1 channel_codec=1
+   error id=0 msg=ok
+
+   channelvariable cid=5 channel_codec_quality|cid=1 channel_codec_quality
+   cid=5 channel_codec_quality=7|cid=1 channel_codec_quality=10
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientaddperm" xml:space="preserve">
+    <value>Usage: clientaddperm cldbid={clientDBID} ( permid={permID}|permsid={permName} 
+       permvalue={permValue} permskip={1|0} )...
+
+Adds a set of specified permissions to a client. Multiple permissions can be 
+added by providing the three parameters of each permission. A permission can 
+be specified by permid or permsid.
+
+Example:
+   clientaddperm cldbid=16 permsid=i_client_talk_power permvalue=5 permskip=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientdbdelete" xml:space="preserve">
+    <value>Usage: clientdbdelete cldbid={clientDBID}
+
+Deletes a clients properties from the database.
+
+Example:
+   clientdbdelete cldbid=56
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientdbedit" xml:space="preserve">
+    <value>Usage: clientdbedit cldbid={clientDBID} [client_properties...]
+
+Changes a clients settings using given properties.
+
+Example:
+   clientdbedit cldbid=56 client_description=Best\sguy\sever!
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientdblist" xml:space="preserve">
+    <value>Usage: clientdblist [start={offset}] [duration={limit}] [-count]
+
+Displays a list of client identities known by the server including their 
+database ID, last nickname, etc.
+
+Example:
+   clientdblist
+   cldbid=7 client_unique_identifier=DZhdQU58qyooEK4Fr8Ly738hEmc= 
+   client_nickname=MuhChy client_created=1259147468 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientdelperm" xml:space="preserve">
+    <value>Usage: channeldelperm cldbid={clientDBID} permid={permID}|permsid={permName}...
+
+Removes a set of specified permissions from a client. Multiple permissions 
+can be removed at once. A permission can be specified by permid or permsid.
+
+Example:
+   clientdelperm cldbid=16 permsid=i_icon_id|permsid=b_icon_manage
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientgetdbidfromuid" xml:space="preserve">
+    <value>Usage: clientgetdbidfromuid cluid={clientUID}
+
+Displays the database ID matching the unique identifier specified by cluid.
+
+Example:
+   clientgetdbidfromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientgetids" xml:space="preserve">
+    <value>Usage: clientgetids cluid={clientUID}
+
+Displays all client IDs matching the unique identifier specified by cluid.
+
+Example:
+   clientgetids cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= clid=1 name=Janko
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientgetnamefromdbid" xml:space="preserve">
+    <value>Usage: clientgetnamefromdbid cldbid={clientDBID}
+
+Displays the unique identifier and nickname matching the database ID specified 
+by cldbid.
+
+Example:
+   clientgetnamefromdbid cldbid=32
+   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientgetnamefromuid" xml:space="preserve">
+    <value>Usage: clientgetnamefromuid cluid={clientUID}
+
+Displays the database ID and nickname matching the unique identifier specified 
+by cluid.
+
+Example:
+   clientgetnamefromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+   cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientgetuidfromclid" xml:space="preserve">
+    <value>Usage: clientgetuidfromclid clid={clientID}
+
+Displays the unique identifier and nickname associated with the client
+specified by the clid parameter.
+
+Example:
+   clientgetuidfromclid clid=7
+   notifyclientuidfromclid schandlerid=5 clid=7 cluid=Fp430hbE43dHtZklxfiHkWJeQBg= nickname=TheInvisibleMan
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientkick" xml:space="preserve">
+    <value>Usage: clientkick reasonid={4|5} [reasonmsg={text}] clid={clientID}...
+
+Kicks one or more clients specified with clid from their currently joined 
+channel or from the server, depending on reasonid. The reasonmsg parameter 
+specifies a text message sent to the kicked clients. This parameter is optional 
+and may only have a maximum of 40 characters.
+
+Available reasonid values are:
+4: Kick the client from his current channel into the default channel
+5: Kick the client from the server
+
+Example:
+   clientkick reasonid=4 reasonmsg=Go\saway! clid=5|clid=6
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientlist" xml:space="preserve">
+    <value>Usage: clientlist [-uid] [-away] [-voice] [-groups] [-icon] [-country]
+
+Displays a list of clients that are known. Included information is the
+clientID, nickname, client database id, channelID and client type.
+Please take note that the output will only contain clients which are in
+channels you are currently subscribed to. Using the optional modifier
+parameters you can enable additional information per client.
+
+Here is a list of the additional display paramters you will receive for
+each of the possible modifier parameters.
+
+-uid:
+client_unique_identifier
+
+-away:
+client_away
+client_away_message
+
+-voice:
+client_flag_talking
+client_input_muted
+client_output_muted
+client_input_hardware
+client_output_hardware
+client_talk_power
+client_is_talker
+client_is_priority_speaker
+client_is_recording
+client_is_channel_commander
+client_is_muted
+
+-groups:
+client_servergroups
+client_channel_group_id
+
+-icon:
+client_icon_id
+
+-country:
+client_country
+
+
+Example:
+  clientlist
+  clid=4 cid=1 client_database_id=3 client_nickname=Muh client_type=0
+  error id=0 msg=ok</value>
+  </data>
+  <data name="clientmove" xml:space="preserve">
+    <value>Usage: clientmove cid={channelID} [cpw={channelPassword}] clid={clientID}...
+
+Moves one or more clients specified with clid to the channel with ID cid. If 
+the target channel has a password, it needs to be specified with cpw. If the 
+channel has no password, the parameter can be omitted.
+
+Example:
+   clientmove cid=3 clid=5|clid=6
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientmute" xml:space="preserve">
+    <value>Usage: clientmute clid={clientID1}...
+
+Mutes one or more clients specified with clid. Also adds the specified client
+to the FriendFoe list to make sure this mute is permanent...
+
+Example:
+   clientmute clid=5|clid=6
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientnotifyregister" xml:space="preserve">
+    <value>Usage: clientnotifyregister schandlerid=&lt;serverConnectionHandlerID&gt; event=&lt;event&gt;
+
+This command allows you to listen to events that the client encounters. Events
+are things like people starting or stopping to talk, people joining or leaving,
+new channels being created and many more.
+It registers for client notifications for the specified
+serverConnectionHandlerID. If the serverConnectionHandlerID is set to zero it
+applies to all server connection handlers. Possible event values are listed
+below, additionally the special string "any" can be used to subscribe to all
+events.
+
+Possible values for event:
+  notifytalkstatuschange
+  notifymessage
+  notifymessagelist
+  notifycomplainlist
+  notifybanlist
+  notifyclientmoved
+  notifyclientleftview
+  notifycliententerview
+  notifyclientpoke
+  notifyclientchatclosed
+  notifyclientchatcomposing
+  notifyclientupdated
+  notifyclientids
+  notifyclientdbidfromuid
+  notifyclientnamefromuid
+  notifyclientnamefromdbid
+  notifyclientuidfromclid
+  notifyconnectioninfo
+  notifychannelcreated
+  notifychanneledited
+  notifychanneldeleted
+  notifychannelmoved
+  notifyserveredited
+  notifyserverupdated
+  channellist
+  channellistfinished
+  notifytextmessage
+  notifycurrentserverconnectionchanged
+  notifyconnectstatuschange
+
+Example:
+   clientnotifyregister schandlerid=0 event=any
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientnotifyunregister" xml:space="preserve">
+    <value>Usage: clientnotifyunregister
+
+Unregisters from all previously registered client notifications.
+
+Example:
+   clientnotifyunregister
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientpermlist" xml:space="preserve">
+    <value>Usage: clientpermlist cldbid={clientDBID} [-permsid]
+
+Displays a list of permissions defined for a client.
+
+Example:
+   clientpermlist cldbid=2
+   cldbid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientpoke" xml:space="preserve">
+    <value>Usage: clientpoke msg={txt} clid={clientID}
+
+Sends a poke message to the client specified with clid.
+
+Example:
+   clientpoke msg=Wake\sup! clid=5
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientunmute" xml:space="preserve">
+    <value>Usage: clientunmute clid={clientID1}...
+
+Unmutes one or more clients specified with clid.
+
+Example:
+   clientunmute clid=5|clid=6
+   error id=0 msg=ok</value>
+  </data>
+  <data name="clientupdate" xml:space="preserve">
+    <value>Usage: clientupdate ident=value...
+
+Sets one or more values concerning your own client, and makes them available
+to other clients through the server where applicable. Available idents are:
+
+client_nickname:             set a new nickname
+client_away:                 0 or 1, set us away or back available
+client_away_message:         what away message to display when away
+client_input_muted:          0 or 1, mutes or unmutes microphone
+client_output_muted:         0 or 1, mutes or unmutes speakers/headphones
+client_input_deactivated:    0 or 1, same as input_muted, but invisible to
+                             other clients
+client_is_channel_commander: 0 or 1, sets or removes channel commander
+client_nickname_phonetic:    set your phonetic nickname
+client_flag_avatar:          set your avatar
+client_meta_data:            any string that is passed to all clients that
+                             have vision of you.
+client_default_token:        privilege key to be used for the next server
+                             connect
+
+Example:
+  clientupdate client_nickname=me~brb client_away=1
+  error id=0 msg=ok</value>
+  </data>
+  <data name="clientvariable" xml:space="preserve">
+    <value>Usage: clientvariable ( clid={clientID} properties )...
+
+Retrieves client variables from the client (no network usage). For each client
+you can specify one or more properties that should be queried, and this whole
+block of clientID and properties can be repeated to get information about
+multiple clients with one call of clientvariable.
+
+Available properties are:
+client_unique_identifier
+client_nickname
+client_input_muted
+client_output_muted
+client_outputonly_muted
+client_input_hardware
+client_output_hardware
+client_meta_data
+client_is_recording
+client_database_id
+client_channel_group_id
+client_servergroups
+client_away
+client_away_message
+client_type
+client_flag_avatar
+client_talk_power
+client_talk_request
+client_talk_request_msg
+client_description
+client_is_talker
+client_is_priority_speaker
+client_unread_messages
+client_nickname_phonetic
+client_needed_serverquery_view_power
+client_icon_id
+client_is_channel_commander
+client_country
+client_channel_group_inherited_channel_id
+client_flag_talking
+client_is_muted
+client_volume_modificator
+
+These properties are always available for yourself, but need to be requested
+for other clients. Currently you cannot request these variables via
+clientquery:
+client_version
+client_platform
+client_login_name
+client_created
+client_lastconnected
+client_totalconnections
+client_month_bytes_uploaded
+client_month_bytes_downloaded
+client_total_bytes_uploaded
+client_total_bytes_downloaded
+
+These properties are available only for yourself:
+client_input_deactivated
+
+Example:
+   clientvariable clid=4 client_nickname client_input_muted
+   clid=4 client_nickname=ScP client_input_muted=0
+   error id=0 msg=ok
+
+   clientvariable clid=1449 client_country|clid=83 client_country
+   clid=1449 client_country=DE|clid=83 client_country=IT
+   error id=0 msg=ok</value>
+  </data>
+  <data name="complainadd" xml:space="preserve">
+    <value>Usage: complainadd tcldbid={targetClientDBID} message={text}
+
+Submits a complaint about the client with database ID tcldbid to the server.
+
+Example:
+   complainadd tcldbid=3 message=Bad\sguy!
+   error id=0 msg=ok</value>
+  </data>
+  <data name="complaindel" xml:space="preserve">
+    <value>Usage: complaindel tcldbid={targetClientDBID} fcldbid={fromClientDBID}
+
+Deletes the complaint about the client with database ID tcldbid submitted by 
+the client with database ID fcldbid from the server.
+
+Example:
+   complaindel tcldbid=3 fcldbid=4
+   error id=0 msg=ok</value>
+  </data>
+  <data name="complaindelall" xml:space="preserve">
+    <value>Usage: complaindelall tcldbid={targetClientDBID}
+
+Deletes all complaints about the client with database ID tcldbid from 
+the server.
+
+Example:
+   complaindelall tcldbid=3
+   error id=0 msg=ok</value>
+  </data>
+  <data name="complainlist" xml:space="preserve">
+    <value>Usage: complainlist [tcldbid={targetClientDBID}]
+
+Displays a list of complaints on the selected virtual server. If tcldbid is 
+specified, only complaints about the targeted client will be shown.
+
+Example:
+   complainlist tcldbid=3
+   tcldbid=3 tname=Julian fcldbid=56 fname=Sven message=Bad\sguy! ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="currentschandlerid" xml:space="preserve">
+    <value>Usage: currentschandlerid
+
+Get server connection handler ID of current server tab.
+
+Example:
+   currentschandlerid
+   schandlerid=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftcreatedir" xml:space="preserve">
+    <value>Usage: ftcreatedir cid={channelID} cpw={channelPassword} dirname={dirPath}
+
+Creates new directory in a channels file repository.
+
+Example:
+   ftcreatedir cid=2 cpw= dirname=\/My\sDirectory
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftdeletefile" xml:space="preserve">
+    <value>Usage: ftdeletefile cid={channelID} cpw={channelPassword} name={filePath}...
+
+Deletes one or more files stored in a channels file repository.
+
+Example:
+   ftdeletefile cid=2 cpw= name=\/Pic1.PNG|name=\/Pic2.PNG
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftgetfileinfo" xml:space="preserve">
+    <value>Usage: ftgetfileinfo cid={channelID} cpw={channelPassword} name={filePath}...
+
+Displays detailed information about one or more specified files stored in a 
+channels file repository.
+
+Example:
+   ftgetfileinfo cid=2 cpw= name=\/Pic1.PNG|cid=2 cpw= name=\/Pic2.PNG
+   cid=2 path=\/ name=Stuff size=0 datetime=1259415210 type=0|name=Pic1.PNG 
+   size=563783 datetime=1259425462 type=1|name=Pic2.PNG ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftgetfilelist" xml:space="preserve">
+    <value>Usage: ftgetfilelist cid={channelID} cpw={channelPassword} path={filePath}
+
+Displays a list of files and directories stored in the specified channels file 
+repository.
+
+Example:
+   ftgetfilelist cid=2 cpw= path=\/
+   cid=2 path=\/ name=Stuff size=0 datetime=1259415210 type=0|name=Pic1.PNG 
+   size=563783 datetime=1259425462 type=1|name=Pic2.PNG ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftinitdownload" xml:space="preserve">
+    <value>Usage: ftinitdownload clientftfid={clientFileTransferID} name={filePath} 
+       cid={channelID} cpw={channelPassword} seekpos={seekPosition}
+
+Initializes a file transfer download. clientftfid is an arbitrary ID to 
+identify the file transfer on client-side. On success, the server generates 
+a new ftkey which is required to start downloading the file through 
+TeamSpeak 3's file transfer interface.
+
+Example:
+   ftinitdownload clientftfid=1 name=\/image.iso cid=5 cpw= seekpos=0
+   clientftfid=1 serverftfid=7 ftkey=NrOga\/4d2GpYC5oKgxuclTO37X83ca\/1 
+   port=30033 size=673460224
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftinitupload" xml:space="preserve">
+    <value>Usage: ftinitupload clientftfid={clientFileTransferID} name={filePath} 
+       cid={channelID} cpw={channelPassword} size={fileSize} overwrite={1|0} 
+	     resume={1|0}
+
+Initializes a file transfer upload. clientftfid is an arbitrary ID to identify 
+the file transfer on client-side. On success, the server generates a new ftkey 
+which is required to start uploading the file through TeamSpeak 3's file 
+transfer interface.
+
+Example:
+   ftinitupload clientftfid=1 name=\/image.iso cid=5 cpw= size=673460224 
+   overwrite=1 resume=0
+   clientftfid=1 serverftfid=6 ftkey=itRNdsIOvcBiBg\/Xj4Ge51ZSrsShHuid 
+   port=30033 seekpos=0
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftlist" xml:space="preserve">
+    <value>Usage: ftlist
+
+Displays a list of running file transfers on the selected virtual server. The 
+output contains the path to which a file is uploaded to, the current transfer 
+rate in bytes per second, etc.
+
+Example:
+   ftlist
+   clid=2 path=files\/virtualserver_1\/channel_5 name=image.iso size=673460224 
+   sizedone=450756 clientftfid=2 serverftfid=6 sender=0 status=1 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftrenamefile" xml:space="preserve">
+    <value>Usage: ftrenamefile cid={channelID} cpw={channelPassword} 
+       [tcid={targetChannelID}] [tcpw={targetChannelPassword}] 
+	   oldname={oldFilePath} newname={newFilePath}
+
+Renames a file in a channels file repository. If the two parameters tcid and 
+tcpw are specified, the file will be moved into another channels file 
+repository.
+
+Example:
+   ftrenamefile cid=2 cpw= tcid=3 tcpw= oldname=\/Pic3.PNG newname=\/Pic3.PNG
+   error id=0 msg=ok</value>
+  </data>
+  <data name="ftstop" xml:space="preserve">
+    <value>Usage: ftstop serverftfid={serverFileTransferID} delete={1|0}
+
+Stops the running file transfer with server-side ID serverftfid.
+
+Example:
+   ftstop serverftfid=2 delete=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="hashpassword" xml:space="preserve">
+    <value>Usage: hashpassword password={unhashed password}
+
+returns a passwordhash
+
+Example:
+   hashpassword password=roger
+   passwordhash=phoa3XHa3HQDeuXkTuMHE9uadFE=
+   error id=0 msg=ok</value>
+  </data>
+  <data name="help" xml:space="preserve">
+    <value>TeamSpeak 3 Client :: ClientQuery
+(c) TeamSpeak Systems GmbH
+
+Command Overview:
+   help                        | read help files
+   quit                        | close connection
+   use                         | select server connection handler
+   auth                        | authenticate telnet connection with users API key
+
+   banadd                      | add a new ban rule to the server
+   banclient                   | ban a client from the server 
+   bandelall                   | delete all active ban rules
+   bandel                      | delete an active ban rule from the server
+   banlist                     | list all active ban rules
+   channeladdperm              | add a permission to a channel
+   channelclientaddperm        | add a channel-client permisison to a client and specified channel id
+   channelclientdelperm        | delete a channel-client permisison from a client and specified channel id
+   channelclientlist           | displays a list of clients that are in the channel specified by the cid parameter
+   channelclientpermlist       | list all assigned channel-client permisisons for a client and specified channel id
+   channelconnectinfo          | channel connect information
+   channelcreate               | create a channel
+   channeldelete               | delete a channel
+   channeldelperm              | delete a from a channel
+   channeledit                 | edit a channel
+   channelgroupadd             | create a channel group
+   channelgroupaddperm         | add a permission to a channel group
+   channelgroupclientlist      | list all assigned channel groups for the specified channel id
+   channelgroupdel             | delete a channel group
+   channelgroupdelperm         | delete a permission from a channel group
+   channelgrouplist            | list all available channel groups
+   channelgrouppermlist        | list all assigned permissions from a channel group
+   channellist                 | list of all channels
+   channelmove                 | assign a new parent channel to a channel
+   channelpermlist             | list all assigned permissions for a channel
+   channelvariable             | retrieve specific information about a channel
+   clientaddperm               | add a permission to a clientDBID
+   clientdbdelete              | delete a client from the server database
+   clientdbedit                | edit a clients properties identified by clientDBID
+   clientdblist                | list all clients stored in the server database
+   clientdelperm               | delete a permission from a clientDBID
+   clientgetdbidfromuid        | get the clientDBIDs for a certain client unique id
+   clientgetids                | get the clientIDs for a certain client unique id
+   clientgetnamefromdbid       | get the nickname from a client database id
+   clientgetnamefromuid        | get the nickname from a client unique id
+   clientgetuidfromclid        | get the unique id from a clientID
+   clientkick                  | kick a client
+   clientlist                  | list known clients
+   clientmove                  | move a client or switch channel ourself
+   clientmute                  | mute all voice data from a client
+   clientunmute                | unmute a previously muted client
+   clientnotifyregister        | register to receive client notifications
+   clientnotifyunregister      | unregister from receiving client notifications
+   clientpermlist              | list all assigned permissions from a clientDBID
+   clientpoke                  | poke a client
+   clientupdate                | set personal client variables, like your nickname
+   clientvariable              | retrieve specific information about a client
+   complainadd                 | submit a complaint about a clientDBID
+   complaindelall              | delete all complaints from a clientDBID
+   complaindel                 | delete a complaint from the server
+   complainlist                | list all complaints from a server or for a clientDBID
+   currentschandlerid          | server connection handler ID of current server tab
+   ftcreatedir                 | create a new directory
+   ftdeletefile                | delete one or more files
+   ftgetfileinfo               | get informations about the specified file
+   ftgetfilelist               | list all files for the specified channel and filepath
+   ftinitdownload              | initialise a filetransfer download
+   ftinitupload                | initialise a filetransfer upload
+   ftlist                      | get a list of all file transfers currently running on the server  notifyfiletransferlist
+   ftrenamefile                | rename the specified file
+   ftstop                      | stop an running file transfer progress
+   hashpassword                | create a password hash
+   messageadd                  | send an offline message to a clientDBID
+   messagedel                  | delete an existing offline message from your inbox
+   messageget                  | display an existing offline message from your inbox   
+   messagelist                 | list all offline messages from your inbox
+   messageupdateflag           | mark or unmark an offline message as read
+   permoverview                | list all assigned permissons
+   sendtextmessage             | send a chat message
+   serverconnectinfo           | server connect information
+   serverconnectionhandlerlist | list available server connection handlers
+   servergroupaddclient        | add a client to a server group
+   servergroupadd              | create a server group
+   servergroupaddperm          | add a permission to a server group
+   servergroupclientlist       | list all client database ids from a server group
+   servergroupdelclient        | delete a client from a server group
+   servergroupdel              | delete a server group
+   servergroupdelperm          | delete a permission from a server group
+   servergrouplist             | get a list of server groups
+   servergrouppermlist         | list all assigned permission from a server group
+   servergroupsbyclientid      | get all assigned server groups from a clientDBID
+   servervariable              | retrieve specific information about a server
+   setclientchannelgroup       | assign a channel group to a client database id
+   tokenadd                    | add a token to a server- or channel group
+   tokendelete                 | delete an existing token from the server
+   tokenlist                   | lists all tokens available on the server
+   tokenuse                    | use a token to gain access to the server
+   verifychannelpassword       | check if we know the current password of a channel
+   verifyserverpassword        | check if we know the current server password
+   whoami                      | display information about ourself</value>
+  </data>
+  <data name="messageadd" xml:space="preserve">
+    <value>Usage: messageadd cluid={clientUID} subject={subject} message={text}
+
+Sends an offline message to the client specified by cluid.
+
+Example:
+   messageadd cluid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= subject=Hi! message=Hello?!?
+   error id=0 msg=ok</value>
+  </data>
+  <data name="messagedel" xml:space="preserve">
+    <value>Usage: messagedel msgid={messageID}
+
+Deletes an existing offline message with ID msgid from your inbox.
+
+Example:
+   messagedel msgid=4
+   error id=0 msg=ok</value>
+  </data>
+  <data name="messageget" xml:space="preserve">
+    <value>Usage: messageget msgid={messageID}
+
+Displays an existing offline message with ID msgid from your inbox. Please note 
+that this does not automatically set the flag_read property of the message.
+
+Example:
+   messageget msgid=4
+   msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Hi! message=Hello?!?
+   error id=0 msg=ok</value>
+  </data>
+  <data name="messagelist" xml:space="preserve">
+    <value>Usage: messagelist
+
+Displays a list of offline messages you've received. The output contains the 
+senders unique identifier, the messages subject, etc.
+
+Example:
+   messagelist
+   msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Test flag_read=0 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="messageupdateflag" xml:space="preserve">
+    <value>Usage: messageupdateflag msgid={messageID} flag={1|0}
+
+Updates the flag_read property of the offline message specified with msgid. If 
+flag is set to 1, the message will be marked as read.
+
+Example:
+   messageupdateflag msgid=4 flag=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="permoverview" xml:space="preserve">
+    <value>Usage: permoverview cid={channelID} cldbid={clientDBID} permid={permID}
+
+Displays all permissions assigned to a client for the channel specified with 
+cid. If permid is set to 0, all permissions will be displayed.
+The output follows the following format:
+( t={PermGroupType} id1={id1} id2={id2} p={permissionID} v={permissionValue}
+  n={permissionNegated} s={permissionSkip} )...
+
+Possible PermGroupType Values:
+0: Server Group;      id1=serverGroupID, id2=0
+1: Global Client;     id1=clientDBID,    id2=0
+2: Channel;           id1=channelID,     id2=0
+3: Channel Group;     id1=channelID,     id2=channelGroupID
+4: Channel Client;    id1=channelID,     id2=clientDBID
+
+Example:
+   permoverview cldbid=57 cid=74 permid=0
+   t=0 id1=5 id2=0 p=37 v=1 n=0 s=0|t=0 id1=5 id2=0 p=38 v=1 n=0 s=0 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="quit" xml:space="preserve">
+    <value>Usage: quit
+
+Closes the ClientQuery connection to the TeamSpeak 3 Client instance.
+
+Example:
+   quit
+   error id=0 msg=ok</value>
+  </data>
+  <data name="sendtextmessage" xml:space="preserve">
+    <value>Usage: sendtextmessage targetmode={1-3} [target=clientID] msg={text}
+
+Sends a text message a specified target. The type of the target is determined 
+by targetmode. 
+Available targetmodes are:
+1: Send private text message to a client. You must specify the target parameter
+2: Send message to the channel you are currently in. Target is ignored.
+3: Send message to the entire server. Target is ignored.
+
+Example:
+   sendtextmessage targetmode=2 msg=Hello\sChannel
+   error id=0 msg=ok</value>
+  </data>
+  <data name="serverconnectinfo" xml:space="preserve">
+    <value>Usage: serverconnectinfo
+
+Get server connection information for the currently selected server connection
+handler.
+
+Example:
+   serverconnectinfo
+   ip=localhost port=9987 password=secret
+   error id=0 msg=ok</value>
+  </data>
+  <data name="serverconnectionhandlerlist" xml:space="preserve">
+    <value>Usage: serverconnectionhandlerlist
+
+Displays a list of all currently active server connection handlers.
+
+Example:
+   serverconnectionhandlerlist
+   schandlerid=2|schandlerid=3|schandlerid=4
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupadd" xml:space="preserve">
+    <value>Usage: servergroupadd name={groupName} [type={groupDbType}]
+
+Creates a new server group using the name specified with name and displays 
+its ID. The optional type parameter can be used to create ServerQuery groups 
+and template groups.
+
+Example:
+   servergroupadd name=Server\sAdmin
+   sgid=13
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupaddclient" xml:space="preserve">
+    <value>Usage: servergroupaddclient sgid={groupID} cldbid={clientDBID}
+
+Adds a client to the server group specified with sgid. Please note that a 
+client cannot be added to default groups or template groups.
+
+Example:
+   servergroupaddclient sgid=16 cldbid=3
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupaddperm" xml:space="preserve">
+    <value>Usage: servergroupaddperm sgid={groupID} ( permid={permID}|permsid={permName}
+       permvalue={permValue} permnegated={1|0} )...
+       permskip={1|0}...
+
+Adds a set of specified permissions to the server group specified with sgid. 
+Multiple permissions can be added by providing the four parameters of each 
+permission. A permission can be specified by permid or permsid.
+
+Example:
+   servergroupaddperm sgid=13 permsid=i_channel_join_power permvalue=50 permnegated=0 permskip=0|permsid=i_client_talk_power permvalue=75 permnegated=0 permskip=0
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupclientlist" xml:space="preserve">
+    <value>Usage: servergroupclientlist sgid={groupID} [-names]
+
+Displays the IDs of all clients currently residing in the server group 
+specified with sgid. If you're using the -names option, the output will 
+also contain the last known nickname and the unique identifier of the 
+clients.
+
+Example:
+   servergroupclientlist sgid=16
+   cldbid=7|cldbid=8|cldbid=9|cldbid=11|cldbid=13|cldbid=16|cldbid=18
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupdel" xml:space="preserve">
+    <value>Usage: servergroupdel sgid={groupID} force={1|0}
+
+Deletes the server group specified with sgid. If force is set to 1, the server 
+group will be deleted even if there are clients within.
+
+Example:
+   servergroupdel sgid=13
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupdelclient" xml:space="preserve">
+    <value>Usage: servergroupdelclient sgid={groupID} cldbid={clientDBID}
+
+Removes a client from the server group specified with sgid.
+
+Example:
+   servergroupdelclient sgid=16 cldbid=3
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupdelperm" xml:space="preserve">
+    <value>Usage: servergroupdelperm sgid={groupID} permid={permID}|permsid={permName}...
+
+Removes a set of specified permissions from the server group specified with 
+sgid. Multiple permissions can be removed at once. A permission can be 
+specified by permid or permsid.
+
+Examples:
+   servergroupdelperm sgid=16 permid=i_channel_join_power|permid=i_client_talk_power
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergrouplist" xml:space="preserve">
+    <value>Usage: servergrouplist
+
+Displays a list of server groups available. Depending on your permissions, the 
+output may also contain global ServerQuery groups and template groups.
+
+Example:
+   servergrouplist
+   sgid=9 name=Server\sAdmin type=1 iconid=300 savedb=1|sgid=10 name=Normal 
+   type=1 iconid=0 savedb=1|sgid=11 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergrouppermlist" xml:space="preserve">
+    <value>Usage: servergrouppermlist sgid={groupID} [-permsid]
+
+Displays a list of permissions assigned to the server group specified with sgid.
+
+Example:
+   servergrouppermlist sgid=13
+   permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 permvalue=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servergroupsbyclientid" xml:space="preserve">
+    <value>Usage: servergroupsbyclientid cldbid={clientDBID}
+
+Displays all server groups the client specified with cldbid is currently 
+residing in.
+
+Example:
+   servergroupsbyclientid cldbid=18
+   name=Server\sAdmin sgid=6 cldbid=18
+   error id=0 msg=ok</value>
+  </data>
+  <data name="servervariable" xml:space="preserve">
+    <value>Usage: servervariable properties
+
+Retrieves server variables from the client (no network usage). You can specify
+multiple properties that should be queried.
+
+Available properties are:
+virtualserver_name
+virtualserver_platform
+virtualserver_version
+virtualserver_created
+virtualserver_codec_encryption_mode
+virtualserver_default_server_group
+virtualserver_default_channel_group
+virtualserver_hostbanner_url
+virtualserver_hostbanner_gfx_url
+virtualserver_hostbanner_gfx_interval
+virtualserver_priority_speaker_dimm_modificator
+virtualserver_id
+virtualserver_hostbutton_tooltip
+virtualserver_hostbutton_url
+virtualserver_hostbutton_gfx_url
+virtualserver_name_phonetic
+virtualserver_icon_id
+virtualserver_ip
+virtualserver_ask_for_privilegekey
+virtualserver_hostbanner_mode
+
+These properties are available, but need to be requested. Currently
+you cannot request these variables via clientquery:
+virtualserver_clientsonline
+virtualserver_channelsonline
+virtualserver_uptime
+virtualserver_flag_password
+virtualserver_default_channel_admin_group
+virtualserver_max_download_total_bandwidth
+virtualserver_max_upload_total_bandwidth
+virtualserver_complain_autoban_count
+virtualserver_complain_autoban_time
+virtualserver_complain_remove_time
+virtualserver_min_clients_in_channel_before_forced_silence
+virtualserver_antiflood_points_tick_reduce
+virtualserver_antiflood_points_needed_command_block
+virtualserver_antiflood_points_needed_ip_block
+virtualserver_client_connections
+virtualserver_query_client_connections
+virtualserver_queryclientsonline
+virtualserver_download_quota
+virtualserver_upload_quota
+virtualserver_month_bytes_downloaded
+virtualserver_month_bytes_uploaded
+virtualserver_total_bytes_downloaded
+virtualserver_total_bytes_uploaded
+virtualserver_port
+virtualserver_autostart
+virtualserver_machine_id
+virtualserver_needed_identity_security_level
+virtualserver_log_client
+virtualserver_log_query
+virtualserver_log_channel
+virtualserver_log_permissions
+virtualserver_log_server
+virtualserver_log_filetransfer
+virtualserver_min_client_version
+virtualserver_reserved_slots
+virtualserver_total_packetloss_speech
+virtualserver_total_packetloss_keepalive
+virtualserver_total_packetloss_control
+virtualserver_total_packetloss_total
+virtualserver_total_ping
+virtualserver_weblist_enabled
+
+
+Example:
+   servervariable virtualserver_name virtualserver_platform
+   virtualserver_name=TS\s\s\s\s\s3.0. virtualserver_platform=Linux
+   error id=0 msg=ok</value>
+  </data>
+  <data name="setclientchannelgroup" xml:space="preserve">
+    <value>Usage: setclientchannelgroup cgid={groupID} cid={channelID} cldbid={clientDBID}
+
+Sets the channel group of a client to the ID specified with cgid.
+
+Example:
+   setclientchannelgroup cgid=13 cid=15 cldbid=20
+   error id=0 msg=ok</value>
+  </data>
+  <data name="tokenadd" xml:space="preserve">
+    <value>Usage: tokenadd tokentype={1|0} tokenid1={groupID} tokenid2={channelID} 
+       [tokendescription={description}] [tokencustomset={customFieldSet}]
+
+Create a new token. If tokentype is set to 0, the ID specified with tokenid1 
+will be a server group ID. Otherwise, tokenid1 is used as a channel group ID 
+and you need to provide a valid channel ID using tokenid2.
+
+The tokencustomset parameter allows you to specify a set of custom client 
+properties. This feature can be used when generating tokens to combine a 
+website account database with a TeamSpeak user. The syntax of the value 
+needs to be escaped using the ServerQuery escape patterns and has to follow 
+the general syntax of:
+
+ident=ident1 value=value1|ident=ident2 value=value2|ident=ident3 value=value3
+
+Example:
+   tokenadd tokentype=0 tokenid1=6 tokenid2=0 tokendescription=Test 
+   tokencustomset=ident=forum_user\svalue=ScP\pident=forum_id\svalue=123
+   token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+   error id=0 msg=ok</value>
+  </data>
+  <data name="tokendelete" xml:space="preserve">
+    <value>Usage: tokendelete token={tokenKey}
+
+Deletes an existing token matching the token key specified with token.
+
+Example:
+   tokendelete token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+   error id=0 msg=ok</value>
+  </data>
+  <data name="tokenlist" xml:space="preserve">
+    <value>Usage: tokenlist
+
+Displays a list of tokens available including their type and group IDs. Tokens 
+can be used to gain access to specified server or channel groups.
+
+A token is similar to a client with administrator privileges that adds you to 
+a certain permission group, but without the necessity of a such a client with 
+administrator privileges to actually exist. It is a long (random looking) 
+string that can be used as a ticket into a specific server group.
+
+Example:
+   tokenlist
+   token=88CVUg\/zkujt+y+WfHdko79UcM4R6uyCL6nEfy3B token_type=0 token_id1=9 ...
+   error id=0 msg=ok</value>
+  </data>
+  <data name="tokenuse" xml:space="preserve">
+    <value>Usage: tokenuse token={tokenKey}
+
+Use a token key gain access to a server or channel group. Please note that the 
+server will automatically delete the token after it has 
+been used.
+
+Example:
+   tokenuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+   error id=0 msg=ok</value>
+  </data>
+  <data name="use" xml:space="preserve">
+    <value>Usage: use [schandlerid={scHandlerID}] [{scHandlerID}]
+
+Selects the server connection handler scHandlerID or, if no parameter is given,
+the currently active server connection handler is selected.
+
+Examples:
+   use schandlerid=1
+   selected schandlerid=1
+   error id=0 msg=ok
+   
+   use 1
+   selected schandlerid=1
+   error id=0 msg=ok</value>
+  </data>
+  <data name="verifychannelpassword" xml:space="preserve">
+    <value>Usage: verifychannelpassword cid={channelID} password={channelPassword}
+
+Returns ERROR_ok if the password is correct, or ERROR_channel_invalid_password
+if it is not.
+
+Example:
+   verifychannelpassword cid=17 password=carrot
+   error id=0 msg=ok</value>
+  </data>
+  <data name="verifyserverpassword" xml:space="preserve">
+    <value>Usage: verifyserverpassword password={serverPassword}
+
+Returns ERROR_ok if the password is correct, or ERROR_server_invalid_password
+if it is not.
+
+Example:
+   verifyserverpassword password=carrot
+   error id=0 msg=ok</value>
+  </data>
+  <data name="whoami" xml:space="preserve">
+    <value>Usage: whoami
+
+Retrieves information about ourself:
+- ClientID (if connected)
+- ChannelID of the channel we are in (if connected)
+
+If not connected, an error is returned.
+
+Example:
+   whoami
+   clid=56 cid=1
+   error id=0 msg=ok</value>
+  </data>
+</root>
