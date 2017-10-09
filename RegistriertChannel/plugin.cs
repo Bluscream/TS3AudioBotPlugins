@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
@@ -21,6 +24,7 @@ namespace RegistriertChannel
 
     public class RegistriertChannel : ITabPlugin
     {
+        private SQLiteConnection db;
         private MainBot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
@@ -37,10 +41,28 @@ namespace RegistriertChannel
                                    "4. Wenn die Registrierung erfolgreich warst erhälst du die Server Gruppe \"Registriert\". Es kann eine Zeit lang dauern bis dein Minecraft Kopf hinter deinem Namen erscheint.";
 
         public void Initialize(MainBot mainBot) {
+            var dbpath = Path.Combine(Directory.GetCurrentDirectory(), "RegistriertChannel.db");
+            var firstStart = File.Exists(dbpath);
+            if (firstStart) SQLiteConnection.CreateFile(dbpath);
+            db = new SQLiteConnection("Data Source=" + dbpath + ";Version=3;");
+            db.Open();
+            if (firstStart) new SQLiteCommand("create table optout (uid varchar(28))", db).ExecuteNonQuery();
+
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
+            lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+        }
+
+        private void Lib_OnTextMessageReceived(object sender, IEnumerable<TextMessage> e) {
+            foreach (var msg in e)
+            {
+                if (msg.Message.ToLower() != "!stop") continue;
+                var cmd = new SQLiteCommand("insert into optout (uid) values (@uid)", db);
+                cmd.Parameters.AddWithValue("@uid", msg.InvokerUid);
+                cmd.ExecuteNonQuery();
+            }
         }
 
         private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
@@ -61,6 +83,7 @@ namespace RegistriertChannel
         public void Dispose()
         {
             lib.OnClientMoved -= Lib_OnClientMoved;
+            db.Close();
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

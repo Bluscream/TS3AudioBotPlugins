@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Data.SQLite;
+using System.IO;
 using PMRedirect.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
@@ -29,7 +31,8 @@ namespace PMRedirect
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot) {
+        public void Initialize(MainBot mainBot)
+        {
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
