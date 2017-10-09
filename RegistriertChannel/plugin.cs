@@ -56,12 +56,14 @@ namespace RegistriertChannel
         }
 
         private void Lib_OnTextMessageReceived(object sender, IEnumerable<TextMessage> e) {
+            if (!Enabled) return;
             foreach (var msg in e)
             {
                 if (msg.Message.ToLower() != "!stop") continue;
                 var cmd = new SQLiteCommand("insert into optout (uid) values (@uid)", db);
                 cmd.Parameters.AddWithValue("@uid", msg.InvokerUid);
                 cmd.ExecuteNonQuery();
+                bot.QueryConnection.SendMessage("Erfolgreich abgemeldet.", msg.InvokerId);
             }
         }
 
@@ -83,6 +85,7 @@ namespace RegistriertChannel
         public void Dispose()
         {
             lib.OnClientMoved -= Lib_OnClientMoved;
+            lib.OnTextMessageReceived -= Lib_OnTextMessageReceived;
             db.Close();
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
