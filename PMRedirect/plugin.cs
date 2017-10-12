@@ -34,6 +34,7 @@ namespace PMRedirect {
         {
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+            bot.RightsManager.RegisterRights("PMRedirect.isowner");
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -52,16 +53,16 @@ namespace PMRedirect {
                     if (msg.Target != TextMessageTargetMode.Private || msg.InvokerId == lib.WhoAmI().ClientId) continue;
                     try {
                         clientbuffer = clientbuffer ?? lib.ClientList(ClientListOptions.uid).ToList();
-                        foreach (var client in clientbuffer)
-                        {
-                            foreach (var uid in Settings.Default.uids)
-                            {
-                                PluginLog(Log.Level.Debug, "uid: " + uid);
-                                if (client.Uid != uid || uid == msg.InvokerUid) continue;
-                                PluginLog(Log.Level.Debug, "Got PM from "+client.Uid+". Redirecting to "+uid);
-                                bot.QueryConnection.SendMessage(ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
-                            }
+                        foreach (var client in clientbuffer) {
+                            if (client.Uid == msg.InvokerUid) continue;
+                            if (!bot.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
+                            // PluginLog(Log.Level.Debug, "Got PM from " + msg.InvokerUid + ". Redirecting to " + client.Uid);
+                            bot.QueryConnection.SendMessage("Got PM from " + ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
                         }
+                        //foreach (var uid in Settings.Default.uids)
+                        //{
+                        //    PluginLog(Log.Level.Debug, "uid: " + uid);
+                        //}
                     } catch (Ts3CommandException exception) {
                         PluginLog(Log.Level.Error, exception.ToString());
                     }
