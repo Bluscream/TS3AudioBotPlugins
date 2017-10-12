@@ -71,6 +71,7 @@ namespace PMRedirect {
 
         public void Dispose() {
             lib.OnTextMessageReceived -= Lib_OnTextMessageReceived;
+            bot.RightsManager.UnregisterRights("PMRedirect.isowner");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
