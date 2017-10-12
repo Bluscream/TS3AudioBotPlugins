@@ -1,16 +1,14 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Data.SQLite;
-using System.IO;
 using PMRedirect.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
 using TS3Client;
 using TS3Client.Full;
+using TS3Client.Messages;
 
-namespace PMRedirect
-{
+namespace PMRedirect {
 
     public class PluginInfo
     {
@@ -26,6 +24,7 @@ namespace PMRedirect
         public PluginInfo pluginInfo = new PluginInfo();
         private MainBot bot;
         private Ts3FullClient lib;
+        public bool Enabled { get; private set; }
 
         public void PluginLog(Log.Level logLevel, string Message) {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
@@ -36,27 +35,36 @@ namespace PMRedirect
             bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
-            PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+            Enabled = true;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
-        private string ParseInvoker(TS3Client.Messages.TextMessage msg)
+        private string ParseInvoker(TextMessage msg)
         {
             return "[URL=client://" + msg.InvokerId + "/" + msg.InvokerUid + "]" + msg.InvokerName + "[/URL]";
         }
 
-        private void Lib_OnTextMessageReceived(object sender, System.Collections.Generic.IEnumerable<TS3Client.Messages.TextMessage> e) {
-            foreach (var msg in e)
-            {
-                if (msg.Target != TextMessageTargetMode.Private || msg.InvokerId == lib.WhoAmI().ClientId) continue;
-                var clientbuffer = lib.ClientList(ClientListOptions.uid).ToList();
-                foreach (var client in clientbuffer)
+        private void Lib_OnTextMessageReceived(object sender, IEnumerable<TextMessage> e)
+        {
+            if (!Enabled) return;
+            List<ClientData> clientbuffer = null;
+                foreach (var msg in e)
                 {
-                    foreach (var uid in Settings.Default.uids)
-                    {
-                        if (client.Uid != uid || uid == msg.InvokerUid) continue;
-                        bot.QueryConnection.SendMessage(ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
+                    if (msg.Target != TextMessageTargetMode.Private || msg.InvokerId == lib.WhoAmI().ClientId) continue;
+                    try {
+                        clientbuffer = clientbuffer ?? lib.ClientList(ClientListOptions.uid).ToList();
+                        foreach (var client in clientbuffer)
+                        {
+                            foreach (var uid in Settings.Default.uids)
+                            {
+                                PluginLog(Log.Level.Debug, "uid: " + uid);
+                                if (client.Uid != uid || uid == msg.InvokerUid) continue;
+                                PluginLog(Log.Level.Debug, "Got PM from "+client.Uid+". Redirecting to "+uid);
+                                bot.QueryConnection.SendMessage(ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
+                            }
+                        }
+                    } catch (Ts3CommandException exception) {
+                        PluginLog(Log.Level.Error, exception.ToString());
                     }
-                }
             }
         }
 

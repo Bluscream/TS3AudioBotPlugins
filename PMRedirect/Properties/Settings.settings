@@ -6,6 +6,12 @@
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;vMi13IPasnYfvPC+S1rXF0HoTkA=&lt;/string&gt;
+  &lt;string&gt;Q/LO36T/x8Ce/gy09HX9D+Qkrqg=&lt;/string&gt;
+  &lt;string&gt;dUvDe923foCr7xl7SgSpFC7lLVY=&lt;/string&gt;
+  &lt;string&gt;eVAaW2DkZC8qhLLM2io3xP4NjxM=&lt;/string&gt;
+  &lt;string&gt;8srLXv9vEsHkkSiz2+aT75s/CoA=&lt;/string&gt;
+  &lt;string&gt;Ou7uQHY7khdrAiOwwMcDmwTW2nU=&lt;/string&gt;
+  &lt;string&gt;e3dvocUFTE1UWIvtW8qzulnWErI=&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
     <Setting Name="enabled" Type="System.Boolean" Scope="User">

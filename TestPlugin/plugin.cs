@@ -85,15 +85,5 @@ namespace TestPlugin
             var owner = bot.QueryConnection.GetClientByName("Bluscream").UnwrapThrow();
             return "Hi " + name + ", you choose " + number + ". My owner is " + owner.Uid;
         }
-
-        [Command("rawcmd")]
-        [RequiredParameters(1)]
-        public string CommandRawCmd(ExecutionInformation info, string cmd, params string[] cmdpara) {
-            try {
-                var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
-                    cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
-                return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
-            } catch (TS3Client.Ts3CommandException ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
-        }
     }
 }

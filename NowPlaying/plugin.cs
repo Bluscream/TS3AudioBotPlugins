@@ -134,7 +134,7 @@ namespace NowPlaying {
         {
             Settings.Default.Enabled = !Settings.Default.Enabled;
             Settings.Default.Save();
-            return PluginInfo.Name + " is now " + Settings.Default.Enabled.ToString();
+            return PluginInfo.Name + " is now " + Settings.Default.Enabled;
 		}
 
 	    [Command("nowplaying set", "Changes a setting of this plugin")]

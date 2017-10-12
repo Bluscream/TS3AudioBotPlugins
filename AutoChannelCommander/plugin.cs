@@ -25,7 +25,7 @@ namespace AutoChannelCommander
 	    private Ts3FullClient lib;
         public TickWorker Timer { get; private set; }
         public bool Enabled { get; private set; }
-        public bool CCState = false;
+        public bool CCState;
 
         public PluginInfo pluginInfo = new PluginInfo();
 

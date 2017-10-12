@@ -25,9 +25,16 @@ namespace PMRedirect.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>vMi13IPasnYfvPC+S1rXF0HoTkA=</string>\r\n</ArrayOfString>")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>vMi13IPasnYfvPC+S1rXF0HoTkA=</string>
+  <string>Q/LO36T/x8Ce/gy09HX9D+Qkrqg=</string>
+  <string>dUvDe923foCr7xl7SgSpFC7lLVY=</string>
+  <string>eVAaW2DkZC8qhLLM2io3xP4NjxM=</string>
+  <string>8srLXv9vEsHkkSiz2+aT75s/CoA=</string>
+  <string>Ou7uQHY7khdrAiOwwMcDmwTW2nU=</string>
+  <string>e3dvocUFTE1UWIvtW8qzulnWErI=</string>
+</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection uids {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["uids"]));

@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientQuery", "ClientQuery\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistriertChannel", "RegistriertChannel\RegistriertChannel.csproj", "{9ED174DF-9421-419C-9099-A402DB9CF97D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

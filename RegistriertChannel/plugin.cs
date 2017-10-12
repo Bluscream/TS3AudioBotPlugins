@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -10,8 +9,7 @@ using TS3AudioBot.CommandSystem;
 using TS3Client.Full;
 using TS3Client.Messages;
 
-namespace RegistriertChannel
-{
+namespace RegistriertChannel {
 
     public class PluginInfo
     {

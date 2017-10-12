@@ -100,7 +100,7 @@ namespace MetaData
         [Command("metadata toggle", PluginInfo.Description)]
         public string CommandToggleMetaData() {
             Enabled = !Enabled;
-            return PluginInfo.Name + " is now " + Enabled.ToString();
+            return PluginInfo.Name + " is now " + Enabled;
         }
 
         [Command("metadata refresh", PluginInfo.Description)]

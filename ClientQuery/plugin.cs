@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using ClientQuery.Properties;
 using TelnetServer;
@@ -8,8 +7,7 @@ using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
 using TS3Client.Full;
 
-namespace ClientQuery
-{
+namespace ClientQuery {
 
     public class PluginInfo
     {
