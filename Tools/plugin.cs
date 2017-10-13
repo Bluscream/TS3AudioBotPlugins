@@ -59,5 +59,10 @@ namespace Tools
         {
             return Ts3Crypt.HashPassword(pw);
         }
+
+        [Command("ownchannel")]
+        public string CommandGetOwnChannelID(ExecutionInformation info) {
+            return lib.WhoAmI().ChannelId.ToString();
+        }
     }
 }
