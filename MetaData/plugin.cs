@@ -67,7 +67,7 @@ namespace MetaData
         }
 
         private void SetMetaData() {
-            var metaData = "\n" + bot.CommandSettings("QueryConnection::AudioBitrate", "").ToString();
+            var metaData = "\n" + bot.CommandSettings("QueryConnection::AudioBitrate", "");
             metaData += "\n" + bot.CommandSettings("AudioFramework::AudioMode", "");
             metaData += "\n" + bot.CommandSettings("AudioFramework::DefaultVolume", "");
             metaData += "\n" + bot.CommandSettings("QueryConnection::Address", "");

@@ -125,7 +125,7 @@ namespace NowPlaying {
 		}
 
         public void Dispose() {
-            bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
+            bot.PlayManager.AfterResourceStarted -= PlayManager_AfterResourceStarted;
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
