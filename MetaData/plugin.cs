@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
@@ -35,6 +35,7 @@ namespace MetaData
             "534c9582-ab02-4267-aec6-2d94361daa2a", // Gamescom 2017
             "34dbfa8f-bd27-494c-aa08-a312fc0bb240", // Gamescom Hero 2017
             "7d9fa2b1-b6fa-47ad-9838-c239a4ddd116", // MIFCOM
+            "f81ad44d-e931-47d1-a3ef-5fd160217cf8", // 4Netplayers customer
 
             "17dfa0dc-b6e6-42fd-8c9c-b7d168f0823e", // Coolest Hat
             "ef85ab02-8236-4e38-96cb-02c73789734f", // Best Bug Hunter
