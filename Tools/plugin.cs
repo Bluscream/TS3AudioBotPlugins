@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3AudioBot.CommandSystem;
@@ -21,8 +21,8 @@ namespace Tools
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
+        public void Initialize(Core Core) {
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 

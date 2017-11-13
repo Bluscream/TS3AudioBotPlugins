@@ -38,7 +38,7 @@ namespace RegistriertChannel {
                                    "3. Im Teamspeak Chat dem User [URL=client://0/serveradmin~Gomme-Bot]Gomme-Bot[/URL] deinen Minecraft Namen schreiben (Groß/Kleinschreibung beachten)\n" +
                                    "4. Wenn die Registrierung erfolgreich warst erhälst du die Server Gruppe \"Registriert\". Es kann eine Zeit lang dauern bis dein Minecraft Kopf hinter deinem Namen erscheint.";
 
-        public void Initialize(Core mainBot) {
+        public void Initialize(Core Core) {
             var dbpath = Path.Combine(Directory.GetCurrentDirectory(), "RegistriertChannel.db");
             var firstStart = File.Exists(dbpath);
             if (firstStart) SQLiteConnection.CreateFile(dbpath);
@@ -46,7 +46,7 @@ namespace RegistriertChannel {
             db.Open();
             if (firstStart) new SQLiteCommand("create table optout (uid varchar(28))", db).ExecuteNonQuery();
 
-            bot = mainBot.Bots.GetBot(0);
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;

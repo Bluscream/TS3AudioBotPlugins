@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using ClientQuery.Properties;
 using TelnetServer;
@@ -37,8 +37,8 @@ namespace ClientQuery {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
+        public void Initialize(Core Core) {
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             //var PluginPath = Directory.GetCurrentDirectory();
             //Directory.CreateDirectory(Path.Combine(PluginPath, "ClientQuery"));

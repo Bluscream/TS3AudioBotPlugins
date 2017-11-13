@@ -24,14 +24,16 @@ namespace TestPlugin
             public const string Author = "Bluscream <admin@timo.de.vc>";
             public const int Version = 1337;
         }
+		private Core core;
         private Bot bot;
         private Ts3FullClient lib;
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
-            bot.RightsManager.RegisterRights("TestPlugin.dummyperm");
+        public void Initialize(Core Core) {
+			core = Core;
+            bot = Core.Bots.GetBot(0);
+			Core.RightsManager.RegisterRights("TestPlugin.dummyperm");
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.QueryConnection.OnClientConnect += QueryConnection_OnClientConnect;
             bot.QueryConnection.OnClientDisconnect += QueryConnection_OnClientDisconnect;
@@ -71,7 +73,7 @@ namespace TestPlugin
             bot.QueryConnection.OnClientConnect -= QueryConnection_OnClientConnect;
             bot.QueryConnection.OnClientDisconnect -= QueryConnection_OnClientDisconnect;
             bot.QueryConnection.OnMessageReceived -= QueryConnection_OnMessageReceived;
-            bot.RightsManager.UnregisterRights("TestPlugin.dummyperm");
+			core.RightsManager.UnregisterRights("TestPlugin.dummyperm");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

@@ -40,13 +40,13 @@ namespace TestPlugin
         public void Initialize(Core mainBot) {
             bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            bot.RightsManager.RegisterRights("TestPlugin.dummyperm");
+            mainBot.RightsManager.RegisterRights("TestPlugin.dummyperm");
             //lib.OnErrorEvent()
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
         public void Dispose() {
-            bot.RightsManager.UnregisterRights("TestPlugin.dummyperm");
+            mainBot.RightsManager.UnregisterRights("TestPlugin.dummyperm");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

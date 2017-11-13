@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3Client.Messages;
@@ -29,8 +29,8 @@ namespace AutoFollow {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
+        public void Initialize(Core Core) {
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
 			lib.OnClientMoved += Lib_OnClientMoved;
             clid = 0; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");

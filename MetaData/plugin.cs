@@ -21,6 +21,7 @@ namespace MetaData
 
     public class MetaData : ITabPlugin
     {
+		private Core core;
         private Bot bot;
         private Ts3FullClient lib;
 
@@ -62,20 +63,23 @@ namespace MetaData
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
+        public void Initialize(Core Core) {
+			core = Core;
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnConnected += Lib_OnConnected;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
         private void SetMetaData() {
-            var metaData = "\n" + bot.CommandSettings("QueryConnection::AudioBitrate", "");
-            metaData += "\n" + bot.CommandSettings("AudioFramework::AudioMode", "");
-            metaData += "\n" + bot.CommandSettings("AudioFramework::DefaultVolume", "");
-            metaData += "\n" + bot.CommandSettings("QueryConnection::Address", "");
-            metaData += "\n" + bot.CommandSettings("QueryConnection::DefaultNickname", "");
-            metaData += "\n" + bot.CommandSettings("QueryConnection::IdentityLevel", "");
+			var a = core.ConfigManager.GetDataStruct<AudioFrameworkData>("AudioFramework", true);
+			var b = core.ConfigManager.GetDataStruct<Ts3FullClientData>("QueryConnection", true);
+			var metaData = "\nQueryConnection::AudioBitrate=" + b.AudioBitrate;
+            metaData += "\nAudioFramework::AudioMode=" + a.AudioMode;
+            metaData += "\nAudioFramework::DefaultVolume=" + a.DefaultVolume;
+            metaData += "\nQueryConnection::Address=" + b.Address;
+            metaData += "\nQueryConnection::DefaultNickname=" + b.DefaultNickname;
+            metaData += "\nQueryConnection::IdentityLevel=" + b.IdentityLevel;
             lib.Send("clientupdate", new CommandParameter("client_meta_data", metaData));
         }
 

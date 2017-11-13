@@ -33,8 +33,8 @@ namespace AutoChannelCommander
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core mainBot) {
-            bot = mainBot.Bots.GetBot(0);
+        public void Initialize(Core Core) {
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnConnected += Lib_OnConnected;

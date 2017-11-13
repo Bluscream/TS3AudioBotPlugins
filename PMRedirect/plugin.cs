@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using PMRedirect.Properties;
 using TS3AudioBot;
@@ -22,7 +22,8 @@ namespace PMRedirect {
     public class PMRedirect : ITabPlugin {
 
         public PluginInfo pluginInfo = new PluginInfo();
-        private Bot bot;
+		private Core core;
+		private Bot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
 
@@ -30,11 +31,12 @@ namespace PMRedirect {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core mainBot)
+        public void Initialize(Core Core)
         {
-            bot = mainBot.Bots.GetBot(0);
+			core = Core;
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            bot.RightsManager.RegisterRights("PMRedirect.isowner");
+			Core.RightsManager.RegisterRights("PMRedirect.isowner");
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -55,7 +57,7 @@ namespace PMRedirect {
                         clientbuffer = clientbuffer ?? lib.ClientList(ClientListOptions.uid).ToList();
                         foreach (var client in clientbuffer) {
                             if (client.Uid == msg.InvokerUid) continue;
-                            if (!bot.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
+                            if (!core.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
                             // PluginLog(Log.Level.Debug, "Got PM from " + msg.InvokerUid + ". Redirecting to " + client.Uid);
                             bot.QueryConnection.SendMessage("Got PM from " + ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
                         }
@@ -71,7 +73,7 @@ namespace PMRedirect {
 
         public void Dispose() {
             lib.OnTextMessageReceived -= Lib_OnTextMessageReceived;
-            bot.RightsManager.UnregisterRights("PMRedirect.isowner");
+            core.RightsManager.UnregisterRights("PMRedirect.isowner");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 
