@@ -8,11 +8,11 @@ using TS3Client.Full;
 namespace Example
 {
     public class Example : ITabPlugin {
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
-        public void Initialize(MainBot mainBot)
+        public void Initialize(Core mainBot)
         {
-            bot = mainBot;
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
         }

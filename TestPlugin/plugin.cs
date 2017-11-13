@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,13 +24,13 @@ namespace TestPlugin
             public const string Author = "Bluscream <admin@timo.de.vc>";
             public const int Version = 1337;
         }
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+        public void Initialize(Core mainBot) {
+            bot = mainBot.Bots.GetBot(0);
             bot.RightsManager.RegisterRights("TestPlugin.dummyperm");
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.QueryConnection.OnClientConnect += QueryConnection_OnClientConnect;

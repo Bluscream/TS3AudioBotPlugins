@@ -8,7 +8,7 @@ namespace TestPlugin
 {
     public class TestPlugin : ITabPlugin
     {
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
 
         public class PluginInfo
@@ -37,8 +37,8 @@ namespace TestPlugin
             Console.ResetColor();
         }
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+        public void Initialize(Core mainBot) {
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.RightsManager.RegisterRights("TestPlugin.dummyperm");
             //lib.OnErrorEvent()

@@ -21,7 +21,7 @@ namespace MetaData
 
     public class MetaData : ITabPlugin
     {
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
 
         public string[] badges = {
@@ -37,6 +37,7 @@ namespace MetaData
             "34dbfa8f-bd27-494c-aa08-a312fc0bb240", // Gamescom Hero 2017
             "7d9fa2b1-b6fa-47ad-9838-c239a4ddd116", // MIFCOM
             "f81ad44d-e931-47d1-a3ef-5fd160217cf8", // 4Netplayers customer
+			"f22c22f1-8e2d-4d99-8de9-f352dc26ac5b", // Rocket Beans TV
 
             //"17dfa0dc-b6e6-42fd-8c9c-b7d168f0823e", // Coolest Hat
             //"ef85ab02-8236-4e38-96cb-02c73789734f", // Best Bug Hunter
@@ -61,8 +62,8 @@ namespace MetaData
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+        public void Initialize(Core mainBot) {
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnConnected += Lib_OnConnected;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
@@ -89,7 +90,7 @@ namespace MetaData
         public void SetRandomBadge() {
 			currentBadge = (currentBadge + 1) % badges.Length;
 			var build = new StringBuilder("overwolf=1:badges=");
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 15; i++)
 				build.Append(badges[(currentBadge + i) % badges.Length] + ",");
 			build.Length--;
 			lib.Send("clientupdate", new CommandParameter("client_badges", build.ToString()));

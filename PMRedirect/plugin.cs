@@ -22,7 +22,7 @@ namespace PMRedirect {
     public class PMRedirect : ITabPlugin {
 
         public PluginInfo pluginInfo = new PluginInfo();
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
 
@@ -30,9 +30,9 @@ namespace PMRedirect {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot)
+        public void Initialize(Core mainBot)
         {
-            bot = mainBot;
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             bot.RightsManager.RegisterRights("PMRedirect.isowner");
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;

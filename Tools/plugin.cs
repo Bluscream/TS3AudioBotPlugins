@@ -16,13 +16,13 @@ namespace Tools
             public const string Author = "Bluscream <admin@timo.de.vc>";
             public const int Version = 1337;
         }
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+        public void Initialize(Core mainBot) {
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 

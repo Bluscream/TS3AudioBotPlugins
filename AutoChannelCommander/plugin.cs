@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
@@ -21,7 +21,7 @@ namespace AutoChannelCommander
 
     public class AutoChannelCommander : ITabPlugin
     {
-        private MainBot bot;
+        private Bot bot;
 	    private Ts3FullClient lib;
         public TickWorker Timer { get; private set; }
         public bool Enabled { get; private set; }
@@ -33,8 +33,8 @@ namespace AutoChannelCommander
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+        public void Initialize(Core mainBot) {
+            bot = mainBot.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnConnected += Lib_OnConnected;
