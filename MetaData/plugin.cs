@@ -24,7 +24,6 @@ namespace MetaData
 		private Core core;
         private Bot bot;
         private Ts3FullClient lib;
-
         public string[] badges = {
             "1cb07348-34a4-4741-b50f-c41e584370f7", // TeamSpeak Addon Author
             "50bbdbc8-0f2a-46eb-9808-602225b49627", // Gamescom 2016
@@ -39,24 +38,10 @@ namespace MetaData
             "7d9fa2b1-b6fa-47ad-9838-c239a4ddd116", // MIFCOM
             "f81ad44d-e931-47d1-a3ef-5fd160217cf8", // 4Netplayers customer
 			"f22c22f1-8e2d-4d99-8de9-f352dc26ac5b", // Rocket Beans TV
-
-            //"17dfa0dc-b6e6-42fd-8c9c-b7d168f0823e", // Coolest Hat
-            //"ef85ab02-8236-4e38-96cb-02c73789734f", // Best Bug Hunter
-            //"facee3a7-1db0-4493-a5cf-24c9f938d35d", // Informed User
-            //"c9a170ca-62c2-47bf-990b-db75a5d7b086"  // I'm a Scanner / I'm a Floppy
-        };
-
-        public int currentBadge = 0;
-        public string[] _badges = {
-            "450f81c1-ab41-4211-a338-222fa94ed157,c9e97536-5a2d-4c8e-a135-af404587a472,94ec66de-5940-4e38-b002-970df0cf6c94,1cb07348-34a4-4741-b50f-c41e584370f7,50bbdbc8-0f2a-46eb-9808-602225b49627,d95f9901-c42d-4bac-8849-7164fd9e2310",
-            "1cb07348-34a4-4741-b50f-c41e584370f7,50bbdbc8-0f2a-46eb-9808-602225b49627,d95f9901-c42d-4bac-8849-7164fd9e2310,62444179-0d99-42ba-a45c-c6b1557d079a,d95f9901-c42d-4bac-8849-7164fd9e2310,d95f9901-c42d-4bac-8849-7164fd9e2310",
-            "62444179-0d99-42ba-a45c-c6b1557d079a,d95f9901-c42d-4bac-8849-7164fd9e2310,d95f9901-c42d-4bac-8849-7164fd9e2310,534c9582-ab02-4267-aec6-2d94361daa2a,34dbfa8f-bd27-494c-aa08-a312fc0bb240,7d9fa2b1-b6fa-47ad-9838-c239a4ddd116",
-            "534c9582-ab02-4267-aec6-2d94361daa2a,34dbfa8f-bd27-494c-aa08-a312fc0bb240,7d9fa2b1-b6fa-47ad-9838-c239a4ddd116,450f81c1-ab41-4211-a338-222fa94ed157,c9e97536-5a2d-4c8e-a135-af404587a472,94ec66de-5940-4e38-b002-970df0cf6c94"
         };
 
         public bool Enabled { get; private set; }
 	    public TickWorker Timer { get; private set; }
-
 		public PluginInfo pluginInfo = new PluginInfo();
 
         public void PluginLog(Log.Level logLevel, string Message) {
@@ -72,14 +57,14 @@ namespace MetaData
         }
 
         private void SetMetaData() {
-			var a = core.ConfigManager.GetDataStruct<AudioFrameworkData>("AudioFramework", true);
-			var b = core.ConfigManager.GetDataStruct<Ts3FullClientData>("QueryConnection", true);
-			var metaData = "\nQueryConnection::AudioBitrate=" + b.AudioBitrate;
-            metaData += "\nAudioFramework::AudioMode=" + a.AudioMode;
-            metaData += "\nAudioFramework::DefaultVolume=" + a.DefaultVolume;
-            metaData += "\nQueryConnection::Address=" + b.Address;
-            metaData += "\nQueryConnection::DefaultNickname=" + b.DefaultNickname;
-            metaData += "\nQueryConnection::IdentityLevel=" + b.IdentityLevel;
+			var af = core.ConfigManager.GetDataStruct<AudioFrameworkData>("AudioFramework", true);
+			var qc = core.ConfigManager.GetDataStruct<Ts3FullClientData>("QueryConnection", true);
+			var metaData = "\nQueryConnection::AudioBitrate=" + qc.AudioBitrate;
+            metaData += "\nAudioFramework::AudioMode=" + af.AudioMode;
+            metaData += "\nAudioFramework::DefaultVolume=" + af.DefaultVolume;
+            metaData += "\nQueryConnection::Address=" + qc.Address;
+            metaData += "\nQueryConnection::DefaultNickname=" + qc.DefaultNickname;
+            metaData += "\nQueryConnection::IdentityLevel=" + qc.IdentityLevel;
             lib.Send("clientupdate", new CommandParameter("client_meta_data", metaData));
         }
 
@@ -90,7 +75,7 @@ namespace MetaData
 	        lib.Send("clientupdate", new CommandParameter("client_badges", "overwolf=0:badges=94ec66de-5940-4e38-b002-970df0cf6c94"));
 			//Timer = RegisterTick(() => SetMetaData(), TimeSpan.FromSeconds(60), true);
 		}
-
+		private int currentBadge;
         public void SetRandomBadge() {
 			currentBadge = (currentBadge + 1) % badges.Length;
 			var build = new StringBuilder("overwolf=1:badges=");
@@ -98,12 +83,6 @@ namespace MetaData
 				build.Append(badges[(currentBadge + i) % badges.Length] + ",");
 			build.Length--;
 			lib.Send("clientupdate", new CommandParameter("client_badges", build.ToString()));
-			/*
-            //var i = Random.Next(0, badges.Length);
-            currentBadge++;
-            if (currentBadge > badges.Length - 1) currentBadge = 0;
-            lib.Send("clientupdate", new CommandParameter("client_badges", "overwolf=1:badges=" + badges[currentBadge]));
-			*/
 		}
 
         public void Dispose() {
@@ -133,8 +112,14 @@ namespace MetaData
 
         [Command("metadata togglebadges", PluginInfo.Description)]
         public string CommandSetClientToggleBadges() {
-            Timer = TickPool.RegisterTick(SetRandomBadge, TimeSpan.FromMilliseconds(500), true);
-            return "Auto toggeling badges";
+			if (!Timer.Active) {
+				Timer = TickPool.RegisterTick(SetRandomBadge, TimeSpan.FromMilliseconds(500), true);
+				return "Auto toggeling badges";
+			} else {
+				Timer.Active = false;
+				Timer = null;
+				return "Stopped toggeling badges";
+			}
         }
     }
 }
