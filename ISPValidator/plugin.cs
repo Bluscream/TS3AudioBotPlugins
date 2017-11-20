@@ -196,6 +196,29 @@ namespace ISPValidator {
 				}
 			} else if (key.KeyChar == 'n') {
 			} else { Console.WriteLine(); return false; }
+			Console.WriteLine($"{Environment.NewLine}{PluginInfo.Name}: === Event config ===");
+			section = "Events";
+			Console.WriteLine($"{PluginInfo.Shortname}: This event gets fired when the bot connects.");
+			Console.Write($"{PluginInfo.Shortname}: Should the bot check all clients for their ISPs when he connects? (y/n) > "); key = Console.ReadKey();
+			if (key.KeyChar == 'y')
+				cfg[section]["onConnectStatusChange"] = "true";
+			else if (key.KeyChar == 'n')
+				cfg[section]["onConnectStatusChange"] = "false";
+			else { Console.WriteLine(); return false; }
+			Console.WriteLine($"{Environment.NewLine}{PluginInfo.Shortname}: This event gets fired when some client's IP changes.");
+			Console.Write($"{PluginInfo.Shortname}: Should the bot re-check a client when his IP changed? (y/n) > "); key = Console.ReadKey();
+			if (key.KeyChar == 'y')
+				cfg[section]["onUpdateClient"] = "true";
+			else if (key.KeyChar == 'n')
+				cfg[section]["onUpdateClient"] = "false";
+			else { Console.WriteLine(); return false; }
+			Console.WriteLine($"{Environment.NewLine}{PluginInfo.Shortname}: This event gets fired when a client connects.");
+			Console.Write($"{PluginInfo.Shortname}: Should the bot check a client when they connect? (y/n) > "); key = Console.ReadKey();
+			if (key.KeyChar == 'y')
+				cfg[section]["onClientMove"] = "true";
+			else if (key.KeyChar == 'n')
+				cfg[section]["onClientMove"] = "false";
+			else { Console.WriteLine(); return false; }
 			return true;
 		}
 	}
