@@ -22,8 +22,7 @@ namespace PMRedirect {
     public class PMRedirect : ITabPlugin {
 
         public PluginInfo pluginInfo = new PluginInfo();
-		private Core core;
-		private Bot bot;
+		private MainBot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
 
@@ -31,12 +30,11 @@ namespace PMRedirect {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core Core)
+        public void Initialize(MainBot mainBot)
         {
-			core = Core;
-            bot = Core.Bots.GetBot(0);
+			bot = mainBot;
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-			Core.RightsManager.RegisterRights("PMRedirect.isowner");
+			mainBot.RightsManager.RegisterRights("PMRedirect.isowner");
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -57,7 +55,7 @@ namespace PMRedirect {
                         clientbuffer = clientbuffer ?? lib.ClientList(ClientListOptions.uid).ToList();
                         foreach (var client in clientbuffer) {
                             if (client.Uid == msg.InvokerUid) continue;
-                            if (!core.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
+                            if (!bot.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
                             // PluginLog(Log.Level.Debug, "Got PM from " + msg.InvokerUid + ". Redirecting to " + client.Uid);
                             bot.QueryConnection.SendMessage("Got PM from " + ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
                         }
@@ -73,7 +71,7 @@ namespace PMRedirect {
 
         public void Dispose() {
             lib.OnTextMessageReceived -= Lib_OnTextMessageReceived;
-            core.RightsManager.UnregisterRights("PMRedirect.isowner");
+            bot.RightsManager.UnregisterRights("PMRedirect.isowner");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

@@ -23,7 +23,7 @@ namespace RegistriertChannel {
     public class RegistriertChannel : ITabPlugin
     {
         private SQLiteConnection db;
-        private Bot bot;
+        private MainBot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
         public PluginInfo pluginInfo = new PluginInfo();
@@ -38,7 +38,7 @@ namespace RegistriertChannel {
                                    "3. Im Teamspeak Chat dem User [URL=client://0/serveradmin~Gomme-Bot]Gomme-Bot[/URL] deinen Minecraft Namen schreiben (Groß/Kleinschreibung beachten)\n" +
                                    "4. Wenn die Registrierung erfolgreich warst erhälst du die Server Gruppe \"Registriert\". Es kann eine Zeit lang dauern bis dein Minecraft Kopf hinter deinem Namen erscheint.";
 
-        public void Initialize(Core Core) {
+        public void Initialize(MainBot mainBot) {
             var dbpath = Path.Combine(Directory.GetCurrentDirectory(), "RegistriertChannel.db");
             var firstStart = File.Exists(dbpath);
             if (firstStart) SQLiteConnection.CreateFile(dbpath);
@@ -46,8 +46,8 @@ namespace RegistriertChannel {
             db.Open();
             if (firstStart) new SQLiteCommand("create table optout (uid varchar(28))", db).ExecuteNonQuery();
 
-            bot = Core.Bots.GetBot(0);
-            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+			bot = mainBot;
+			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");

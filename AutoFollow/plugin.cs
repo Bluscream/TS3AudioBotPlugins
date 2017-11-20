@@ -18,7 +18,7 @@ namespace AutoFollow {
 
     public class AutoFollow : ITabPlugin
     {
-        private Bot bot;
+        private MainBot bot;
 	    private Ts3FullClient lib;
 
 		public int clid { get; private set; }
@@ -29,9 +29,9 @@ namespace AutoFollow {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core Core) {
-            bot = Core.Bots.GetBot(0);
-            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+        public void Initialize(MainBot mainBot) {
+			bot = mainBot;
+            lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
 			lib.OnClientMoved += Lib_OnClientMoved;
             clid = 0; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }

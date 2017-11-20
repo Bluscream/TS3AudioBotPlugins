@@ -8,7 +8,7 @@ using TS3Client.Full;
 namespace Example
 {
     public class Example : ITabPlugin {
-        private Bot bot;
+        private MainBot bot;
         private Ts3FullClient lib;
         public void Initialize(Core mainBot)
         {

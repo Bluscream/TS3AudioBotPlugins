@@ -24,21 +24,19 @@ namespace TestPlugin
             public const string Author = "Bluscream <admin@timo.de.vc>";
             public const int Version = 1337;
         }
-		private Core core;
-        private Bot bot;
+		private MainBot bot;
         private Ts3FullClient lib;
 
         public void PluginLog(Log.Level logLevel, string Message) { Log.Write(logLevel, PluginInfo.Name + ": " + Message); }
 
-        public void Initialize(Core Core) {
-			core = Core;
-            bot = Core.Bots.GetBot(0);
-			Core.RightsManager.RegisterRights("TestPlugin.dummyperm");
-            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-            bot.QueryConnection.OnClientConnect += QueryConnection_OnClientConnect;
-            bot.QueryConnection.OnClientDisconnect += QueryConnection_OnClientDisconnect;
-            bot.QueryConnection.OnMessageReceived += QueryConnection_OnMessageReceived;
-            bot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
+        public void Initialize(MainBot mainBot) {
+			bot = mainBot;
+			mainBot.RightsManager.RegisterRights("TestPlugin.dummyperm");
+            lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+			mainBot.QueryConnection.OnClientConnect += QueryConnection_OnClientConnect;
+			mainBot.QueryConnection.OnClientDisconnect += QueryConnection_OnClientDisconnect;
+			mainBot.QueryConnection.OnMessageReceived += QueryConnection_OnMessageReceived;
+			mainBot.PlayManager.AfterResourceStarted += PlayManager_AfterResourceStarted;
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 
         }
@@ -73,7 +71,7 @@ namespace TestPlugin
             bot.QueryConnection.OnClientConnect -= QueryConnection_OnClientConnect;
             bot.QueryConnection.OnClientDisconnect -= QueryConnection_OnClientDisconnect;
             bot.QueryConnection.OnMessageReceived -= QueryConnection_OnMessageReceived;
-			core.RightsManager.UnregisterRights("TestPlugin.dummyperm");
+			bot.RightsManager.UnregisterRights("TestPlugin.dummyperm");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

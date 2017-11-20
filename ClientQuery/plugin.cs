@@ -28,7 +28,7 @@ namespace ClientQuery {
     public class ClientQuery : ITabPlugin {
 
         public PluginInfo pluginInfo = new PluginInfo();
-        private Bot bot;
+        private MainBot bot;
         private static Ts3FullClient lib;
         private static Server s;
 
@@ -37,9 +37,9 @@ namespace ClientQuery {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core Core) {
-            bot = Core.Bots.GetBot(0);
-            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+        public void Initialize(MainBot mainBot) {
+			bot = mainBot;
+            lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             //var PluginPath = Directory.GetCurrentDirectory();
             //Directory.CreateDirectory(Path.Combine(PluginPath, "ClientQuery"));
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");

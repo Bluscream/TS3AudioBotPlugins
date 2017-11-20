@@ -9,7 +9,6 @@ using System.Text;
 
 namespace MetaData
 {
-
     public class PluginInfo
     {
         public static readonly string Name = typeof(PluginInfo).Namespace;
@@ -21,8 +20,7 @@ namespace MetaData
 
     public class MetaData : ITabPlugin
     {
-		private Core core;
-        private Bot bot;
+        private MainBot bot;
         private Ts3FullClient lib;
         public string[] badges = {
             "1cb07348-34a4-4741-b50f-c41e584370f7", // TeamSpeak Addon Author
@@ -48,17 +46,16 @@ namespace MetaData
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(Core Core) {
-			core = Core;
-            bot = Core.Bots.GetBot(0);
-            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+        public void Initialize(MainBot mainBot) {
+			bot = mainBot;
+            lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnConnected += Lib_OnConnected;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
 
         private void SetMetaData() {
-			var af = core.ConfigManager.GetDataStruct<AudioFrameworkData>("AudioFramework", true);
-			var qc = core.ConfigManager.GetDataStruct<Ts3FullClientData>("QueryConnection", true);
+			var af = bot.ConfigManager.GetDataStruct<AudioFrameworkData>("AudioFramework", true);
+			var qc = bot.ConfigManager.GetDataStruct<Ts3FullClientData>("QueryConnection", true);
 			var metaData = "\nQueryConnection::AudioBitrate=" + qc.AudioBitrate;
             metaData += "\nAudioFramework::AudioMode=" + af.AudioMode;
             metaData += "\nAudioFramework::DefaultVolume=" + af.DefaultVolume;
