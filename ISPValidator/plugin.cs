@@ -20,6 +20,7 @@ namespace ISPValidator {
 
 	public class PluginInfo {
 		public static readonly string Name = typeof(PluginInfo).Namespace;
+		public const string Shortname = "ISPV";
 		public const string Description = "This script will autokick everyone not using a whitelisted ISP.";
 		public const string Url = "";
 		public const string Author = "Bluscream <admin@timo.de.vc>";
@@ -29,6 +30,7 @@ namespace ISPValidator {
 	public class ISPValidator : ITabPlugin {
 		private MainBot bot;
 		private Ts3FullClient lib;
+		private static FileIniDataParser iniParser;
 		private static IniData cfg;
 		private static string cfgfile;
 		private static string ispfile;
@@ -50,9 +52,11 @@ namespace ISPValidator {
 			ispfile = Path.Combine(pluginPath, "ISPs.txt");
 			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
 			if (File.Exists(cfgfile)) {
-				var parser = new FileIniDataParser();
-				cfg = parser.ReadFile(cfgfile);
-			} else { while (!Setup()) { } }
+				cfg = iniParser.ReadFile(cfgfile);
+			} else {
+				cfg = new IniData();
+				while (!Setup()) { }
+			}
 			lib.OnClientMoved += Lib_OnClientMoved;
 			lib.OnConnected += Lib_OnConnected;
 			Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
@@ -63,9 +67,7 @@ namespace ISPValidator {
 			//TickPool.UnregisterTicker(Timer);
 			lib.OnClientMoved -= Lib_OnClientMoved;
 			lib.OnConnected -= Lib_OnConnected;
-			var parser = new FileIniDataParser();
-			parser.WriteFile(cfgfile, cfg);
-			PluginLog(Log.Level.Debug, "Saved Settings.");
+			PluginLog(Log.Level.Debug, $"Saved Settings to \"{cfgfile}\".");
 			PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 
@@ -87,83 +89,107 @@ namespace ISPValidator {
 			}
 		}
 
-#endregion
+		#endregion
 
 		#region Functions
 
 		public bool Setup() {
 			string line;
 			ConsoleKeyInfo key;
-			IniData data = new IniData();
 			Console.WriteLine($"{PluginInfo.Name}: === General setup ===");
 			string section = "General";
-			Console.WriteLine($"{PluginInfo.Name}: Blacklist mode means only the ISPs found in ISPs.txt will be blocked.");
-			Console.WriteLine($"{PluginInfo.Name}: Whitelist mode means only the ISPs found in ISPs.txt will be allowed.");
-			Console.Write($"{PluginInfo.Name}: Would you like to run the bot in (w)hitelist or (b)lacklist mode?"); key = Console.ReadKey();
+			Console.WriteLine($"{PluginInfo.Shortname}: Blacklist mode means only the ISPs found in ISPs.txt will be blocked.");
+			Console.WriteLine($"{PluginInfo.Shortname}: Whitelist mode means only the ISPs found in ISPs.txt will be allowed.");
+			Console.Write($"{PluginInfo.Shortname}: Would you like to run the bot in (w)hitelist or (b)lacklist mode? > "); key = Console.ReadKey();
 			if (key.KeyChar == 'b')
-				data[section]["whitelist"] = "false";
+				cfg[section]["whitelist"] = "false";
 			else if (key.KeyChar == 'w')
-				data[section]["whitelist"] = "true";
+				cfg[section]["whitelist"] = "true";
 			else { Console.WriteLine(); return false; }
-			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Would you like to enable Debug mode? (y/n)"); key = Console.ReadKey();
+			return true;
+			Console.Write($"{Environment.NewLine}{PluginInfo.Shortname}: Would you like to enable Debug mode? (y/n) > "); key = Console.ReadKey();
 			if (key.KeyChar == 'y')
-				data[section]["debug"] = "true";
+				cfg[section]["debug"] = "true";
 			else if (key.KeyChar == 'n')
-				data[section]["debug"] = "false";
+				cfg[section]["debug"] = "false";
 			else { Console.WriteLine(); return false; }
-			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: (k)ick or (b)an infringing clients?"); key = Console.ReadKey();
+			Console.Write($"{Environment.NewLine}{PluginInfo.Shortname}: (k)ick or (b)an infringing clients? > "); key = Console.ReadKey();
 			if (key.KeyChar == 'k')
-				data[section]["kickonly"] = "true";
+				cfg[section]["kickonly"] = "true";
 			else if (key.KeyChar == 'b') {
-				data[section]["kickonly"] = "false";
-				Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Bantime in seconds? (0 means permanent)"); line = Console.ReadLine();
+				cfg[section]["kickonly"] = "false";
+				Console.Write($"{Environment.NewLine}{PluginInfo.Shortname}: Bantime in seconds? (0 means permanent) > "); line = Console.ReadLine();
 				if (!int.TryParse(line, out var num)) {
-					Console.WriteLine($"{PluginInfo.Name}: Bantime was not valid! (not a number?)");
+					Console.WriteLine($"{PluginInfo.Shortname}: Bantime was not valid! (not a number?) > ");
 					Console.WriteLine(); return false;
 				}
-				data[section]["bantime"] = line;
+				cfg[section]["bantime"] = line;
 			} else {
 				Console.WriteLine(); return false;
 			}
-			Console.Write($"{PluginInfo.Name}: Kick clients whoms ISP couldn't be resolved? (y/n)"); key = Console.ReadKey();
-			if (key.KeyChar == 'y')
-				data[section]["kickunknown"] = "true";
-			else if (key.KeyChar == 'n')
-				data[section]["kickunknown"] = "false";
-			else { Console.WriteLine(); return false; }
-			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Poke message before action is taken (leave empty to disable)"); line = Console.ReadLine();
-			if (String.IsNullOrWhiteSpace(line))
-				data[section]["poke"] = String.Empty;
-			else {
-				data[section]["poke"] = line;
-			}
-			Console.Write($"{PluginInfo.Name}: Private message before action is taken (leave empty to disable)"); line = Console.ReadLine();
-			if (String.IsNullOrWhiteSpace(line))
-				data[section]["msg"] = String.Empty;
-			else {
-				data[section]["msg"] = line;
-			}
-			Console.WriteLine($"{PluginInfo.Name}: === API config ===");
-			section = "API";
-			Console.WriteLine($"{PluginInfo.Name}: Default Main API is http://ip-api.com/line/{{ip}}?fields=isp");
-			Console.Write($"{PluginInfo.Name}: Main API to use? (leave empty for default)"); line = Console.ReadLine();
-			if (String.IsNullOrWhiteSpace(line))
-				data[section]["main"] = "http://ip-api.com/line/{ip}?fields=isp";
-			else {
-				data[section]["main"] = line;
-			}
-			Console.Write($"{PluginInfo.Name}: Would you like to enable Fallback API? (y/n)"); key = Console.ReadKey();
+			Console.Write($"{PluginInfo.Shortname}: Kick clients whoms ISP couldn't be resolved? (y/n) > "); key = Console.ReadKey();
 			if (key.KeyChar == 'y') {
-				Console.WriteLine($"{PluginInfo.Name}: Default Fallback API is http://ipinfo.io/{{ip}}/org");
-				Console.Write($"{PluginInfo.Name}: Fallback API to use? (leave empty for default)"); line = Console.ReadLine();
+				cfg[section]["kickunknown"] = "true";
+				Console.WriteLine($"{Environment.NewLine}{PluginInfo.Shortname}: For the following 2 settings you can use {{ip}} {{isp}} {{nick}} {{clid}} {{uid}}");
+				Console.Write($"{PluginInfo.Shortname}: Poke message if unresolvable (leave empty to disable) > "); line = Console.ReadLine();
 				if (String.IsNullOrWhiteSpace(line))
-					data[section]["main"] = "http://ipinfo.io/{ip}/org";
+					cfg[section]["unknownpoke"] = String.Empty;
 				else {
-					data[section]["main"] = line;
+					cfg[section]["unknownpoke"] = line;
+				}
+				Console.Write($"{PluginInfo.Shortname}: Private message if unresolvable (leave empty to disable) > "); line = Console.ReadLine();
+				if (String.IsNullOrWhiteSpace(line))
+					cfg[section]["unknownmsg"] = String.Empty;
+				else {
+					cfg[section]["unknownmsg"] = line;
 				}
 			} else if (key.KeyChar == 'n')
-				data[section]["debug"] = "false";
+				cfg[section]["kickunknown"] = "false";
 			else { Console.WriteLine(); return false; }
+			Console.WriteLine($"{PluginInfo.Shortname}: For the following 2 settings you can use {{ip}} {{isp}} {{nick}} {{clid}} {{uid}}");
+			Console.Write($"{Environment.NewLine}{PluginInfo.Shortname}: Poke message before action is taken (leave empty to disable) > "); line = Console.ReadLine();
+			if (String.IsNullOrWhiteSpace(line))
+				cfg[section]["poke"] = String.Empty;
+			else {
+				cfg[section]["poke"] = line;
+			}
+			Console.Write($"{PluginInfo.Shortname}: Private message before action is taken (leave empty to disable) > "); line = Console.ReadLine();
+			if (String.IsNullOrWhiteSpace(line))
+				cfg[section]["msg"] = String.Empty;
+			else {
+				cfg[section]["msg"] = line;
+			}
+			Console.WriteLine($"{PluginInfo.Shortname}: Already resolved IP's will get cached for some time if you enable this.");
+			Console.Write($"{PluginInfo.Shortname}: Clear cache interval in minutes (leave empty to disable cache) > "); line = Console.ReadLine();
+			if (!String.IsNullOrWhiteSpace(line))
+				cfg[section]["clearcache"] = line;
+			Console.WriteLine($"{PluginInfo.Shortname}: Learn mode disables all actions and adds all new ISPs to the ISPs.txt until it got disabled.");
+			Console.Write($"{PluginInfo.Shortname}: Would you like to enable learn mode now? (y/n) > "); key = Console.ReadKey();
+			if (key.KeyChar == 'y')
+				cfg[section]["learn"] = "true";
+			else if (key.KeyChar == 'n')
+				cfg[section]["learn"] = "false";
+			else { Console.WriteLine(); return false; }
+			Console.WriteLine($"{Environment.NewLine}{PluginInfo.Name}: === API config ===");
+			section = "API";
+			Console.WriteLine($"{PluginInfo.Shortname}: Default Main API is http://ip-api.com/line/{{ip}}?fields=isp");
+			Console.Write($"{PluginInfo.Shortname}: Main API to use? (leave empty for default) > "); line = Console.ReadLine();
+			if (String.IsNullOrWhiteSpace(line))
+				cfg[section]["main"] = "http://ip-api.com/line/{ip}?fields=isp";
+			else {
+				cfg[section]["main"] = line;
+			}
+			Console.Write($"{PluginInfo.Shortname}: Would you like to enable Fallback API? (y/n)"); key = Console.ReadKey();
+			if (key.KeyChar == 'y') {
+				Console.WriteLine($"{Environment.NewLine}{PluginInfo.Shortname}: Default Fallback API is http://ipinfo.io/{{ip}}/org");
+				Console.Write($"{PluginInfo.Shortname}: Fallback API to use? (leave empty for default) > "); line = Console.ReadLine();
+				if (String.IsNullOrWhiteSpace(line))
+					cfg[section]["main"] = "http://ipinfo.io/{ip}/org";
+				else {
+					cfg[section]["main"] = line;
+				}
+			} else if (key.KeyChar == 'n') {
+			} else { Console.WriteLine(); return false; }
 			return true;
 		}
 	}
