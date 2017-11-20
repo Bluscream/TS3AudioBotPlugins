@@ -1,9 +1,10 @@
 using System.Linq;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.CommandSystem;
+using TS3AudioBot.Commands;
 using TS3Client.Commands;
 using TS3Client.Full;
+using System.Text.RegularExpressions;
 
 namespace Tools
 {
@@ -50,11 +51,27 @@ namespace Tools
             try {
                 var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
                     cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
-                return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
-            } catch (TS3Client.Ts3CommandException ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
-        }
+                var response = string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
+				if (response.Length < 1024) return response;
+				var responses = Regex.Split(response, @"(.{1,1024})(?:\s|$)|(.{1024})").Where(x => x.Length > 0).ToList();
+				foreach (var resp in responses) {
+					bot.QueryConnection.SendMessage(resp, info.InvokerData.ClientId.Value);
+				}
+				return "I sent you the response via DM!";
+			} catch (TS3Client.Ts3CommandException ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
+		}
 
-        [Command("hashpassword")]
+		[Command("silentcmd")]
+		[RequiredParameters(1)]
+		public void CommandSilentCmd(ExecutionInformation info, string cmd, params string[] cmdpara) {
+			try {
+				var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
+					cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
+				PluginLog(Log.Level.Info, string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value)))));
+			} catch (TS3Client.Ts3CommandException ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
+		}
+
+		[Command("hashpassword")]
         public string CommandHashPassword(ExecutionInformation info, string pw)
         {
             return Ts3Crypt.HashPassword(pw);

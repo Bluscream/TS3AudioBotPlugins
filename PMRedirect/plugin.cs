@@ -3,7 +3,7 @@ using System.Linq;
 using PMRedirect.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.CommandSystem;
+using TS3AudioBot.Commands;
 using TS3Client;
 using TS3Client.Full;
 using TS3Client.Messages;

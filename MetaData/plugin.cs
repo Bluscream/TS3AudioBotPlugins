@@ -1,7 +1,7 @@
 using System;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.CommandSystem;
+using TS3AudioBot.Commands;
 using TS3AudioBot.Helper;
 using TS3Client.Commands;
 using TS3Client.Full;
