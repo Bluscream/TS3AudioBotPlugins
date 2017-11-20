@@ -16,34 +16,31 @@ using ServerGroupIdT = System.UInt64;
 using ChannelGroupIdT = System.UInt64;
 using System.IO;
 
-namespace ISPValidator
-{
+namespace ISPValidator {
 
-    public class PluginInfo
-    {
-        public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "This script will autokick everyone not using a whitelisted ISP.";
-        public const string Url = "";
-        public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 1;
-    }
+	public class PluginInfo {
+		public static readonly string Name = typeof(PluginInfo).Namespace;
+		public const string Description = "This script will autokick everyone not using a whitelisted ISP.";
+		public const string Url = "";
+		public const string Author = "Bluscream <admin@timo.de.vc>";
+		public const int Version = 1;
+	}
 
-    public class ISPValidator : ITabPlugin
-    {
-        private MainBot bot;
-	    private Ts3FullClient lib;
+	public class ISPValidator : ITabPlugin {
+		private MainBot bot;
+		private Ts3FullClient lib;
 		private static IniData cfg;
 		private static string cfgfile;
 		private static string ispfile;
 		public TickWorker Timer { get; private set; }
-        public bool Enabled { get; private set; }
-        public bool CCState;
+		public bool Enabled { get; private set; }
+		public bool CCState;
 
-        public PluginInfo pluginInfo = new PluginInfo();
+		public PluginInfo pluginInfo = new PluginInfo();
 
-        public void PluginLog(Log.Level logLevel, string Message) {
-            Log.Write(logLevel, PluginInfo.Name + ": " + Message);
-        }
+		public void PluginLog(Log.Level logLevel, string Message) {
+			Log.Write(logLevel, PluginInfo.Name + ": " + Message);
+		}
 
 		public bool Setup() {
 			string line;
@@ -122,8 +119,8 @@ namespace ISPValidator
 			return true;
 		}
 
-        public void Initialize(MainBot mainBot) {
-            bot = mainBot;
+		public void Initialize(MainBot mainBot) {
+			bot = mainBot;
 			var pluginPath = mainBot.ConfigManager.GetDataStruct<PluginManagerData>("PluginManager", true).PluginPath;
 			cfgfile = Path.Combine(pluginPath, $"{PluginInfo.Name}.cfg");
 			ispfile = Path.Combine(pluginPath, "ISPs.txt");
@@ -133,32 +130,32 @@ namespace ISPValidator
 				cfg = parser.ReadFile(cfgfile);
 			} else { while (!Setup()) { } }
 			lib.OnClientMoved += Lib_OnClientMoved;
-            lib.OnConnected += Lib_OnConnected;
-            Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
-        }
+			lib.OnConnected += Lib_OnConnected;
+			Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+		}
 
-        private void Lib_OnConnected(object sender, EventArgs e) {
-            if (!Enabled) { return; }
-            PluginLog(Log.Level.Debug, "Our client is now connected, setting channel commander :)");
-            bot.QueryConnection.SetChannelCommander(true);
-        }
+		private void Lib_OnConnected(object sender, EventArgs e) {
+			if (!Enabled) { return; }
+			PluginLog(Log.Level.Debug, "Our client is now connected, setting channel commander :)");
+			bot.QueryConnection.SetChannelCommander(true);
+		}
 
-        private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
-            if (!Enabled) { return; }
+		private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
+			if (!Enabled) { return; }
 			foreach (var client in e) {
-			    if (lib.ClientId != client.ClientId) continue;
-			    PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
-			    bot.QueryConnection.SetChannelCommander(true);
-			    return;
+				if (lib.ClientId != client.ClientId) continue;
+				PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
+				bot.QueryConnection.SetChannelCommander(true);
+				return;
 			}
 		}
 
-        public void Dispose() {
-            //Timer.Active = false;
-            //TickPool.UnregisterTicker(Timer);
-            lib.OnClientMoved -= Lib_OnClientMoved;
-            lib.OnConnected -= Lib_OnConnected;
-            PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
-        }
-    }
+		public void Dispose() {
+			//Timer.Active = false;
+			//TickPool.UnregisterTicker(Timer);
+			lib.OnClientMoved -= Lib_OnClientMoved;
+			lib.OnConnected -= Lib_OnConnected;
+			PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+		}
+	}
 }
