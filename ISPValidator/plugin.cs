@@ -68,15 +68,15 @@ namespace ISPValidator {
 			var pluginPath = "Plugins";
 			cfgfile = Path.Combine(pluginPath, $"{PluginInfo.Name}.cfg");
 			try {
-			if (File.Exists(cfgfile)) {
-				var parser = new FileIniDataParser();
-				cfg = parser.ReadFile(cfgfile);
-				whitelistUID = cfg["Ignore"]["uids"].Split(',').ToList();
-				var _whitelistSGID = cfg["Ignore"]["sgids"].Split(',');
-				foreach (var wsgid in _whitelistSGID) {
-					whitelistSGID.Add(ServerGroupIdT.Parse(wsgid));
+				if (File.Exists(cfgfile)) {
+					var parser = new FileIniDataParser();
+					cfg = parser.ReadFile(cfgfile);
+					whitelistUID = cfg["Ignore"]["uids"].Split(',').ToList();
+					var _whitelistSGID = cfg["Ignore"]["sgids"].Split(',');
+					foreach (var wsgid in _whitelistSGID) {
+						whitelistSGID.Add(ServerGroupIdT.Parse(wsgid));
+					}
 				}
-			}
 			} catch (Exception ex) {
 				throw new Exception($"{PluginInfo.Name} Can't load \"{cfgfile}\"! Error:\n{ex}");
 				cfg = new IniData();
