@@ -42,6 +42,55 @@ namespace ISPValidator {
 			Log.Write(logLevel, PluginInfo.Name + ": " + Message);
 		}
 
+		public void Initialize(MainBot mainBot) {
+			bot = mainBot;
+			//var pluginPath = mainBot.ConfigManager.GetDataStruct<PluginManagerData>("PluginManager", true).PluginPath;
+			var pluginPath = "Plugins";
+			cfgfile = Path.Combine(pluginPath, $"{PluginInfo.Name}.cfg");
+			ispfile = Path.Combine(pluginPath, "ISPs.txt");
+			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+			if (File.Exists(cfgfile)) {
+				var parser = new FileIniDataParser();
+				cfg = parser.ReadFile(cfgfile);
+			} else { while (!Setup()) { } }
+			lib.OnClientMoved += Lib_OnClientMoved;
+			lib.OnConnected += Lib_OnConnected;
+			Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+		}
+
+		public void Dispose() {
+			//Timer.Active = false;
+			//TickPool.UnregisterTicker(Timer);
+			lib.OnClientMoved -= Lib_OnClientMoved;
+			lib.OnConnected -= Lib_OnConnected;
+			var parser = new FileIniDataParser();
+			parser.WriteFile(cfgfile, cfg);
+			PluginLog(Log.Level.Debug, "Saved Settings.");
+			PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+		}
+
+		#region Events
+
+		private void Lib_OnConnected(object sender, EventArgs e) {
+			if (!Enabled) { return; }
+			PluginLog(Log.Level.Debug, "Our client is now connected, setting channel commander :)");
+			bot.QueryConnection.SetChannelCommander(true);
+		}
+
+		private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
+			if (!Enabled) { return; }
+			foreach (var client in e) {
+				if (lib.ClientId != client.ClientId) continue;
+				PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
+				bot.QueryConnection.SetChannelCommander(true);
+				return;
+			}
+		}
+
+#endregion
+
+		#region Functions
+
 		public bool Setup() {
 			string line;
 			ConsoleKeyInfo key;
@@ -55,35 +104,34 @@ namespace ISPValidator {
 				data[section]["whitelist"] = "false";
 			else if (key.KeyChar == 'w')
 				data[section]["whitelist"] = "true";
-			else { return false; }
-			Console.Write($"{PluginInfo.Name}: Would you like to enable Debug mode? (y/n)"); key = Console.ReadKey();
+			else { Console.WriteLine(); return false; }
+			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Would you like to enable Debug mode? (y/n)"); key = Console.ReadKey();
 			if (key.KeyChar == 'y')
 				data[section]["debug"] = "true";
 			else if (key.KeyChar == 'n')
 				data[section]["debug"] = "false";
-			else { return false; }
-			Console.Write($"{PluginInfo.Name}: (k)ick or (b)an infringing clients?"); key = Console.ReadKey();
+			else { Console.WriteLine(); return false; }
+			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: (k)ick or (b)an infringing clients?"); key = Console.ReadKey();
 			if (key.KeyChar == 'k')
 				data[section]["kickonly"] = "true";
 			else if (key.KeyChar == 'b') {
 				data[section]["kickonly"] = "false";
-				Console.Write($"{PluginInfo.Name}: Bantime in seconds? (0 means permanent)"); line = Console.ReadLine();
+				Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Bantime in seconds? (0 means permanent)"); line = Console.ReadLine();
 				if (!int.TryParse(line, out var num)) {
 					Console.WriteLine($"{PluginInfo.Name}: Bantime was not valid! (not a number?)");
-					return false;
+					Console.WriteLine(); return false;
 				}
 				data[section]["bantime"] = line;
 			} else {
-				data[section]["bantime"] = "1";
-				return false;
+				Console.WriteLine(); return false;
 			}
 			Console.Write($"{PluginInfo.Name}: Kick clients whoms ISP couldn't be resolved? (y/n)"); key = Console.ReadKey();
 			if (key.KeyChar == 'y')
 				data[section]["kickunknown"] = "true";
 			else if (key.KeyChar == 'n')
 				data[section]["kickunknown"] = "false";
-			else { return false; }
-			Console.Write($"{PluginInfo.Name}: Poke message before action is taken (leave empty to disable)"); line = Console.ReadLine();
+			else { Console.WriteLine(); return false; }
+			Console.Write($"{Environment.NewLine}{PluginInfo.Name}: Poke message before action is taken (leave empty to disable)"); line = Console.ReadLine();
 			if (String.IsNullOrWhiteSpace(line))
 				data[section]["poke"] = String.Empty;
 			else {
@@ -115,47 +163,10 @@ namespace ISPValidator {
 				}
 			} else if (key.KeyChar == 'n')
 				data[section]["debug"] = "false";
-			else { return false; }
+			else { Console.WriteLine(); return false; }
 			return true;
-		}
-
-		public void Initialize(MainBot mainBot) {
-			bot = mainBot;
-			var pluginPath = mainBot.ConfigManager.GetDataStruct<PluginManagerData>("PluginManager", true).PluginPath;
-			cfgfile = Path.Combine(pluginPath, $"{PluginInfo.Name}.cfg");
-			ispfile = Path.Combine(pluginPath, "ISPs.txt");
-			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-			if (File.Exists(cfgfile)) {
-				var parser = new FileIniDataParser();
-				cfg = parser.ReadFile(cfgfile);
-			} else { while (!Setup()) { } }
-			lib.OnClientMoved += Lib_OnClientMoved;
-			lib.OnConnected += Lib_OnConnected;
-			Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
-		}
-
-		private void Lib_OnConnected(object sender, EventArgs e) {
-			if (!Enabled) { return; }
-			PluginLog(Log.Level.Debug, "Our client is now connected, setting channel commander :)");
-			bot.QueryConnection.SetChannelCommander(true);
-		}
-
-		private void Lib_OnClientMoved(object sender, IEnumerable<ClientMoved> e) {
-			if (!Enabled) { return; }
-			foreach (var client in e) {
-				if (lib.ClientId != client.ClientId) continue;
-				PluginLog(Log.Level.Debug, "Our client was moved to " + client.TargetChannelId.ToString() + " because of " + client.Reason + ", setting channel commander :)");
-				bot.QueryConnection.SetChannelCommander(true);
-				return;
-			}
-		}
-
-		public void Dispose() {
-			//Timer.Active = false;
-			//TickPool.UnregisterTicker(Timer);
-			lib.OnClientMoved -= Lib_OnClientMoved;
-			lib.OnConnected -= Lib_OnConnected;
-			PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 	}
 }
+
+#endregion
