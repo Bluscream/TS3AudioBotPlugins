@@ -47,9 +47,6 @@ namespace ISPValidator {
 		private static IniData cfg;
 		private static string cfgfile;
 		private static string ispfile;
-		public const string mainAPI = "http://your-api.here";
-		public const string fallbackAPI = "http://ip-api.com/line/{ip}?fields=isp";
-		public const string fallbackAPI2 = "http://ipinfo.io/{ip}/org";
 		public bool Enabled { get; private set; }
 		public List<string> isps = new List<string>();
 		public List<string> allowed = new List<string>();
@@ -293,25 +290,25 @@ namespace ISPValidator {
 				takeAction(client, "Actions", true);
 				return "already blocked";
 			}
-			client.Isp = getISP(ip, mainAPI).Replace($"\n", "").Replace($"\r", "");
+			client.Isp = getISP(ip, cfg["API"]["main"]).Replace($"\n", "").Replace($"\r", "");
 			if (cfg["General"]["learn"] == "true") {
 				var m = "unknown";
 				if (client.Isp != "unknown")
 					m = learn(client.Isp);
-				var fb = getISP(client.Ip.ToString(), fallbackAPI).Replace($"\n", "").Replace($"\r", ""); ;
+				var fb = getISP(client.Ip.ToString(), cfg["API"]["fallback"]).Replace($"\n", "").Replace($"\r", ""); ;
 				var f = "unknown";
 				if (client.Isp != "unknown")
 					f = learn(fb);
-				var fb2 = getISP(client.Ip.ToString(), fallbackAPI2).Replace($"\n", "").Replace($"\r", ""); ;
+				var fb2 = getISP(client.Ip.ToString(), cfg["API"]["fallback2"]).Replace($"\n", "").Replace($"\r", ""); ;
 				var f2 = "unknown";
 				if (client.Isp != "unknown")
 					f2 = learn(fb2);
 				return $"main ({client.Isp}): {m} | fallback ({fb}): {f} | fallback2 ({fb2}): {f2}";
 			} else {
 				if (client.Isp == "unknown") {
-					client.Isp = getISP(ip, fallbackAPI).Replace($"\n", "");
+					client.Isp = getISP(ip, cfg["API"]["fallback"]).Replace($"\n", "");
 					if (client.Isp == "unknown") {
-						client.Isp = getISP(ip, fallbackAPI2).Replace($"\n", "");
+						client.Isp = getISP(ip, cfg["API"]["fallback2"]).Replace($"\n", "");
 					}
 				}
 			}
