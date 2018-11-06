@@ -43,11 +43,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="TS3AudioBot">
-      <HintPath>..\..\..\..\..\..\Bots\TS3AudioBot.exe</HintPath>
+      <HintPath>..\..\TS3AudioBot\TS3AudioBot\bin\Debug\net46\TS3AudioBot.exe</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="TS3Client">
-      <HintPath>..\..\..\..\..\..\Bots\TS3Client.dll</HintPath>
+      <HintPath>..\..\TS3AudioBot\TS3Client\bin\Debug\net46\TS3Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
