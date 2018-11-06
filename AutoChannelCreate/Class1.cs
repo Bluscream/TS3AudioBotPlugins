@@ -56,14 +56,15 @@ namespace AutoChannelCreate
 				command.AppendParameter(new CommandParameter("channel_maxclients", 10));
 				command.AppendParameter(new CommandParameter("channel_needed_talk_power", -1));
 				command.AppendParameter(new CommandParameter("channel_topic", $"Channel created at {DateTime.Now}"));
-				var result = Ts3FullClient.SendNotifyCommand(command, NotificationType.ChannelCreated);
-				if (!result.Ok) return;
-				var res = result.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+				/*var result =*/ Ts3FullClient.SendNotifyCommand(command, NotificationType.ChannelCreated);
+				/*if (!result.Ok) return;
+				var res = result.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();*/
 			}
 		}
 
 		public void Dispose() {
 			Ts3FullClient.OnChannelListFinished -= Ts3Client_OnChannelListFinished;
+			Ts3FullClient.OnEachChannelList -= Ts3Client_OnEachChannelList;
 		}
 	}
 }
