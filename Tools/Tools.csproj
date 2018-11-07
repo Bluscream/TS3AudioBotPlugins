@@ -22,16 +22,17 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\..\..\..\Bots\Plugins\Tools.xml</DocumentationFile>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\..\Bots\Plugins\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\TS3AB\net46\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <LangVersion>4</LangVersion>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,18 +43,22 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TS3AudioBot">
-      <HintPath>..\..\..\..\..\..\Bots\TS3AudioBot.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="TS3Client">
-      <HintPath>..\..\..\..\..\..\Bots\TS3Client.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj">
+      <Project>{8dcb9b39-ec81-48f9-8e94-304ace471bc8}</Project>
+      <Name>TS3AudioBot</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TS3AudioBot\TS3Client\TS3Client.csproj">
+      <Project>{962813ae-56fd-4699-9675-fd27b9e2cfb5}</Project>
+      <Name>TS3Client</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

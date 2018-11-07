@@ -27,11 +27,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistriertChannel", "Regis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoChannelCreate", "AutoChannelCreate\AutoChannelCreate.csproj", "{094DE022-F932-43C0-A9E5-21378E2E8312}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoChannelCreate", "AutoChannelCreate\AutoChannelCreate.csproj", "{094DE022-F932-43C0-A9E5-21378E2E8312}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TS3AudioBot", "..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj", "{8DCB9B39-EC81-48F9-8E94-304ACE471BC8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TS3Client", "..\TS3AudioBot\TS3Client\TS3Client.csproj", "{962813AE-56FD-4699-9675-FD27B9E2CFB5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersionDetector", "VersionDump\VersionDetector.csproj", "{98BA33E4-63E0-4E8F-9594-935E6A05AE02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoIdentity", "NoIdentity\NoIdentity.csproj", "{2F2E11E0-19A6-4A55-B552-0D93867420B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +80,14 @@ Global
 		{962813AE-56FD-4699-9675-FD27B9E2CFB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{962813AE-56FD-4699-9675-FD27B9E2CFB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{962813AE-56FD-4699-9675-FD27B9E2CFB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98BA33E4-63E0-4E8F-9594-935E6A05AE02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98BA33E4-63E0-4E8F-9594-935E6A05AE02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98BA33E4-63E0-4E8F-9594-935E6A05AE02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98BA33E4-63E0-4E8F-9594-935E6A05AE02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
