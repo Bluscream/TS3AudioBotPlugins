@@ -28,16 +28,14 @@ namespace AutoChannelCreate
 	}
 	public class AutoChannelCreate : IBotPlugin
 	{
+		//private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger(); /* TODO */
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 
 		private List<ChannelList> channelList = new List<ChannelList>();
 
 		public Ts3FullClient Ts3FullClient { get; set; }
-
 		public Ts3Client Ts3Client { get; set; }
-
 		public ConfBot Conf { get; set; }
-
 		public PlayManager BotPlayer { get; set; }
 
 		public void Initialize() {
@@ -97,8 +95,8 @@ namespace AutoChannelCreate
 				)
 			});
 			Ts3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
-			PluginLog(LogLevel.Debug, "Enableing channel commander...");
-			Ts3Client.SetChannelCommander(true);
+			//PluginLog(LogLevel.Debug, "Enableing channel commander...");
+			//Ts3Client.SetChannelCommander(true); // DONE IN AUTOCHANNELCOMMANDER PLUGIN
 		}
 
 		public void Dispose() {

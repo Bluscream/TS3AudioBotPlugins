@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Example.cs = Example.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoChannelCommander", "AutoChannelCommander\AutoChannelCommander.csproj", "{873F143E-70FD-4366-8BEC-3D5506BA7E0F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFollow", "AutoFollow\AutoFollow.csproj", "{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaData", "MetaData\MetaData.csproj", "{A31B7BC4-4D11-463A-9E08-7908F1104DFF}"
@@ -25,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientQuery", "ClientQuery\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistriertChannel", "RegistriertChannel\RegistriertChannel.csproj", "{9ED174DF-9421-419C-9099-A402DB9CF97D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tools", "Tools\Tools.csproj", "{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoChannelCreate", "AutoChannelCreate\AutoChannelCreate.csproj", "{094DE022-F932-43C0-A9E5-21378E2E8312}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TS3AudioBot", "..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj", "{8DCB9B39-EC81-48F9-8E94-304ACE471BC8}"
@@ -35,7 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TS3Client", "..\TS3AudioBot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersionDetector", "VersionDump\VersionDetector.csproj", "{98BA33E4-63E0-4E8F-9594-935E6A05AE02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoIdentity", "NoIdentity\NoIdentity.csproj", "{2F2E11E0-19A6-4A55-B552-0D93867420B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoIdentity", "NoIdentity\NoIdentity.csproj", "{2F2E11E0-19A6-4A55-B552-0D93867420B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoChannelCommander", "AutoChannelCommander\AutoChannelCommander.csproj", "{E1F2B4D4-0EE1-4D23-BB7E-2F8FE13EDEF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj", "{0D4AB6B3-7FC0-4654-861B-D5BFE108652F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,9 +43,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{873F143E-70FD-4366-8BEC-3D5506BA7E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{873F143E-70FD-4366-8BEC-3D5506BA7E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{873F143E-70FD-4366-8BEC-3D5506BA7E0F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2034ACB5-D3A0-4533-ABF7-80C24A1D6101}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -67,9 +64,6 @@ Global
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ED174DF-9421-419C-9099-A402DB9CF97D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B99B0309-0D6B-4666-8CCE-DD02D037F3FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{094DE022-F932-43C0-A9E5-21378E2E8312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{094DE022-F932-43C0-A9E5-21378E2E8312}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{094DE022-F932-43C0-A9E5-21378E2E8312}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -88,6 +82,14 @@ Global
 		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F2E11E0-19A6-4A55-B552-0D93867420B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1F2B4D4-0EE1-4D23-BB7E-2F8FE13EDEF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F2B4D4-0EE1-4D23-BB7E-2F8FE13EDEF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F2B4D4-0EE1-4D23-BB7E-2F8FE13EDEF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F2B4D4-0EE1-4D23-BB7E-2F8FE13EDEF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D4AB6B3-7FC0-4654-861B-D5BFE108652F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D4AB6B3-7FC0-4654-861B-D5BFE108652F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D4AB6B3-7FC0-4654-861B-D5BFE108652F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D4AB6B3-7FC0-4654-861B-D5BFE108652F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
