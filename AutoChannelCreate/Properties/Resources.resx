@@ -127,11 +127,13 @@ Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
 
 [url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
 
-Address: {address}
+Address: [b]{address}[/b]
 OnConnect: {onconnect}
 OnIdle: {onidle}
 OnDisconnect: {ondisconnect}
 
-!x (!bot disconnect) (!bot connect template alphakevin)</value>
+!x (!bot disconnect) (!bot connect template alphakevin)
+
+[color=lightblue]Some Math: {math} = {result}</value>
   </data>
 </root>
