@@ -61,17 +61,16 @@ namespace AutoChannelCreate.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
+        ///   Looks up a localized string similar to Last Updated: {now}
+        ///
+        ///Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
         ///Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
+        ///
+        ///[url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
         ///
         ///[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
         ///
-        ///Address: {address}
-        ///OnConnect: {onconnect}
-        ///OnIdle: {onidle}
-        ///OnDisconnect: {ondisconnect}
-        ///
-        ///!x (!bot disconnect) (!bot connect template alphakevin).
+        ///Address:  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Description {
             get {

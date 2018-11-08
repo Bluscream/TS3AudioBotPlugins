@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using TS3AudioBot.CommandSystem;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
@@ -13,7 +14,6 @@ using TS3Client.Messages;
 using TS3Client;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
-using TS3AudioBot.CommandSystem;
 
 namespace Tools
 {

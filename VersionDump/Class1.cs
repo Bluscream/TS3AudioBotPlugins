@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using TS3AudioBot.Plugins;
+using TS3Client;
 using TS3Client.Full;
 using TS3Client.Messages;
 
 namespace VersionDetector
 {
+	public class PluginInfo
+	{
+		public static readonly string Name = typeof(PluginInfo).Namespace;
+		public const string Description = "";
+		public const string Url = "";
+		public const string Author = "Splamy";
+		public const int Version = 1;
+	}
 	public class VersionDetector : IBotPlugin
 	{
+		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
+
 		private static WebClient wc = new WebClient();
 
 		const string versionFile = "versions.csv";
@@ -29,6 +40,7 @@ namespace VersionDetector
 		public void Initialize()
 		{
 			Ts3Client.OnEachClientEnterView += Ts3Client_OnEachClientEnterView;
+			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
 
 		private void Ts3Client_OnEachClientEnterView(object sender, ClientEnterView e)
@@ -61,6 +73,7 @@ namespace VersionDetector
 		public void Dispose()
 		{
 			Ts3Client.OnEachClientEnterView -= Ts3Client_OnEachClientEnterView;
+			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 	}
 }

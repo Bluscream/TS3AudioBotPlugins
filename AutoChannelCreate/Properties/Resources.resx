@@ -118,8 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
+    <value>Last Updated: {now}
+
+Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
 Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
+
+[url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
 
 [url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
 
