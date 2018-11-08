@@ -24,7 +24,7 @@ namespace Tools
 		{
 			public static readonly string Name = typeof(PluginInfo).Namespace;
 			public const string Description = "";
-			public const string URL = "";
+			public const string URL = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/Tools";
 			public const string Author = "Bluscream <admin@timo.de.vc>";
 			public const int Version = 1337;
 		}

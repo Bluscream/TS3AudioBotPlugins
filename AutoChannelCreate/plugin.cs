@@ -22,7 +22,7 @@ namespace AutoChannelCreate
 		public const string Description = "Allows you to set several locations where the current track is being announced.\n" +
 										  "Edit the file NowPlaying.dll.config to your needs.\n" +
 										  "Possible replacements: {now}, {botname}, {address}, {onconnect}, {onidle}, {ondisconnect}";
-		public const string Url = "";
+		public const string Url = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/AutoChannelCreate";
 		public const string Author = "Bluscream <admin@timo.de.vc>";
 		public const int Version = 1;
 	}

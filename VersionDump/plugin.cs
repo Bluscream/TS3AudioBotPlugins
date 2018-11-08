@@ -13,7 +13,7 @@ namespace VersionDetector
 	{
 		public static readonly string Name = typeof(PluginInfo).Namespace;
 		public const string Description = "";
-		public const string Url = "";
+		public const string Url = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/VersionDump";
 		public const string Author = "Splamy";
 		public const int Version = 1;
 	}
