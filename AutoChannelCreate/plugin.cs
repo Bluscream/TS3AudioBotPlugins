@@ -33,8 +33,8 @@ namespace AutoChannelCreate
 
 		private List<ChannelList> channelList = new List<ChannelList>();
 
-		public Ts3FullClient Ts3FullClient { get; set; }
-		public Ts3Client Ts3Client { get; set; }
+		public Ts3FullClient TS3FullClient { get; set; }
+		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
 		public PlayManager BotPlayer { get; set; }
 
@@ -43,8 +43,8 @@ namespace AutoChannelCreate
 				Console.WriteLine("AutoChannelCreate does not work if the default channel is set to an ID!");
 				return;
 			}
-			Ts3FullClient.OnChannelListFinished += Ts3Client_OnChannelListFinished;
-			Ts3FullClient.OnEachChannelList += Ts3Client_OnEachChannelList;
+			TS3FullClient.OnChannelListFinished += Ts3Client_OnChannelListFinished;
+			TS3FullClient.OnEachChannelList += Ts3Client_OnEachChannelList;
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
 
@@ -72,7 +72,7 @@ namespace AutoChannelCreate
 					new CommandParameter("channel_needed_talk_power", -1),
 					new CommandParameter("channel_topic", $"Created: {DateTime.Now}")
 				});
-				var result = Ts3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
+				var result = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
 				if (!result.Ok) {
 					PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could not create default channel! ({result.Error.Message})");
 					return;
@@ -94,14 +94,14 @@ namespace AutoChannelCreate
 					.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
 				)
 			});
-			Ts3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+			TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
 			//PluginLog(LogLevel.Debug, "Enableing channel commander...");
 			//Ts3Client.SetChannelCommander(true); // DONE IN AUTOCHANNELCOMMANDER PLUGIN
 		}
 
 		public void Dispose() {
-			Ts3FullClient.OnChannelListFinished -= Ts3Client_OnChannelListFinished;
-			Ts3FullClient.OnEachChannelList -= Ts3Client_OnEachChannelList;
+			TS3FullClient.OnChannelListFinished -= Ts3Client_OnChannelListFinished;
+			TS3FullClient.OnEachChannelList -= Ts3Client_OnEachChannelList;
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 	}
