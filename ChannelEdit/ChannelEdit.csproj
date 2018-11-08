@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="YouTube.Api" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj">
       <Private>false</Private>
     </ProjectReference>

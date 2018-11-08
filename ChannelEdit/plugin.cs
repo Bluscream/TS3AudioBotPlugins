@@ -72,11 +72,8 @@ namespace ChannelEdit
 			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
 			else { return $"Channel Needed Talk Power set to: [b]{tp}[/b]"; }
 		}
-		/*
-		[02][ OUT] (setclientchannelgroup cgid=8 cid=310 cldbid=548:0)
-		[02][ IN] (notifyclientchannelgroupchanged invokerid=2 invokername=Bluscream invokeruid=e3dvocUFTE1UWIvtW8qzulnWErI= cgid=8 cid=310 clid=2 cgi=310:0)
-		*/
-		[Command("ce cgid", PluginInfo.Description)]
+
+		[Command("ce cgid", "Syntax: !ce cgid dbid cgid")]
 		public string CommandAssignChannelGroup(ulong dbid, ulong cgid)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
