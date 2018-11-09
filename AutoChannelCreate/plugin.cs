@@ -53,29 +53,17 @@ namespace AutoChannelCreate
 		}
 
 		private void Ts3Client_OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e) {
-			string math = "";
-			string mathResult = "?";
 			ChannelIdT found = 0;
 			foreach (ChannelList channel in channelList) {
 				if (channel.Name == Conf.Connect.Channel.Value) {
 					found = channel.ChannelId;
 				}
 			}
-			//Ts3Client.MoveTo(found, Conf.Connect.ChannelPassword.Password.Value);
 			if (found == 0) {
 				PluginLog(LogLevel.Warning, "Default channel does not exist yet, creating...");
-				Random rnd = new Random();
-				int rnd1 = rnd.Next(1, 999999);
-				int rnd2 = rnd.Next(1, 999999);
-				int rnd3 = rnd.Next(1, 555555);
-				int rnd4 = rnd.Next(1, 10);
-				int rnd5 = rnd.Next(1, 10);
-				math = $"{rnd1} + {rnd2} - {rnd3} / {rnd4} * {rnd5}";
-				mathResult = (rnd1 + rnd2 - rnd3 / rnd4 * rnd5).ToString();
-				// int randomPasswordResultFloored = (int) Math.Floor(randomPasswordResult / 0.0);
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
-					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword), // randomPasswordResultFloored
+					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
 					new CommandParameter("channel_codec_quality", 7),
 					new CommandParameter("channel_flag_maxclients_unlimited", false),
 					new CommandParameter("channel_maxclients", 10),
@@ -88,17 +76,6 @@ namespace AutoChannelCreate
 				}
 				var res = result.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 				found = res.ChannelId;
-			/*} else {
-				if (string.IsNullOrEmpty(randomPassword))
-				{
-					var result = TS3FullClient.SendNotifyCommand(new Ts3Command("channelgetdescription", new List<ICommandPart>() { new CommandParameter("cid", found) }), NotificationType.ChannelEdited);
-					if (!result.Ok)
-					{
-						PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could not get channel description! ({result.Error.Message})"); return;
-					}
-					var res = result.Value.Notifications.Cast<ChannelEdited>().FirstOrDefault();
-					//res.Topic
-				}*/
 			}
 			if (found == 0 ) return;
 			PluginLog(LogLevel.Debug, "Updating channel...");
@@ -112,8 +89,6 @@ namespace AutoChannelCreate
 					.Replace("{onconnect}", Conf.Events.OnConnect)
 					.Replace("{onidle}", Conf.Events.OnIdle)
 					.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
-					.Replace("{math}", math)
-					.Replace("{result}", mathResult)
 				)
 			});
 			TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);

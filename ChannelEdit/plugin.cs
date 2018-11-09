@@ -35,20 +35,6 @@ namespace ChannelEdit
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
 
-
-		[Command("ce pw", PluginInfo.Description)]
-		public string CommandEditChannelPassword(string password = "")
-		{
-			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
-			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() { new CommandParameter("cid", ownChannelId),
-				new CommandParameter("channel_password", Ts3Crypt.HashPassword(password))
-			});
-			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
-			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
-			if (string.IsNullOrEmpty(password)) { return "Channel Password removed!";
-			} else { return $"Channel Password set to: [b]{password}[/b]"; }
-		}
-
 		[Command("ce name", PluginInfo.Description)]
 		public string CommandEditChannelName(string name)
 		{
@@ -61,7 +47,20 @@ namespace ChannelEdit
 			else { return $"Channel Name set to: [b]{name}[/b]"; }
 		}
 
-		[Command("ce tp", PluginInfo.Description)]
+		[Command("ce pw", "Syntax: !ce <new password (empty=no pw)>")]
+		public string CommandEditChannelPassword(string password = "")
+		{
+			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
+			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() { new CommandParameter("cid", ownChannelId),
+				new CommandParameter("channel_password", Ts3Crypt.HashPassword(password))
+			});
+			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
+			if (string.IsNullOrEmpty(password)) { return "Channel Password removed!";
+			} else { return $"Channel Password set to: [b]{password}[/b]"; }
+		}
+
+		[Command("ce tp", "Syntax: !ce <needed talk power>")]
 		public string CommandEditChannelTalkPower(int tp)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
@@ -73,31 +72,30 @@ namespace ChannelEdit
 			else { return $"Channel Needed Talk Power set to: [b]{tp}[/b]"; }
 		}
 
-		[Command("ce cgid", "Syntax: !ce cgid dbid cgid")]
+		[Command("ce cgid", "Syntax: !ce <channel group id> <client database id>")]
 		public string CommandAssignChannelGroup(ulong dbid, ulong cgid)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
-			var commandEdit = new Ts3Command("setclientchannelgroup", new List<ICommandPart>() {
-				new CommandParameter("cid", ownChannelId),
+			var commandEdit = new Ts3Command("setclientchannelgroup", new List<ICommandPart>() { new CommandParameter("cid", ownChannelId),
 				new CommandParameter("cldbid", dbid),
-				new CommandParameter("cid", cgid),
+				new CommandParameter("cgid", cgid),
 			});
 			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientChannelGroupChanged);
 			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
 			return $"Assigned channel group {cgid} to [b]{dbid}[/b]";
 		}
 
-		[Command("ce tpgrant", "Syntax: !ce tpgrant clid")]
+		[Command("ce tpgrant", "Syntax: !ce tpgrant <client id>")]
 		public string CommandToggleTalkPower(ClientIdT clid)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
 			var wasTalker = TS3FullClient.ClientInfo(clid).Value.TalkPowerGranted;
-			var commandEdit = new Ts3Command("clientedit", new List<ICommandPart>() {
+			var commandEdit = new Ts3Command("clientedit", new List<ICommandPart>() { new CommandParameter("clid", clid),
 				new CommandParameter("client_is_talker", !wasTalker)
 			});
 			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientUpdated);
-			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
-			if (wasTalker) return $"Granted Talk Power to [b]{clid}[/b]";
+			if (!result.Ok) return $"{PluginInfo.Name}: {commandEdit.ToString()} = {result.Error.Message} ({result.Error.ExtraMessage})";
+			if (!wasTalker) return $"Granted Talk Power to [b]{clid}[/b]";
 			return $"Revoked Talk Power from [b]{clid}[/b]";
 		}
 
