@@ -72,20 +72,7 @@ namespace ChannelEdit
 			else { return $"Channel Needed Talk Power set to: [b]{tp}[/b]"; }
 		}
 
-		[Command("ce cgid", "Syntax: !ce <channel group id> <client database id>")]
-		public string CommandAssignChannelGroup(ulong dbid, ulong cgid)
-		{
-			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
-			var commandEdit = new Ts3Command("setclientchannelgroup", new List<ICommandPart>() { new CommandParameter("cid", ownChannelId),
-				new CommandParameter("cldbid", dbid),
-				new CommandParameter("cgid", cgid),
-			});
-			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientChannelGroupChanged);
-			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
-			return $"Assigned channel group {cgid} to [b]{dbid}[/b]";
-		}
-
-		[Command("ce tpgrant", "Syntax: !ce tpgrant <client id>")]
+		[Command("ce tpg", "Syntax: !ce tpgrant <client id>")]
 		public string CommandToggleTalkPower(ClientIdT clid)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
@@ -97,6 +84,19 @@ namespace ChannelEdit
 			if (!result.Ok) return $"{PluginInfo.Name}: {commandEdit.ToString()} = {result.Error.Message} ({result.Error.ExtraMessage})";
 			if (!wasTalker) return $"Granted Talk Power to [b]{clid}[/b]";
 			return $"Revoked Talk Power from [b]{clid}[/b]";
+		}
+
+		[Command("ce cg", "Syntax: !ce <channel group id> <client database id>")]
+		public string CommandAssignChannelGroup(ulong dbid, ulong cgid)
+		{
+			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
+			var commandEdit = new Ts3Command("setclientchannelgroup", new List<ICommandPart>() { new CommandParameter("cid", ownChannelId),
+				new CommandParameter("cldbid", dbid),
+				new CommandParameter("cgid", cgid),
+			});
+			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientChannelGroupChanged);
+			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
+			return $"Assigned channel group {cgid} to [b]{dbid}[/b]";
 		}
 
 		public void Dispose()
