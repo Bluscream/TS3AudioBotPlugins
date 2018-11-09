@@ -84,7 +84,21 @@ namespace ChannelEdit
 			});
 			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientChannelGroupChanged);
 			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
-			else { return $"Assigned channel group {cgid} to [b]{dbid}[/b]"; }
+			return $"Assigned channel group {cgid} to [b]{dbid}[/b]";
+		}
+
+		[Command("ce tpgrant", "Syntax: !ce tpgrant clid")]
+		public string CommandToggleTalkPower(ClientIdT clid)
+		{
+			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
+			var wasTalker = TS3FullClient.ClientInfo(clid).Value.TalkPowerGranted;
+			var commandEdit = new Ts3Command("clientedit", new List<ICommandPart>() {
+				new CommandParameter("client_is_talker", !wasTalker)
+			});
+			var result = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ClientUpdated);
+			if (!result.Ok) return $"{PluginInfo.Name}: {result.Error.Message} ({result.Error.ExtraMessage})";
+			if (wasTalker) return $"Granted Talk Power to [b]{clid}[/b]";
+			return $"Revoked Talk Power from [b]{clid}[/b]";
 		}
 
 		public void Dispose()
