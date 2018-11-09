@@ -2,11 +2,27 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>YoutubeSearchPlugin</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>C:\TS3AB\net46\Plugins\</OutputPath>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj" />
-    <ProjectReference Include="..\..\TS3AudioBot\TS3Client\TS3Client.csproj" />
+    <PackageReference Include="YoutubeSearch.dll" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TS3AudioBot\TS3Client\TS3Client.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
