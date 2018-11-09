@@ -134,6 +134,9 @@ OnDisconnect: {ondisconnect}
 
 !x (!bot disconnect) (!bot connect template alphakevin)
 
-[color=lightblue]Some Math: {math} = {result}</value>
+[b]IDs Bekommen:[/b] [color=orange]!id &lt;TEIL VOM NAMEN&gt;[/color]
+[b]Talk Power geben/entfernen:[/b] [color=orange]!tp &lt;TEIL VOM NAMEN&gt;[/color]
+[b]Vom Channel kicken:[/b] [color=orange]!ckick &lt;TEIL VOM NAMEN&gt;[/color]
+[b]PW Ändern:[/b] [color=orange]!pw &lt;NEUES PW ODER NICHTS UM PW ZU ENTFERNEN&gt;[/color]</value>
   </data>
 </root>

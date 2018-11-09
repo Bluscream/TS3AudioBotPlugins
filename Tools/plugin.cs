@@ -14,6 +14,8 @@ using TS3Client.Messages;
 using TS3Client;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
+using TS3AudioBot.Web.Api;
+using TS3AudioBot.Helper;
 
 namespace Tools
 {
@@ -43,13 +45,20 @@ namespace Tools
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 
+		[Command("id")]
+		public static JsonValue<ClientData> CommandGetUserByName(Ts3Client ts3Client, string username)
+		{
+			var client = ts3Client.GetClientByName(username).UnwrapThrow();
+			return new JsonValue<ClientData>(client, $"\nClient: [url=client://{client.ClientId}/{client.Uid}]{client.Name}[/url]\nClient ID: [b]{client.ClientId}[/b]\nDatabase ID: [b]{client.DatabaseId}[/b]\nChannel ID: [b]{client.ChannelId}[/b]\nUnique ID: [b]{client.Uid}");
+		}
+
 		[Command("isowner", "Check if you're owner")]
 		public string CommandCheckOwner(ExecutionInformation info)
 		{
 			return info.HasRights("*").ToString();
 		}
 
-		[Command("tprequest", "Request Talk Power!")]
+		[Command("talkpowerrequest", "Request Talk Power!")]
 		//[RequiredParameters(0)]
 		public void CommandTPRequest(ExecutionInformation info, string message)
 		{

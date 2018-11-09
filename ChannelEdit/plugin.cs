@@ -10,6 +10,7 @@ using TS3Client.Messages;
 using TS3Client;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
+using TS3AudioBot.Helper;
 
 namespace ChannelEdit
 {
@@ -64,7 +65,7 @@ namespace ChannelEdit
 			else { return $"Channel Name set to: [b]{name}[/b]"; }
 		}
 
-		[Command("ce pw", "Syntax: !ce <new password (empty=no pw)>")]
+		[Command("pw", "Syntax: !ce <new password (empty=no pw)>")]
 		public string CommandEditChannelPassword(string password = "")
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
@@ -89,7 +90,7 @@ namespace ChannelEdit
 			else { return $"Channel Needed Talk Power set to: [b]{tp}[/b]"; }
 		}
 
-		[Command("ce tpg", "Syntax: !ce tpgrant <client id>")]
+		[Command("tp", "Syntax: !ce tpgrant <client id>")]
 		public string CommandToggleTalkPower(ClientIdT clid)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
@@ -101,6 +102,17 @@ namespace ChannelEdit
 			if (!result.Ok) return $"{PluginInfo.Name}: {commandEdit.ToString()} = [color=red]{result.Error.Message} ({result.Error.ExtraMessage})";
 			if (!wasTalker) return $"Granted Talk Power to [b]{clid}[/b]";
 			return $"Revoked Talk Power from [b]{clid}[/b]";
+		}
+		[Command("tp", "Syntax: !ce tpgrant <name>")]
+		public string CommandToggleTalkPower(InvokerData invoker, string name = null)
+		{
+			ClientIdT clid = 0;
+			if (name == null) {
+				clid = invoker.ClientId ?? default(int);
+			} else {
+				clid = TS3Client.GetClientByName(name).UnwrapThrow().ClientId;
+			}
+			return CommandToggleTalkPower(clid);
 		}
 
 		[Command("ce cg", "Syntax: !ce cg <channel group id> <client database id>")]
@@ -116,12 +128,18 @@ namespace ChannelEdit
 			return $"Assigned channel group {cgid} to [b]{dbid}[/b]";
 		}
 
-		[Command("ce kick", "Syntax: !ce kick <client id>")]
+		[Command("ckick", "Syntax: !ce kick <client id>")]
 		public string CommandKickClientFromChannel(ClientIdT clid, string reason = null)
 		{
 			var result = TS3FullClient.KickClient(new ClientIdT[]{ clid }, ReasonIdentifier.Channel, reason);
 			if (!result.Ok) return $"{PluginInfo.Name}: [color=red]{result.Error.Message} ({result.Error.ExtraMessage})";
 			return $"Kicked client [b]{clid}[/b] from his channel for {reason}.";
+		}
+		[Command("ckick", "Syntax: !ce kick <name>")]
+		public string CommandKickClientFromChannel(string name, string reason = null)
+		{
+			var client = TS3Client.GetClientByName(name).UnwrapThrow();
+			return CommandKickClientFromChannel(client.ClientId, reason);
 		}
 
 		[Command("ce codec", "Syntax: !ce codec <codec (0-5)>")]
