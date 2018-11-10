@@ -4,8 +4,6 @@ using TS3AudioBot.Plugins;
 using TS3Client.Full;
 using TS3Client.Messages;
 using TS3Client;
-using IniParser;
-using IniParser.Model;
 using ServerGroupIdT = System.UInt64;
 
 namespace DefaultServerGroup
@@ -23,13 +21,13 @@ namespace DefaultServerGroup
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 
 		public Ts3FullClient TS3FullClient { get; set; }
-		public ServerGroupIdT[] defaultGroups { get; set; }
+		public ServerGroupIdT[] defaultGroups = {9};
 
 		public void Initialize()
 		{
-			var parser = new FileIniDataParser();
+			/*var parser = new FileIniDataParser();
 			IniData data = parser.ReadFile($"{PluginInfo.Name}.ini");
-			defaultGroups = data["groups"]["defaultgroups"].Split(',').Select(ServerGroupIdT.Parse).ToArray();
+			defaultGroups = data["groups"]["defaultgroups"].Split(',').Select(ServerGroupIdT.Parse).ToArray();*/
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
