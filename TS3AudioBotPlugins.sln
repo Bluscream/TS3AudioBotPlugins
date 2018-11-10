@@ -39,7 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NowPlaying", "NowPlaying\No
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelEdit", "ChannelEdit\ChannelEdit.csproj", "{4807B5ED-2591-4422-A56D-ACEF864C88E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeSearch", "YoutubeSearch\YoutubeSearch.csproj", "{D963A828-BE9C-491D-950D-AE4C014DEFE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YoutubeSearch", "YoutubeSearch\YoutubeSearch.csproj", "{D963A828-BE9C-491D-950D-AE4C014DEFE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultServerGroup", "DefaultServerGroup\DefaultServerGroup.csproj", "{D017515D-41F6-4EA7-9E3E-7AADC916ACA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{D963A828-BE9C-491D-950D-AE4C014DEFE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D963A828-BE9C-491D-950D-AE4C014DEFE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D963A828-BE9C-491D-950D-AE4C014DEFE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D017515D-41F6-4EA7-9E3E-7AADC916ACA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D017515D-41F6-4EA7-9E3E-7AADC916ACA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D017515D-41F6-4EA7-9E3E-7AADC916ACA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D017515D-41F6-4EA7-9E3E-7AADC916ACA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
