@@ -4,7 +4,10 @@ using TS3AudioBot.Plugins;
 using TS3Client.Full;
 using TS3Client.Messages;
 using TS3Client;
-using ServerGroupIdT = System.UInt64;
+using TS3AudioBot.Helper;
+using TS3Client.Commands;
+using System.Collections.Generic;
+//using ServerGroupIdT = System.UInt64;
 
 namespace DefaultServerGroup
 {
@@ -21,25 +24,34 @@ namespace DefaultServerGroup
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 
 		public Ts3FullClient TS3FullClient { get; set; }
-		public ServerGroupIdT[] defaultGroups = {9};
 
 		public void Initialize()
 		{
-			/*var parser = new FileIniDataParser();
-			IniData data = parser.ReadFile($"{PluginInfo.Name}.ini");
-			defaultGroups = data["groups"]["defaultgroups"].Split(',').Select(ServerGroupIdT.Parse).ToArray();*/
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView e)
 		{
-			bool hasAnyDefaultGroup = e.ServerGroups.Intersect(defaultGroups).Any();
-			if (!hasAnyDefaultGroup) return;
-			foreach (var group in defaultGroups)
-			{
-				TS3FullClient.ServerGroupAddClient(group, e.DatabaseId);
+			TS3FullClient.ServerGroupAddClient(9, e.DatabaseId);
+		}
+
+		[TS3AudioBot.CommandSystem.Command("sgadd")]
+		public string CommandServerGroupClientAdd(ulong sgid, ulong cldbid) {
+			var err = TS3FullClient.ServerGroupAddClient(sgid, cldbid);
+			if (!err.Ok) {
+				return $"{PluginInfo.Name}: {err.Error.Message} ({err.Error.ExtraMessage})";
 			}
+			return $"Added group \"{sgid}\" to client \"{cldbid}\"";
+		}
+
+		[TS3AudioBot.CommandSystem.Command("sgrem")]
+		public string CommandServerGroupClientDelete(ulong sgid, ulong cldbid) {
+			var err = TS3FullClient.ServerGroupDelClient(sgid, cldbid);
+			if (!err.Ok) {
+				return $"{PluginInfo.Name}: {err.Error.Message} ({err.Error.ExtraMessage})";
+			}
+			return $"Removed group \"{sgid}\" from client \"{cldbid}\"";
 		}
 
 		public void Dispose()
