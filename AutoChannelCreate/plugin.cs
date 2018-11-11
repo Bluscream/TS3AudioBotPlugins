@@ -59,15 +59,17 @@ namespace AutoChannelCreate
 					found = channel.ChannelId;
 				}
 			}
+			int neededTP = -1; // 2147483647
 			if (found == 0) {
 				PluginLog(LogLevel.Warning, "Default channel does not exist yet, creating...");
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
 					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
-					new CommandParameter("channel_codec_quality", 7),
+					new CommandParameter("channel_codec", 5),
+					new CommandParameter("channel_codec_quality", 10),
 					new CommandParameter("channel_flag_maxclients_unlimited", false),
-					new CommandParameter("channel_maxclients", 10),
-					new CommandParameter("channel_needed_talk_power", -1),
+					new CommandParameter("channel_maxclients", 50),
+					new CommandParameter("channel_needed_talk_power", neededTP),
 					new CommandParameter("channel_topic", $"Created: {DateTime.Now}")
 				});
 				var result = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
@@ -91,7 +93,14 @@ namespace AutoChannelCreate
 					.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
 				)
 			});
+			var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
+			if (tp >= neededTP) return;
 			TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+			var commandTP = new Ts3Command("clientedit", new List<ICommandPart>() {
+				new CommandParameter("clid", TS3FullClient.ClientId),
+				new CommandParameter("client_is_talker", true)
+			});
+			TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
 		}
 
 		public void Dispose() {
