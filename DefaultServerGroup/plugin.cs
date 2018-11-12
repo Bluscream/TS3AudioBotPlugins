@@ -19,7 +19,7 @@ namespace DefaultServerGroup
 		public const string Author = "Bluscream <admin@timo.de.vc>";
 		public const int Version = 1;
 	}
-	public class AutoChannelCreate : IBotPlugin
+	public class DefaultServerGroup : IBotPlugin
 	{
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 

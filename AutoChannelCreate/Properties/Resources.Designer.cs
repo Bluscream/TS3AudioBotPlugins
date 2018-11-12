@@ -63,18 +63,43 @@ namespace AutoChannelCreate.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Last Updated: {now}
         ///
-        ///Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
+        ///Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
         ///Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
         ///
         ///[url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
         ///
         ///[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
         ///
-        ///Address:  [rest of string was truncated]&quot;;.
+        ///Address: [url=ts3server://{address [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last Updated: {now}
+        ///
+        ///Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
+        ///Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
+        ///
+        ///[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=1]Webinterface[/url]
+        ///
+        ///Address: [url=ts3server://{address}]{address}[/url]
+        ///OnConnect: {onconnect}
+        ///OnIdle: {onidle}
+        ///OnDisconnect: {ondisconnect}
+        ///
+        ///!x (!bot disconnect) (!bot connect template alphakevin2)
+        ///
+        ///[center][size=20]Tipps und Tricks[/size][/center]
+        ///[hr]
+        ///[B]Alle Sounds [COLOR=#ff0000] [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DescriptionRadio {
+            get {
+                return ResourceManager.GetString("DescriptionRadio", resourceCulture);
             }
         }
     }

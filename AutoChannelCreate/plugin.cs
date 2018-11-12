@@ -59,48 +59,66 @@ namespace AutoChannelCreate
 					found = channel.ChannelId;
 				}
 			}
-			int neededTP = -1; // 2147483647
+			var now = DateTime.Now.ToString();
+			int neededTP = -1; // 2147483647 // -1
 			if (found == 0) {
 				PluginLog(LogLevel.Warning, "Default channel does not exist yet, creating...");
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
 					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
-					new CommandParameter("channel_codec", 5),
+					// new CommandParameter("channel_codec", 5), // * Radio *
 					new CommandParameter("channel_codec_quality", 10),
 					new CommandParameter("channel_flag_maxclients_unlimited", false),
-					new CommandParameter("channel_maxclients", 50),
+					new CommandParameter("channel_maxclients", 10), // 50 / 10
 					new CommandParameter("channel_needed_talk_power", neededTP),
-					new CommandParameter("channel_topic", $"Created: {DateTime.Now}")
+					new CommandParameter("channel_topic", $"Created: {now}")
 				});
-				var result = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
-				if (!result.Ok) {
-					PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could not create default channel! ({result.Error.Message})"); return;
+				var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
+				if (!createResult.Ok) {
+					PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
 				}
-				var res = result.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
-				found = res.ChannelId;
+				var createRes = createResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+				found = createRes.ChannelId;
 			}
 			if (found == 0 ) return;
 			PluginLog(LogLevel.Debug, "Updating channel...");
+			/*var uid = TS3FullClient.WhoAmI().Unwrap().Uid;
+			Console.WriteLine($"whoAmI.Unwrap(): {uid}");
+			uid = TS3FullClient.WhoAmI().Value.Uid;
+			Console.WriteLine($"whoAmI.Value: {uid}");*/
+			var uid = Ts3Crypt.LoadIdentity(Conf.Connect.Identity.PrivateKey, Conf.Connect.Identity.Offset).Value.ClientUid;
+			// Console.WriteLine($"Id: {uid}");
 			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
 			new CommandParameter("cid", found),
 				new CommandParameter("channel_description",
-				Properties.Resources.Description
-					.Replace("{now}", DateTime.Now.ToString())
+				Properties.Resources.Description // Description // DescriptionRadio
+					.Replace("{now}", now)
 					.Replace("{botname}", Conf.Connect.Name)
+					.Replace("{botuid}", uid)
 					.Replace("{address}", Conf.Connect.Address)
 					.Replace("{onconnect}", Conf.Events.OnConnect)
 					.Replace("{onidle}", Conf.Events.OnIdle)
 					.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
 				)
 			});
+			var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+			if (!editResult.Ok)
+			{
+				PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could set channel description! ({editResult.Error.Message})"); return;
+			}
+			// var reditRes = editResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 			var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
 			if (tp >= neededTP) return;
-			TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
 			var commandTP = new Ts3Command("clientedit", new List<ICommandPart>() {
 				new CommandParameter("clid", TS3FullClient.ClientId),
 				new CommandParameter("client_is_talker", true)
 			});
-			TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
+			var tpResult = TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
+			if (!tpResult.Ok) {
+				PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
+			}
+			//tpRes = tpResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+			
 		}
 
 		public void Dispose() {

@@ -120,14 +120,14 @@
   <data name="Description" xml:space="preserve">
     <value>Last Updated: {now}
 
-Channel Owner: [URL=client://0/hn/Nzc55Zoj54Xrty7/JGkNQUxs=~Dvni]{botname}[/URL]
+Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
 Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
 
 [url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
 
 [url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
 
-Address: [b]{address}[/b]
+Address: [url=ts3server://{address}]{address}[/url]
 OnConnect: {onconnect}
 OnIdle: {onidle}
 OnDisconnect: {ondisconnect}
@@ -138,5 +138,37 @@ OnDisconnect: {ondisconnect}
 [b]Talk Power geben/entfernen:[/b] [color=orange]!tp &lt;TEIL VOM NAMEN&gt;[/color]
 [b]Vom Channel kicken:[/b] [color=orange]!ckick &lt;TEIL VOM NAMEN&gt;[/color]
 [b]PW Ändern:[/b] [color=orange]!pw &lt;NEUES PW ODER NICHTS UM PW ZU ENTFERNEN&gt;[/color]</value>
+  </data>
+  <data name="DescriptionRadio" xml:space="preserve">
+    <value>Last Updated: {now}
+
+Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
+Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
+
+[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=1]Webinterface[/url]
+
+Address: [url=ts3server://{address}]{address}[/url]
+OnConnect: {onconnect}
+OnIdle: {onidle}
+OnDisconnect: {ondisconnect}
+
+!x (!bot disconnect) (!bot connect template alphakevin2)
+
+[center][size=20]Tipps und Tricks[/size][/center]
+[hr]
+[B]Alle Sounds [COLOR=#ff0000]deaktivieren[/COLOR]:[/B]
+
+[img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: In TeamSpeak oben auf "Selbst" -&gt; "Sound Pack" -&gt; "Sounds deaktivieren" klicken.
+[img]https://i.imgur.com/gp8Utzx.png[/img]: Oben rechts auf den Das Viereck mit dem Zahnrad klicken -&gt; Unter "Audio" auf "Sound Pack" klicken -&gt; Auf "Female Voice" drücken -&gt; Auf "Disabled" drücken -&gt; Mit "Speichern" bestätigen.
+[hr]
+[B]Alle Sounds wieder [COLOR=#00aa00]aktivieren[/COLOR]:[/B]
+
+[img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: In TeamSpeak oben auf "Selbst" -&gt; "Sound Pack" -&gt; "Default Sound Pack (Female)" klicken.
+[img]https://i.imgur.com/gp8Utzx.png[/img]: Oben rechts auf den Das Viereck mit dem Zahnrad klicken -&gt; Unter "Audio" auf "Sound Pack" klicken -&gt; Auf "Disabled" drücken -&gt; Auf "Female Voice" drücken -&gt; Mit "Speichern" bestätigen.
+[hr]
+[B]Lautstärke des Bots einstellen:[/B]
+
+[img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: Rechtsklick auf [URL=client://0/{botuid}]{botname}[/URL] -&gt; "Lautstärke anpassen".
+[img]https://i.imgur.com/gp8Utzx.png[/img]: Lange auf den Bot gedrückt halten -&gt; "Lautstärke anpassen" drücken.</value>
   </data>
 </root>
