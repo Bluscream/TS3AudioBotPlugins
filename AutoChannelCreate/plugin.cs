@@ -82,12 +82,7 @@ namespace AutoChannelCreate
 			}
 			if (found == 0 ) return;
 			PluginLog(LogLevel.Debug, "Updating channel...");
-			/*var uid = TS3FullClient.WhoAmI().Unwrap().Uid;
-			Console.WriteLine($"whoAmI.Unwrap(): {uid}");
-			uid = TS3FullClient.WhoAmI().Value.Uid;
-			Console.WriteLine($"whoAmI.Value: {uid}");*/
-			var uid = Ts3Crypt.LoadIdentity(Conf.Connect.Identity.PrivateKey, Conf.Connect.Identity.Offset).Value.ClientUid;
-			// Console.WriteLine($"Id: {uid}");
+			var uid = ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid;
 			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
 			new CommandParameter("cid", found),
 				new CommandParameter("channel_description",
