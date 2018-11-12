@@ -120,7 +120,7 @@
   <data name="Description" xml:space="preserve">
     <value>Last Updated: {now}
 
-Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
+Channel Owner: [URL=client://{botclid}/{botuid}]{botname}[/URL]
 Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
 
 [url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
@@ -142,7 +142,7 @@ OnDisconnect: {ondisconnect}
   <data name="DescriptionRadio" xml:space="preserve">
     <value>Last Updated: {now}
 
-Channel Owner: [URL=client://0/{botuid}]{botname}[/URL]
+Channel Owner: [URL=client://{botclid}/{botuid}]{botname}[/URL]
 Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
 
 [url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=1]Webinterface[/url]
@@ -159,7 +159,7 @@ OnDisconnect: {ondisconnect}
 [B]Alle Sounds [COLOR=#ff0000]deaktivieren[/COLOR]:[/B]
 
 [img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: In TeamSpeak oben auf "Selbst" -&gt; "Sound Pack" -&gt; "Sounds deaktivieren" klicken.
-[img]https://i.imgur.com/gp8Utzx.png[/img]: Oben rechts auf den Das Viereck mit dem Zahnrad klicken -&gt; Unter "Audio" auf "Sound Pack" klicken -&gt; Auf "Female Voice" drücken -&gt; Auf "Disabled" drücken -&gt; Mit "Speichern" bestätigen.
+[img]https://i.imgur.com/gp8Utzx.png[/img]: Oben rechts auf den Das Viereck mit dem Zahnrad drücken -&gt; Unter "Audio" auf "Sound Pack" drücken -&gt; Auf "Female Voice" drücken -&gt; Auf "Disabled" drücken -&gt; Mit "Speichern" bestätigen.
 [hr]
 [B]Alle Sounds wieder [COLOR=#00aa00]aktivieren[/COLOR]:[/B]
 
@@ -168,7 +168,7 @@ OnDisconnect: {ondisconnect}
 [hr]
 [B]Lautstärke des Bots einstellen:[/B]
 
-[img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: Rechtsklick auf [URL=client://0/{botuid}]{botname}[/URL] -&gt; "Lautstärke anpassen".
+[img]https://i.imgur.com/3In6xmJ.png[/img] / [img]https://i.imgur.com/b3z15Yt.png[/img] / [img]https://i.imgur.com/jksIqei.png[/img]: Rechtsklick auf [URL=client://{botclid}/{botuid}]{botname}[/URL] -&gt; "Lautstärke anpassen".
 [img]https://i.imgur.com/gp8Utzx.png[/img]: Lange auf den Bot gedrückt halten -&gt; "Lautstärke anpassen" drücken.</value>
   </data>
 </root>

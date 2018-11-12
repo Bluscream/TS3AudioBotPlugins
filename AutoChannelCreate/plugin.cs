@@ -60,16 +60,16 @@ namespace AutoChannelCreate
 				}
 			}
 			var now = DateTime.Now.ToString();
-			int neededTP = -1; // 2147483647 // -1
+			int neededTP = 2147483647; // 2147483647 // -1
 			if (found == 0) {
 				PluginLog(LogLevel.Warning, "Default channel does not exist yet, creating...");
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
 					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
-					// new CommandParameter("channel_codec", 5), // * Radio *
+					new CommandParameter("channel_codec", 5), // * Radio *
 					new CommandParameter("channel_codec_quality", 10),
 					new CommandParameter("channel_flag_maxclients_unlimited", false),
-					new CommandParameter("channel_maxclients", 10), // 50 / 10
+					new CommandParameter("channel_maxclients", 50), // 50 / 10
 					new CommandParameter("channel_needed_talk_power", neededTP),
 					new CommandParameter("channel_topic", $"Created: {now}")
 				});
@@ -86,10 +86,11 @@ namespace AutoChannelCreate
 			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
 			new CommandParameter("cid", found),
 				new CommandParameter("channel_description",
-				Properties.Resources.Description // Description // DescriptionRadio
+				Properties.Resources.DescriptionRadio // Description // DescriptionRadio
 					.Replace("{now}", now)
 					.Replace("{botname}", Conf.Connect.Name)
 					.Replace("{botuid}", uid)
+					.Replace("{botclid}", TS3FullClient.ClientId.ToString())
 					.Replace("{address}", Conf.Connect.Address)
 					.Replace("{onconnect}", Conf.Events.OnConnect)
 					.Replace("{onidle}", Conf.Events.OnIdle)
