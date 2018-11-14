@@ -30,7 +30,8 @@ namespace SimpleTTS
 		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
-		public PlayManager BotPlayer { get; set; }
+		//public PlayManager BotPlayer { get; set; }
+		//public ConfHistory confHistory { get; set; }
 		// { "UK English Female", "UK English Male", "US English Female", "Spanish Female", "French Female", "Deutsch Female", "Italian Female", "Greek Female", "Hungarian Female", "Turkish Female", "Russian Female", "Dutch Female", "Swedish Female", "Norwegian Female", "Japanese Female", "Korean Female", "Chinese Female", "Hindi Female", "Serbian Male", "Croatian Male", "Bosnian Male", "Romanian Male", "Catalan Male", "Australian Female", "Finnish Female", "Afrikaans Male", "Albanian Male", "Arabic Male", "Armenian Male", "Czech Female", "Danish Female", "Esperanto Male", "Hatian Creole Female", "Icelandic Male", "Indonesian Female", "Latin Female", "Latvian Male", "Macedonian Male", "Moldavian Male", "Montenegrin Male", "Polish Female", "Brazilian Portuguese Female", "Portuguese Female", "Serbo-Croatian Male", "Slovak Female", "Spanish Latin American Female", "Swahili Male", "Tamil Male", "Thai Female", "Vietnamese Male", "Welsh Male" };
 		public string[] TTSLocales = { "af-ZA", "ar-SA", "bs", "ca-ES", "cs-CZ", "cy", "da-DK", "de-DE", "el-GR", "en-AU", "en-GB", "en-US", "eo", "es-ES", "es-MX", "fi-FI", "fr-FR", "hi-IN", "hr-HR", "hu-HU", "hy-AM", "id-ID", "is-IS", "it-IT", "ja-JP", "ko-KR", "la", "lv-LV", "md", "me", "mk-MK", "nb-NO", "nl-NL", "pl-PL", "pt-BR", "ro-RO", "ru-RU", "sk-SK", "sq-AL", "sr-RS", "sv-SE", "sw-KE", "th-TH", "tr-TR", "vi-VN", "zh-CN", "zh-HK", "zh-TW" };
 		public string[] TTSGenders = { "male", "female" };
@@ -46,12 +47,17 @@ namespace SimpleTTS
 		}
 
 		[Command("say", "Syntax: !say <text>")]
-		public string CommandSay(params string[] _text) {
+		public void CommandSay(PlayManager playManager, params string[] _text) {
 			var text = Uri.EscapeUriString(string.Join(" ", _text));
-			var url_ = TTSUrl.Replace("{text}", text).Replace("{locale}", TTSLocale).Replace("{pitch}", TTSPitch).Replace("{rate}", TTSRate).Replace("{volume}", TTSVolume);
+			var url = TTSUrl.Replace("{text}", text).Replace("{locale}", TTSLocale).Replace("{pitch}", TTSPitch).Replace("{rate}", TTSRate).Replace("{volume}", TTSVolume);
 			// PluginLog(LogLevel.Debug, url_);
-			return "[url]" + url_ + "[/url]";
+			//return "[url]" + url_ + "[/url]";
 			//BotPlayer.ResourceFactoryManager.Load(new TS3AudioBot.ResourceFactories.AudioResource());
+			var wait = playManager.Play(InvokerData.Anonymous, url);
+			playManager.PlaylistManager.Previous();
+			//var stream = new Stream();
+			//var prod = new TS3Client.Audio.StreamAudioProducer(stream);
+			//TS3Client.MixInStreamOnce(prod);
 		}
 
 		[Command("tts locale", "Syntax: !tts <locale>")]

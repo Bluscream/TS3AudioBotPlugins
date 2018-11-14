@@ -1,47 +1,38 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using TS3AudioBot.CommandSystem;
-using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
 using TS3Client.Commands;
 using TS3Client.Full;
 using TS3Client.Messages;
 using TS3Client;
-using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
 using TS3AudioBot.Web.Api;
 using TS3AudioBot.Helper;
+using ClientIdT = System.UInt16;
+using ChannelIdT = System.UInt64;
 
 namespace Tools
 {
-	public class Tools : IBotPlugin
-	{
-
-		public class PluginInfo
-		{
+	public class Tools : IBotPlugin {
+		public class PluginInfo {
 			public static readonly string Name = typeof(PluginInfo).Namespace;
 			public const string Description = "";
 			public const string URL = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/Tools";
 			public const string Author = "Bluscream <admin@timo.de.vc>";
 			public const int Version = 1337;
 		}
-		public Ts3FullClient lib;
+
+		public Ts3FullClient Lib { get; set; }
 
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 
-		public void Initialize()
-		{
+		public void Initialize() {
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
 		}
 
@@ -62,7 +53,7 @@ namespace Tools
 		//[RequiredParameters(0)]
 		public void CommandTPRequest(ExecutionInformation info, string message)
 		{
-			lib.Send("clientupdate", new CommandParameter("client_talk_request", 1), new CommandParameter("client_talk_request_msg", message = message ?? ""));
+			Lib.Send("clientupdate", new CommandParameter("client_talk_request", 1), new CommandParameter("client_talk_request_msg", message = message ?? ""));
 		}
 
 		[Command("rawcmd")]
@@ -71,7 +62,7 @@ namespace Tools
 		{
 			try
 			{
-				var result = lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
+				var result = Lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
 					cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
 				//return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
 				return "Sent command.";
@@ -88,7 +79,13 @@ namespace Tools
 		[Command("ownchannel")]
 		public string CommandGetOwnChannelID(ExecutionInformation info)
 		{
-			return lib.WhoAmI().Value.ChannelId.ToString();
+			return Lib.WhoAmI().Unwrap().ChannelId.ToString();
+		}
+
+		[Command("subscribe ownchannel")]
+		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
+		{
+			targetManager.WhisperChannelSubscribe(Lib.WhoAmI().Unwrap().ChannelId, true);
 		}
 	}
 }
