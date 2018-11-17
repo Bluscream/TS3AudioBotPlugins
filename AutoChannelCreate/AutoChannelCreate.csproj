@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Bluscream</Authors>
+    <PackageProjectUrl>https://github.com/Splamy/TS3AudioBot</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Bluscream/TS3AudioBotPlugins</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Description>Automatic channel creation plugin for TS3AudioBot</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

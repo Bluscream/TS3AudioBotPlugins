@@ -11,15 +11,23 @@ namespace VersionDetector
 {
 	public class PluginInfo
 	{
-		public static readonly string Name = typeof(PluginInfo).Namespace;
-		public const string Description = "";
-		public const string Url = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/VersionDump";
-		public const string Author = "Splamy";
-		public const int Version = 1;
+		public static readonly string ShortName = typeof(PluginInfo).Namespace;
+		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+		public static string Description = "";
+		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+		public PluginInfo()
+		{
+			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+			Description = versionInfo.FileDescription;
+			Author = versionInfo.CompanyName;
+		}
 	}
 	public class VersionDetector : IBotPlugin
 	{
-		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
+		private static readonly PluginInfo PluginInfo = new PluginInfo();
+		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		private static WebClient wc = new WebClient();
 
@@ -40,7 +48,7 @@ namespace VersionDetector
 		public void Initialize()
 		{
 			Ts3Client.OnEachClientEnterView += Ts3Client_OnEachClientEnterView;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		private void Ts3Client_OnEachClientEnterView(object sender, ClientEnterView e)
@@ -73,7 +81,7 @@ namespace VersionDetector
 		public void Dispose()
 		{
 			Ts3Client.OnEachClientEnterView -= Ts3Client_OnEachClientEnterView;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
 }

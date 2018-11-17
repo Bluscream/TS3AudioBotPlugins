@@ -68,9 +68,9 @@ namespace AutoChannelCreate.Properties {
         ///
         ///[url=https://steamcommunity.com/profiles/76561198022446661][img]http://steamsignature.com/status/german/76561198022446661.png[/img][/url][url=steam://friends/add/76561198022446661][img]http://steamsignature.com/AddFriend.png[/img][/url]
         ///
-        ///[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=0]Webinterface[/url]
+        ///[url=http://minopia.de:58913/index.html]Webinterface[/url]
         ///
-        ///Address: [url=ts3server:// [rest of string was truncated]&quot;;.
+        ///Address: [url=ts3server://{address}]{address}[/ur [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Description {
             get {
@@ -79,23 +79,16 @@ namespace AutoChannelCreate.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Last Updated: {now}
+        ///   Looks up a localized string similar to [center]Last Updated: {now}
         ///
         ///Channel Owner: [URL=client://{botclid}/{botuid}]{botname}[/URL]
         ///Bot Owner: [URL=client://0/e3dvocUFTE1UWIvtW8qzulnWErI=~Blu]Blu[/URL]
         ///
-        ///[url=http://minopia.de:58913/index.html?page=bot.html&amp;bot_id=1]Webinterface[/url]
-        ///
-        ///Address: [url=ts3server://{address}]{address}[/url]
-        ///OnConnect: {onconnect}
-        ///OnIdle: {onidle}
-        ///OnDisconnect: {ondisconnect}
-        ///
-        ///!x (!bot disconnect) (!bot connect template alphakevin2)
-        ///
-        ///[center][size=20]Tipps und Tricks[/size][/center]
+        ///[size=20]Tipps und Tricks[/size][/center]
         ///[hr]
-        ///[B]Alle Sounds [COLOR= [rest of string was truncated]&quot;;.
+        ///[B]Bot abonnieren (Überall Musik hören):[/B][list]
+        ///
+        ///[*][img]https://i.imgur.com/3In6xmJ.png[/img] | [img]https://i.imgur.com/b3z15Yt.png[/img] | [img]https://i.imgur.com/jksIqei.png[/img] | [img]https://i.imgur.com/gp8Utzx.png[/img]: Den Bot im Chat mit [b][COLOR=#ffaa00]!sub[/COLOR][/b] ans [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DescriptionRadio {
             get {

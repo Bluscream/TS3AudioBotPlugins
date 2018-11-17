@@ -36,15 +36,24 @@ namespace YoutubeSearchPlugin
 	}
 	public class PluginInfo
 	{
-		public static readonly string Name = typeof(PluginInfo).Namespace;
-		public const string Description = "";
-		public const string Url = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/YoutubeSearch";
-		public const string Author = "Bluscream";
-		public const int Version = 1;
+		public static readonly string ShortName = typeof(PluginInfo).Namespace;
+		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+		public static string Description = "";
+		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+		public PluginInfo()
+		{
+			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+			Description = versionInfo.FileDescription;
+			Author = versionInfo.CompanyName;
+		}
 	}
 	public class YoutubeSearchPlugin : IBotPlugin
 	{
-		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
+		private static readonly PluginInfo PluginInfo = new PluginInfo();
+		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
+
 
 		//private static WebClient wc = new WebClient();
 
@@ -56,8 +65,9 @@ namespace YoutubeSearchPlugin
 		}
 
 		[Command("yt", PluginInfo.Description)]
-		public string CommandSearchYoutube(string query)
+		public string CommandSearchYoutube(params string[] _text)
 		{
+			var query = Uri.EscapeUriString(string.Join(" ", _text));
 			var search = new VideoSearch();
 			var result = new StringBuilder($"[color=black]You[/color][color=red]Tube[/color] Results for \"[b]{query}[/b]\":\n");
 			var items = search.SearchQuery(query, 1);

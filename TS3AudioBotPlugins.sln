@@ -47,7 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackToDefaultChannel", "Bac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTTS", "SimpleTTS\SimpleTTS.csproj", "{7AEBD962-2CF4-485C-A811-79E142A44CEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JTS3Mod", "JTS3Mod\JTS3Mod.csproj", "{64BFD2C5-6774-4AE2-AD28-7423FC554F29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JTS3Mod", "JTS3Mod\JTS3Mod.csproj", "{64BFD2C5-6774-4AE2-AD28-7423FC554F29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoChannelDescription", "AutoChannelDescription\AutoChannelDescription.csproj", "{BF67E970-7027-4E95-AF7D-74A9120F0A43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +129,10 @@ Global
 		{64BFD2C5-6774-4AE2-AD28-7423FC554F29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64BFD2C5-6774-4AE2-AD28-7423FC554F29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64BFD2C5-6774-4AE2-AD28-7423FC554F29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

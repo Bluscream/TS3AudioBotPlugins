@@ -2,14 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Bluscream</Authors>
-    <PackageProjectUrl>https://github.com/Splamy/TS3AudioBot</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bluscream/TS3AudioBotPlugins</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/Splamy/TS3AudioBot</PackageProjectUrl>
+    <Description>Automatic channel description plugin for TS3AudioBot</Description>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Authors>Bluscream</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>C:\TS3AB\Plugins\</OutputPath>
+    <OutputPath>C:\TS3AB\net46\Plugins\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>

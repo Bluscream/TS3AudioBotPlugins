@@ -16,20 +16,23 @@ using ChannelIdT = System.UInt64;
 
 namespace AutoChannelCreate
 {
-	public class PluginInfo
-	{
-		public static readonly string Name = typeof(PluginInfo).Namespace;
-		public const string Description = "Allows you to set several locations where the current track is being announced.\n" +
-										  "Edit the file NowPlaying.dll.config to your needs.\n" +
-										  "Possible replacements: {now}, {botname}, {address}, {onconnect}, {onidle}, {ondisconnect}";
-		public const string Url = "https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/AutoChannelCreate";
-		public const string Author = "Bluscream <admin@timo.de.vc>";
-		public const int Version = 1;
+	public class PluginInfo {
+		public static readonly string ShortName = typeof(PluginInfo).Namespace;
+		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+		public static string Description = "";
+		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+		public PluginInfo()
+		{
+			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+			Description = versionInfo.FileDescription;
+			Author = versionInfo.CompanyName;
+		}
 	}
-	public class AutoChannelCreate : IBotPlugin
-	{
-		//private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger(); /* TODO */
-		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
+	public class AutoChannelCreate : IBotPlugin {
+		private static readonly PluginInfo PluginInfo = new PluginInfo();
+		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		private List<ChannelList> channelList = new List<ChannelList>();
 
@@ -40,12 +43,12 @@ namespace AutoChannelCreate
 
 		public void Initialize() {
 			if (Regex.Match(Conf.Connect.Channel.Value, @"^\/\d+$").Success) {
-				Console.WriteLine("AutoChannelCreate does not work if the default channel is set to an ID!");
+				Log.Error("AutoChannelCreate does not work if the default channel is set to an ID!");
 				return;
 			}
 			TS3FullClient.OnChannelListFinished += Ts3Client_OnChannelListFinished;
 			TS3FullClient.OnEachChannelList += Ts3Client_OnEachChannelList;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		private void Ts3Client_OnEachChannelList(object sender, ChannelList e) {
@@ -60,9 +63,9 @@ namespace AutoChannelCreate
 				}
 			}
 			var now = DateTime.Now.ToString();
-			int neededTP = 2147483647; // 2147483647 // -1
+			int neededTP = int.MaxValue; // int.MaxValue // -1
 			if (found == 0) {
-				PluginLog(LogLevel.Warning, "Default channel does not exist yet, creating...");
+				Log.Warn("Default channel does not exist yet, creating...");
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
 					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
@@ -75,13 +78,13 @@ namespace AutoChannelCreate
 				});
 				var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
 				if (!createResult.Ok) {
-					PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
+					Log.Debug($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
 				}
 				var createRes = createResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 				found = createRes.ChannelId;
 			}
 			if (found == 0 ) return;
-			PluginLog(LogLevel.Debug, "Updating channel...");
+			Log.Debug("Updating channel...");
 			var uid = ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid;
 			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
 			new CommandParameter("cid", found),
@@ -100,7 +103,7 @@ namespace AutoChannelCreate
 			var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
 			if (!editResult.Ok)
 			{
-				PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could set channel description! ({editResult.Error.Message})"); return;
+				Log.Debug($"{PluginInfo.Name}: Could set channel description! ({editResult.Error.Message})"); return;
 			}
 			// var reditRes = editResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 			var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
@@ -111,7 +114,7 @@ namespace AutoChannelCreate
 			});
 			var tpResult = TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
 			if (!tpResult.Ok) {
-				PluginLog(LogLevel.Debug, $"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
+				Log.Debug($"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
 			}
 			//tpRes = tpResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 			
@@ -120,7 +123,7 @@ namespace AutoChannelCreate
 		public void Dispose() {
 			TS3FullClient.OnChannelListFinished -= Ts3Client_OnChannelListFinished;
 			TS3FullClient.OnEachChannelList -= Ts3Client_OnEachChannelList;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
 }
