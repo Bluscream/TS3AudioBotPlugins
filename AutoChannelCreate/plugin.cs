@@ -13,6 +13,8 @@ using TS3Client.Messages;
 using TS3Client;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
+using IniParser;
+using IniParser.Model;
 
 namespace AutoChannelCreate
 {
@@ -23,6 +25,7 @@ namespace AutoChannelCreate
 		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
 		public static string Author = "Bluscream <admin@timo.de.vc>";
 		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+		public static readonly string ConfigFile = $"{ShortName}.ini";
 		public PluginInfo()
 		{
 			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -31,7 +34,7 @@ namespace AutoChannelCreate
 		}
 	}
 	public class AutoChannelCreate : IBotPlugin {
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
+		//public PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		private List<ChannelList> channelList = new List<ChannelList>();
@@ -39,11 +42,18 @@ namespace AutoChannelCreate
 		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
-		public PlayManager BotPlayer { get; set; }		
+		public PlayManager BotPlayer { get; set; }
+
+		public static IniData PluginConfig;
 
 		public void Initialize() {
 			if (Regex.Match(Conf.Connect.Channel.Value, @"^\/\d+$").Success) {
 				Log.Error("AutoChannelCreate does not work if the default channel is set to an ID!");
+				return;
+			}
+			var success = new Config().LoadConfig();
+			if (!success) {
+				Log.Warn("Config for plugin {} created, please modify it and reload!");
 				return;
 			}
 			TS3FullClient.OnChannelListFinished += Ts3Client_OnChannelListFinished;
@@ -69,7 +79,7 @@ namespace AutoChannelCreate
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 					new CommandParameter("channel_name", Conf.Connect.Channel.Value),
 					new CommandParameter("channel_password", Conf.Connect.ChannelPassword.Get().HashedPassword),
-					new CommandParameter("channel_codec", 5), // * Radio *
+					new CommandParameter("channel_codec", (int) Codec.OpusMusic), // * Radio *
 					new CommandParameter("channel_codec_quality", 10),
 					new CommandParameter("channel_flag_maxclients_unlimited", false),
 					new CommandParameter("channel_maxclients", 50), // 50 / 10

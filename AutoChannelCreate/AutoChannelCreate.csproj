@@ -16,6 +16,18 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <DocumentationFile>C:\TS3AB\net46\Plugins\netstandard2.0\AutoChannelCreate.xml</DocumentationFile>
+    <OutputPath>C:\TS3AB\net46\Plugins</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ini-parser" Version="2.5.2" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj">
       <Private>false</Private>
