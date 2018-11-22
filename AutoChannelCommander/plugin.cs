@@ -7,21 +7,6 @@ using TS3AudioBot.CommandSystem;
 using TS3AudioBot.Helper;
 using TS3Client.Full;
 using TS3Client;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using TS3AudioBot.Config;
-using TS3AudioBot.Plugins;
-using TS3AudioBot;
-using TS3Client.Commands;
-using TS3Client.Full;
-using TS3Client.Messages;
-using TS3Client;
-using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
 
 namespace AutoChannelCommander
 {
@@ -60,7 +45,7 @@ namespace AutoChannelCommander
 	public class AutoChannelCommander : IBotPlugin
 	{
 		private static readonly PluginInfo PluginInfo = new PluginInfo();
-		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
+		private static readonly NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Bot bot;
 		public Ts3FullClient TS3FullClient { get; set; }
@@ -103,7 +88,7 @@ namespace AutoChannelCommander
 			TS3Client.SetChannelCommander(CCState);
 		}
 
-		[Command("acc toggle", PluginInfo.Description)]
+		[Command("acc toggle", "")]
 		public string CommandToggleAutoChannelCommander()
 		{
 			Mode = Mode.Next();

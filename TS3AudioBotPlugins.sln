@@ -49,7 +49,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTTS", "SimpleTTS\Simp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JTS3Mod", "JTS3Mod\JTS3Mod.csproj", "{64BFD2C5-6774-4AE2-AD28-7423FC554F29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoChannelDescription", "AutoChannelDescription\AutoChannelDescription.csproj", "{BF67E970-7027-4E95-AF7D-74A9120F0A43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoChannelDescription", "AutoChannelDescription\AutoChannelDescription.csproj", "{BF67E970-7027-4E95-AF7D-74A9120F0A43}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouTubeLive", "Twitch\YouTubeLive.csproj", "{1111FAB8-30C0-403D-8A04-9848E20BEEAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AwayMover", "AwayMover\AwayMover.csproj", "{F6387855-FD28-4AA1-A8C2-96C05464A0D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotAutoStart", "BotAutoStart\BotAutoStart.csproj", "{95D19E7E-4AAB-44FD-92CE-F6AA58E300BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +139,18 @@ Global
 		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF67E970-7027-4E95-AF7D-74A9120F0A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1111FAB8-30C0-403D-8A04-9848E20BEEAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1111FAB8-30C0-403D-8A04-9848E20BEEAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1111FAB8-30C0-403D-8A04-9848E20BEEAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1111FAB8-30C0-403D-8A04-9848E20BEEAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6387855-FD28-4AA1-A8C2-96C05464A0D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6387855-FD28-4AA1-A8C2-96C05464A0D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6387855-FD28-4AA1-A8C2-96C05464A0D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6387855-FD28-4AA1-A8C2-96C05464A0D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D19E7E-4AAB-44FD-92CE-F6AA58E300BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D19E7E-4AAB-44FD-92CE-F6AA58E300BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D19E7E-4AAB-44FD-92CE-F6AA58E300BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D19E7E-4AAB-44FD-92CE-F6AA58E300BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

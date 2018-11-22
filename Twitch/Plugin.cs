@@ -1,39 +1,26 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Collections.Generic;
-using TS3AudioBot;
-using TS3AudioBot.CommandSystem;
+using System.Text.RegularExpressions;
+using System.Reflection;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
+using TS3AudioBot;
+using TS3AudioBot.CommandSystem;
 using TS3Client.Commands;
 using TS3Client.Full;
 using TS3Client.Messages;
+using TS3Client.Audio;
 using TS3Client;
-using YoutubeSearch;
+using Nett;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
-using System.Text;
+using System.Diagnostics;
 
-//YTAPIKEY: AIzaSyBHTLNDGw7yj_gnw7_e1_ztZ5nJigP9fEg
-
-namespace YoutubeSearchPlugin
+namespace YoutubeLive
 {
-	static class StringExtensions
-	{
-
-		public static IEnumerable<String> SplitInParts(this String s, Int32 partLength)
-		{
-			if (s == null)
-				throw new ArgumentNullException("s");
-			if (partLength <= 0)
-				throw new ArgumentException("Part length has to be positive.", "partLength");
-
-			for (var i = 0; i < s.Length; i += partLength)
-				yield return s.Substring(i, Math.Min(partLength, s.Length - i));
-		}
-
-	}
 	public class PluginInfo
 	{
 		public static readonly string ShortName = typeof(PluginInfo).Namespace;
@@ -49,32 +36,42 @@ namespace YoutubeSearchPlugin
 			Author = versionInfo.CompanyName;
 		}
 	}
-	public class YoutubeSearchPlugin : IBotPlugin
+	public class YoutubeLive : IBotPlugin
 	{
 		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
+		public Ts3FullClient TS3FullClient { get; set; }
+		public Ts3Client TS3Client { get; set; }
+		public ConfBot Conf { get; set; }
+		public PlayManager BotPlayer { get; set; }
+		public IPlayerConnection PlayerConnection { get; set; }
+		public IVoiceTarget targetManager { get; set; }
+		//public ConfHistory confHistory { get; set; }
 
-		//private static WebClient wc = new WebClient();
-
-		public Ts3FullClient Ts3Client { get; set; }
+		private static WebClient wc = new WebClient();
 
 		public void Initialize()
 		{
+			BotPlayer.BeforeResourceStarted += BeforeResourceStarted;
+			BotPlayer.BeforeResourceStopped += BeforeResourceStopped;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
-		[Command("yt", "")]
-		public string CommandSearchYoutube(params string[] _text)
+		private void BeforeResourceStarted(object sender, PlayInfoEventArgs e)
 		{
-			var query = Uri.EscapeUriString(string.Join(" ", _text));
-			var search = new VideoSearch();
-			var result = new StringBuilder($"[color=black]You[/color][color=red]Tube[/color] Results for \"[b]{query}[/b]\":\n");
-			var items = search.SearchQuery(query, 1);
-			for (int i = 0; i < 5; i++) {
-				result.Append($"[url={items[i].Url}]{items[i].Title}[/URL]\n");
+			Log.Debug($"Set Volume to {PlayerConnection.Volume}");
+		}
+
+		private void BeforeResourceStopped(object sender, EventArgs e)
+		{
+			try
+			{
+				wc.
+				// wc.UploadData(string.Format("https://splamy.de/api/teamspeak/version/{0}/{1}?sign={2}",
+					//info.ClientVersion, info.ClientPlatform, Uri.EscapeDataString(info.ClientVersionSign)), "POST", Array.Empty<byte>());
 			}
-			return result.ToString(); // .SplitInParts(500).FirstOrDefault()
+			catch { return; }
 		}
 
 		public void Dispose()
