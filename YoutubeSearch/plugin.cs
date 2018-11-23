@@ -34,37 +34,42 @@ namespace YoutubeSearchPlugin
 		}
 
 	}
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
 		{
-			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 	public class YoutubeSearchPlugin : IBotPlugin
 	{
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
-
-
-		//private static WebClient wc = new WebClient();
 
 		public Ts3FullClient Ts3Client { get; set; }
 
 		public void Initialize()
 		{
-			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+			Log.Info("Plugin {} v{} by {} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		[Command("yt", "")]
+		public void CommandPlayYoutube(PlayManager playManager, params string[] _text)
+		{
+			var query = Uri.EscapeUriString(string.Join(" ", _text));
+			var search = new VideoSearch();
+			var result = search.SearchQuery(query, 1)[0];
+			playManager.Play(InvokerData.Anonymous, result.Url);
+		}
+
+		[Command("search yt", "")]
 		public string CommandSearchYoutube(params string[] _text)
 		{
 			var query = Uri.EscapeUriString(string.Join(" ", _text));

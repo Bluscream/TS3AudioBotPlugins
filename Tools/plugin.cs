@@ -11,6 +11,7 @@ using TS3AudioBot.Web.Api;
 using TS3AudioBot.Helper;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
+using TS3AudioBot.Config;
 
 namespace Tools
 {
@@ -33,6 +34,12 @@ namespace Tools
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 		public Ts3FullClient Lib { get; set; }
+		public Ts3Client TS3Client { get; set; }
+		public ConfBot Conf { get; set; }
+		public PlayManager BotPlayer { get; set; }
+		public IPlayerConnection PlayerConnection { get; set; }
+		public IVoiceTarget targetManager { get; set; }
+		public ConfRoot ConfRoot { get; set; }
 
 		public void Initialize()
 		{
@@ -89,6 +96,19 @@ namespace Tools
 		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
 		{
 			targetManager.WhisperChannelSubscribe(Lib.WhoAmI().Unwrap().ChannelId, true);
+		}
+
+		[Command("isplaying")]
+		public bool CommandIsPlaying(IPlayerConnection playerConnection /*, PlayManager playManager*/)
+		{
+			return playerConnection.Paused;
+			/*var paused = playerConnection.Paused;
+			var playing = playManager.IsPlaying;
+			if (paused && !playing)
+				return false;
+			else if (!paused && playing)
+				return true;
+			else throw new Exception("Bla");*/
 		}
 
 		public void Dispose()

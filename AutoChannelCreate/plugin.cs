@@ -88,21 +88,29 @@ namespace AutoChannelCreate
 				Log.Warn("No section found for \"{}\" \"{}\"! Skipping...", bot, PluginConfigFile); return;
 			}
 			var now = DateTime.Now.ToString();
-			var neededTP = PluginConfig[bot]["Needed Talk Power"]; // .Replace("{max}", int.MaxValue.ToString())
+			var neededTP = PluginConfig[bot]["Needed Talk Power"];
 			var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : int.Parse(neededTP);
 			if (found == 0) {
-				var channel_name = PluginConfig[bot]["Name"].Replace("{auto}", Conf.Connect.Channel.Value);
+				var channel_name = Conf.Connect.Channel.Value;
 				Log.Info("Default channel \"{}\" for template \"{}\" does not exist yet, creating...", channel_name, bot);
 				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
-					new CommandParameter("channel_name", channel_name),
-					new CommandParameter("channel_password", PluginConfig[bot]["Password"].Replace("{auto}", Conf.Connect.ChannelPassword.Get().HashedPassword)),
-					new CommandParameter("channel_codec", PluginConfig[bot]["Codec"]), 
-					new CommandParameter("channel_codec_quality", PluginConfig[bot]["Codec Quality"]),
-					new CommandParameter("channel_flag_maxclients_unlimited", PluginConfig[bot]["Maxclients"] == "-1"),
-					new CommandParameter("channel_maxclients", PluginConfig[bot]["Maxclients"]),
-					new CommandParameter("channel_needed_talk_power", channel_needed_talk_power),
-					new CommandParameter("channel_topic", PluginConfig[bot]["Topic Template"].Replace("{now}", now))
+					new CommandParameter("channel_name", channel_name)
 				});
+				var channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
+				if (!string.IsNullOrEmpty(channel_password)) commandCreate.AppendParameter(new CommandParameter("channel_password", channel_password));
+				var channel_codec = PluginConfig[bot]["Codec"];
+				if (!string.IsNullOrEmpty(channel_codec)) commandCreate.AppendParameter(new CommandParameter("channel_codec", channel_codec));
+				var channel_codec_quality = PluginConfig[bot]["Codec Quality"];
+				if (!string.IsNullOrEmpty(channel_codec_quality)) commandCreate.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality));
+				var channel_maxclients = PluginConfig[bot]["Maxclients"];
+				if (!string.IsNullOrEmpty(channel_maxclients)) {
+					commandCreate.AppendParameter(new CommandParameter("channel_maxclients", channel_maxclients));
+					commandCreate.AppendParameter(new CommandParameter("channel_flag_maxclients_unlimited", channel_maxclients == "-1"));
+				}
+				if (!string.IsNullOrEmpty(neededTP)) commandCreate.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
+				var channel_topic = PluginConfig[bot]["Topic Template"];
+				if (!string.IsNullOrEmpty(channel_topic)) commandCreate.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", now)));
+				// Log.Debug(commandCreate);
 				var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
 				if (!createResult.Ok) {
 					Log.Debug($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
@@ -128,7 +136,8 @@ namespace AutoChannelCreate
 						.Replace("{onconnect}", Conf.Events.OnConnect)
 						.Replace("{onidle}", Conf.Events.OnIdle)
 						.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
-					)
+					),
+					new CommandParameter("channel_needed_talk_power", channel_needed_talk_power)
 				});
 				var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
 				if (!editResult.Ok)

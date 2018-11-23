@@ -3,30 +3,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using TS3AudioBot.Plugins;
-using TS3Client;
 using TS3Client.Full;
 using TS3Client.Messages;
 
 namespace VersionDetector
 {
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
 		{
-			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 	public class VersionDetector : IBotPlugin
 	{
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		private static WebClient wc = new WebClient();

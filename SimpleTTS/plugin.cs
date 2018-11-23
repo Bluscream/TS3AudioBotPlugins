@@ -14,10 +14,11 @@ using TS3Client.Full;
 using TS3Client.Messages;
 using TS3Client.Audio;
 using TS3Client;
-using Nett;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
 using System.Diagnostics;
+using IniParser;
+using IniParser.Model;
 
 namespace SimpleTTS
 {
@@ -47,22 +48,40 @@ namespace SimpleTTS
 		public PlayManager BotPlayer { get; set; }
 		public IPlayerConnection PlayerConnection { get; set; }
 		public IVoiceTarget targetManager { get; set; }
-		//public ConfHistory confHistory { get; set; }
+		public ConfRoot ConfRoot { get; set; }
 		// { "UK English Female", "UK English Male", "US English Female", "Spanish Female", "French Female", "Deutsch Female", "Italian Female", "Greek Female", "Hungarian Female", "Turkish Female", "Russian Female", "Dutch Female", "Swedish Female", "Norwegian Female", "Japanese Female", "Korean Female", "Chinese Female", "Hindi Female", "Serbian Male", "Croatian Male", "Bosnian Male", "Romanian Male", "Catalan Male", "Australian Female", "Finnish Female", "Afrikaans Male", "Albanian Male", "Arabic Male", "Armenian Male", "Czech Female", "Danish Female", "Esperanto Male", "Hatian Creole Female", "Icelandic Male", "Indonesian Female", "Latin Female", "Latvian Male", "Macedonian Male", "Moldavian Male", "Montenegrin Male", "Polish Female", "Brazilian Portuguese Female", "Portuguese Female", "Serbo-Croatian Male", "Slovak Female", "Spanish Latin American Female", "Swahili Male", "Tamil Male", "Thai Female", "Vietnamese Male", "Welsh Male" };
 		public string[] TTSLocales = { "af-ZA", "ar-SA", "bs", "ca-ES", "cs-CZ", "cy", "da-DK", "de-DE", "el-GR", "en-AU", "en-GB", "en-US", "eo", "es-ES", "es-MX", "fi-FI", "fr-FR", "hi-IN", "hr-HR", "hu-HU", "hy-AM", "id-ID", "is-IS", "it-IT", "ja-JP", "ko-KR", "la", "lv-LV", "md", "me", "mk-MK", "nb-NO", "nl-NL", "pl-PL", "pt-BR", "ro-RO", "ru-RU", "sk-SK", "sq-AL", "sr-RS", "sv-SE", "sw-KE", "th-TH", "tr-TR", "vi-VN", "zh-CN", "zh-HK", "zh-TW" };
 		public string[] TTSGenders = { "male", "female" };
-		public string TTSUrl = "http://code.responsivevoice.org/getvoice.php?t={text}&tl={locale}&gender={gender}&pitch={pitch}&rate={rate}&vol={volume}"; // &sv=&vn=
-		public string TTSLocale = "de-DE"; public string TTSGender = "female"; public string TTSPitch = "0.5"; public string TTSRate = "0.5";
-		public string TTSVolume = "1"; public float BOTVolume = 100; public float oldVolume = 0; public bool isTalking = false;
-		public bool isBroadcast = false; GroupWhisperType oldGroupWhisperType; GroupWhisperTarget oldGroupWhisperTarget; TargetSendMode oldSendMode;
+		public bool isTalking = false; public bool isBroadcast = false; public float BOTVolume = 100; public float oldVolume = 0;
+		GroupWhisperType oldGroupWhisperType; GroupWhisperTarget oldGroupWhisperTarget; TargetSendMode oldSendMode;
 		ICollection<ushort> oldWhisperClients; ICollection<ulong> oldWhisperChannels; ulong oldTargetId;
 
-		public void Initialize() {
-			// TomlTable table = Toml.ReadFile("test.tml");
-			// var timeout = table.Get<TomlTable>("Server").Get<TimeSpan>("Timeout");
-			var myConfig = TomlSettings.Create();
-			//timeout = "5000"
+		private static FileIniDataParser ConfigParser;
+		private static string PluginConfigFile;
+		public static IniData PluginConfig;
+		public const string section = "General";
+		public const string bsection = "Broadcast";
 
+		public void Initialize()
+		{
+			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.ini");
+			ConfigParser = new FileIniDataParser();
+			if (!File.Exists(PluginConfigFile))
+			{
+				PluginConfig = new IniData();
+				PluginConfig[section]["Url"] = "http://code.responsivevoice.org/getvoice.php?t={text}&tl={locale}&gender={gender}&pitch={pitch}&rate={rate}&vol=1"; // &sv={sv}&vn={vn}
+				PluginConfig[section]["Locale"] = "en-US";
+				PluginConfig[section]["Gender"] = "female";
+				PluginConfig[section]["Pitch"] = "0.5";
+				PluginConfig[section]["Rate"] = "0.5";
+				// PluginConfig[section]["Volume"] = "1";
+				PluginConfig[bsection]["Gender"] = "male";
+				PluginConfig[bsection]["Rate"] = "0.3";
+				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+				Log.Warn("Config for plugin {} created, please modify it and reload!", PluginInfo.Name);
+				return;
+			}
+			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			BotPlayer.BeforeResourceStarted += BeforeResourceStarted;
 			BotPlayer.BeforeResourceStopped += BeforeResourceStopped;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
@@ -120,13 +139,20 @@ namespace SimpleTTS
 			oldTargetId = targetManager.GroupWhisperTargetId;
 			oldWhisperChannels = targetManager.WhisperChannel.ToArray();
 			oldWhisperClients = targetManager.WhisperClients.ToArray();
+			isBroadcast = true;
 			CommandSay(playerConnection, text);
 			// targetManager.WhisperClientSubscribe(invoker.ClientId.Value);
 		}
 		[Command("say", "Syntax: !say <text>")]
 		public void CommandSay(IPlayerConnection playerConnection, params string[] _text) {
 			var text = Uri.EscapeUriString(string.Join(" ", _text));
-			var url = TTSUrl.Replace("{text}", text).Replace("{locale}", TTSLocale).Replace("{gender}", TTSGender).Replace("{pitch}", TTSPitch).Replace("{rate}", TTSRate).Replace("{volume}", TTSVolume);
+			var url = PluginConfig[section]["Url"]
+				.Replace("{text}", text)
+				.Replace("{locale}", PluginConfig[section]["Locale"])
+				.Replace("{gender}", isBroadcast ? PluginConfig[bsection]["Gender"] : PluginConfig[section]["Gender"])
+				.Replace("{pitch}", PluginConfig[section]["Pitch"])
+				.Replace("{rate}", isBroadcast ? PluginConfig[bsection]["Rate"] : PluginConfig[section]["Rate"])
+				.Replace("{volume}", PluginConfig[section]["Volume"]);
 			oldVolume = playerConnection.Volume;
 			//playerConnection.Paused = true;
 			//playerConnection.Volume = 0;
@@ -145,16 +171,18 @@ namespace SimpleTTS
 		public string CommandSetLocale(string locale)
 		{
 			if (!TTSLocales.Contains(locale)) return $"Failed to set locale! Make sure it's a valid locale from {string.Join(",", TTSLocales)}";
-			TTSLocale = locale;
-			return $"Set SimpleTTS locale to [b]{TTSLocale}[/b]";
+			PluginConfig[section]["Locale"] = locale;
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return $"Set SimpleTTS locale to [b]{locale}[/b]";
 		}
 
 		[Command("tts gender", "Syntax: !tts gender <male|female>")]
 		public string CommandSetGender(string gender)
 		{
 			if (!TTSGenders.Contains(gender)) return $"Failed to set locale! Make sure it's a valid value from {string.Join(",", TTSGenders)}";
-			TTSGender = gender;
-			return $"Set SimpleTTS gender to [b]{TTSGender}[/b]";
+			PluginConfig[section]["Gender"] = gender;
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return $"Set SimpleTTS gender to [b]{gender}[/b]";
 		}
 
 		[Command("tts pitch", "Syntax: !tts <pitch (0.0-1.0)>")]
@@ -162,8 +190,9 @@ namespace SimpleTTS
 		{
 			var success = double.TryParse(pitch, out double s);
 			if (!success) return "Failed to set pitch! Make sure it's a valid value between 0.0 and 1.0";
-			TTSPitch = pitch;
-			return $"Set SimpleTTS pitch to [b]{TTSPitch}[/b]";
+			PluginConfig[section]["Pitch"] = pitch;
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return $"Set SimpleTTS pitch to [b]{pitch}[/b]";
 		}
 
 		[Command("tts rate", "Syntax: !tts <rate (0.0-1.0)>")]
@@ -171,8 +200,9 @@ namespace SimpleTTS
 		{
 			var success = double.TryParse(rate, out double s);
 			if (!success) return "Failed to set rate! Make sure it's a valid value between 0.0 and 1.0";
-			TTSRate = rate;
-			return $"Set SimpleTTS rate to [b]{TTSRate}[/b]";
+			PluginConfig[section]["Rate"] = rate;
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return $"Set SimpleTTS rate to [b]{rate}[/b]";
 		}
 
 		[Command("tts volume", "Syntax: !tts <volume (0-100)>")]
@@ -180,7 +210,6 @@ namespace SimpleTTS
 		{
 			var success = float.TryParse(volume, out float s);
 			if (!success) return "Failed to set volume! Make sure it's a valid value between 0 and 100";
-			// TTSVolume = volume;
 			BOTVolume = s;
 			return $"Set SimpleTTS volume to [b]{volume}[/b]";
 		}

@@ -27,24 +27,23 @@ namespace AutoChannelCommander
 		CHANNEL,
 		TALKING
 	}
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
 		{
-			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 	public class AutoChannelCommander : IBotPlugin
 	{
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static readonly NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Bot bot;
@@ -63,7 +62,7 @@ namespace AutoChannelCommander
 			TS3FullClient.OnChannelListFinished += OnChannelListFinished;
 			//TS3FullClient.On
 			Timer = TickPool.RegisterTick(Tick, TimeSpan.FromSeconds(1), false);
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+			Log.Info("Plugin {} v{} by {} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		private void OnEachClientMoved(object sender, ClientMoved e)
@@ -109,7 +108,7 @@ namespace AutoChannelCommander
 			TickPool.UnregisterTicker(Timer);
 			TS3FullClient.OnEachClientMoved -= OnEachClientMoved;
 			TS3FullClient.OnChannelListFinished -= OnChannelListFinished;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
 }

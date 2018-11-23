@@ -14,24 +14,23 @@ using TS3AudioBot.Helper;
 
 namespace ChannelEdit
 {
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
 		{
-			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 	public class ChannelEdit : IBotPlugin
 	{
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Ts3FullClient TS3FullClient { get; set; }
@@ -42,7 +41,7 @@ namespace ChannelEdit
 		public void Initialize()
 		{
 			TS3FullClient.OnEachClientUpdated += OnEachClientUpdated; // Remove this for security reasons!
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+			Log.Info("Plugin {} v{} by {} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		private void OnEachClientUpdated(object sender, ClientUpdated e)
@@ -61,7 +60,7 @@ namespace ChannelEdit
 			} catch { }
 		}
 
-		[Command("ce name", PluginInfo.Description)]
+		[Command("ce name", "")]
 		public string CommandEditChannelName(string name)
 		{
 			ChannelIdT ownChannelId = TS3FullClient.WhoAmI().Value.ChannelId;
@@ -189,7 +188,7 @@ namespace ChannelEdit
 		public void Dispose()
 		{
 			TS3FullClient.OnEachClientUpdated -= OnEachClientUpdated;
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
 }
