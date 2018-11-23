@@ -14,38 +14,29 @@ using ChannelIdT = System.UInt64;
 
 namespace Tools
 {
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
 		{
-			var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 	public class Tools : IBotPlugin
 	{
-		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
-
-
 		public Ts3FullClient Lib { get; set; }
 
-		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
-
-		public void Initialize() {
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
-
-		}
-
-		public void Dispose() {
-			PluginLog(LogLevel.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+		public void Initialize()
+		{
+			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
 		[Command("id")]
@@ -98,6 +89,11 @@ namespace Tools
 		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
 		{
 			targetManager.WhisperChannelSubscribe(Lib.WhoAmI().Unwrap().ChannelId, true);
+		}
+
+		public void Dispose()
+		{
+			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
 }

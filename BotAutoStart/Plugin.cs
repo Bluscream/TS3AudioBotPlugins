@@ -49,9 +49,7 @@ namespace BotAutoStart
 
 		public void Initialize()
 		{
-			PluginConfigFile = $"{PluginInfo.ShortName}.ini";
-			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, PluginConfigFile);
-			Log.Debug(PluginConfigFile);
+			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.ini");
 			if (!File.Exists(PluginConfigFile))
 			{
 				File.CreateText(PluginConfigFile);
@@ -89,8 +87,8 @@ namespace BotAutoStart
 		private void OnEachClientEnterView(object sender, ClientEnterView e)
 		{
 			var has = HasAutoStart(e.Uid);
-			Log.Debug($"{e.Name} has a default bot: {has}");
 			if (string.IsNullOrEmpty(has)) return;
+			Log.Debug($"{e.Name} has a default bot: {has}");
 			if (IsBotConnected(has)) return;
 			Log.Debug($"{has} is not connected");
 			BotManager.RunBotTemplate(has);
@@ -140,11 +138,11 @@ namespace BotAutoStart
 				var bot = _bot.Value;
 				var matches = bot.Name == name;
 				var not_offline = bot.Status != BotStatus.Offline;
-				Log.Debug($"{bot.Name} == {name} && {bot.Status} != {BotStatus.Offline}: {matches} && {not_offline} ({matches && not_offline})");
+				// Log.Debug($"{bot.Name} == {name} && {bot.Status} != {BotStatus.Offline}: {matches} && {not_offline} ({matches && not_offline})");
 				if (matches && not_offline)
 					return true;
 			}
-			Log.Debug("Returning False");
+			// Log.Debug("Returning False");
 			return false;
 		}
 
