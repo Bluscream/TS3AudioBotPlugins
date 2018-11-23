@@ -3,34 +3,33 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
 using TS3Client.Full;
 using TS3Client.Messages;
-using System.Diagnostics;
 
 namespace BotAutoStart
 {
-	public class PluginInfo
+	public static class PluginInfo
 	{
-		public static readonly string ShortName = typeof(PluginInfo).Namespace;
-		public static readonly string Name = string.IsNullOrEmpty(Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : Assembly.GetExecutingAssembly().GetName().Name;
-		public static string Description = "";
-		public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-		public PluginInfo()
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+
+		static PluginInfo()
 		{
-			var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
-			Description = versionInfo.FileDescription;
-			Author = versionInfo.CompanyName;
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
+
 	public class BotAutoStart : IBotPlugin
 	{
-		//private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Ts3FullClient TS3FullClient { get; set; }
@@ -44,22 +43,19 @@ namespace BotAutoStart
 		//public ConfHistory confHistory { get; set; }
 
 		private static string PluginConfigFile;
-		/*private static FileIniDataParser ConfigParser;
-		private static IniData PluginConfig;*/
 		private static Dictionary<string, string> PluginConfig = new Dictionary<string, string>();
 
 		private static Dictionary<int, string> UidCache;
 
 		public void Initialize()
 		{
-			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.ini");
+			PluginConfigFile = $"{PluginInfo.ShortName}.ini";
+			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, PluginConfigFile);
+			Log.Debug(PluginConfigFile);
 			if (!File.Exists(PluginConfigFile))
 			{
-				File.CreateText(PluginConfigFile).Dispose();
-				throw new Exception($"Config file {PluginConfigFile} not found, creating... Please add new entries in the format [b]uid:template name without bot_[/b]");
-				/*var botSection = new SectionData("Bots");
-				PluginConfig.Sections.Add(botSection);
-				ConfigParser.WriteFile(PluginConfigFile, PluginConfig, System.Text.Encoding.UTF8);*/
+				File.CreateText(PluginConfigFile);
+				throw new Exception($"Config file {PluginConfigFile} not found, creating... Please add new entries in the format 'uid:template name without \"bot_\"'");
 			}
 			foreach (var _line in File.ReadAllLines(PluginConfigFile))
 			{
@@ -71,8 +67,6 @@ namespace BotAutoStart
 					Log.Warn($"Malformed Line in {PluginConfigFile}: \"{_line}\"");
 				}
 			}
-			/*ConfigParser = new FileIniDataParser();
-			PluginConfig = ConfigParser.ReadFile(PluginConfigFile);*/
 
 			UidCache = new Dictionary<int, string>();
 
@@ -95,8 +89,10 @@ namespace BotAutoStart
 		private void OnEachClientEnterView(object sender, ClientEnterView e)
 		{
 			var has = HasAutoStart(e.Uid);
+			Log.Debug($"{e.Name} has a default bot: {has}");
 			if (string.IsNullOrEmpty(has)) return;
-			if (!IsBotConnected(has)) return;
+			if (IsBotConnected(has)) return;
+			Log.Debug($"{has} is not connected");
 			BotManager.RunBotTemplate(has);
 			UidCache.Add(e.ClientId,e.Uid);
 		}
@@ -121,6 +117,7 @@ namespace BotAutoStart
 		}
 
 		private bool IsBotConnected(string name) {
+			name = name.Trim();
 			var botInfoList = BotManager.GetBotInfolist();
 			var botConfigList = ConfRoot.GetAllBots();
 			var infoList = new Dictionary<string, BotInfo>();
@@ -141,9 +138,13 @@ namespace BotAutoStart
 			foreach (var _bot in infoList)
 			{
 				var bot = _bot.Value;
-				if (bot.Name == name && bot.Status != BotStatus.Offline)
+				var matches = bot.Name == name;
+				var not_offline = bot.Status != BotStatus.Offline;
+				Log.Debug($"{bot.Name} == {name} && {bot.Status} != {BotStatus.Offline}: {matches} && {not_offline} ({matches && not_offline})");
+				if (matches && not_offline)
 					return true;
 			}
+			Log.Debug("Returning False");
 			return false;
 		}
 
