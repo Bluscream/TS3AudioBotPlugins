@@ -98,17 +98,28 @@ namespace Tools
 			targetManager.WhisperChannelSubscribe(Lib.WhoAmI().Unwrap().ChannelId, true);
 		}
 
-		[Command("isplaying")]
-		public bool CommandIsPlaying(IPlayerConnection playerConnection /*, PlayManager playManager*/)
+		[Command("isplaying playerconnection")]
+		public bool CommandIsPlaying(IPlayerConnection playerConnection)
 		{
-			return playerConnection.Paused;
-			/*var paused = playerConnection.Paused;
+			return !playerConnection.Paused;
+		}
+
+		[Command("isplaying playmanager")]
+		public bool CommandIsPlaying2(PlayManager playManager)
+		{
+			return playManager.IsPlaying;
+		}
+
+		[Command("isplaying weird")]
+		public bool CommandIsPlaying3(IPlayerConnection playerConnection, PlayManager playManager)
+		{
+			var paused = playerConnection.Paused;
 			var playing = playManager.IsPlaying;
 			if (paused && !playing)
 				return false;
 			else if (!paused && playing)
 				return true;
-			else throw new Exception("Bla");*/
+			else throw new Exception("Unknown");
 		}
 
 		public void Dispose()

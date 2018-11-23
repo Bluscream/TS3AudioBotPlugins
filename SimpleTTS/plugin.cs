@@ -1,22 +1,15 @@
+#define ALT
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
 using TS3AudioBot.CommandSystem;
-using TS3Client.Commands;
 using TS3Client.Full;
-using TS3Client.Messages;
 using TS3Client.Audio;
 using TS3Client;
-using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
-using System.Diagnostics;
 using IniParser;
 using IniParser.Model;
 
@@ -42,13 +35,12 @@ namespace SimpleTTS
 		private static readonly PluginInfo PluginInfo = new PluginInfo();
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
-		public ConfBot Conf { get; set; }
-		public PlayManager BotPlayer { get; set; }
+		public PlayManager PlayManager { get; set; }
 		public IPlayerConnection PlayerConnection { get; set; }
 		public IVoiceTarget targetManager { get; set; }
 		public ConfRoot ConfRoot { get; set; }
+		// public Bot Bot { get; set; }
 		// { "UK English Female", "UK English Male", "US English Female", "Spanish Female", "French Female", "Deutsch Female", "Italian Female", "Greek Female", "Hungarian Female", "Turkish Female", "Russian Female", "Dutch Female", "Swedish Female", "Norwegian Female", "Japanese Female", "Korean Female", "Chinese Female", "Hindi Female", "Serbian Male", "Croatian Male", "Bosnian Male", "Romanian Male", "Catalan Male", "Australian Female", "Finnish Female", "Afrikaans Male", "Albanian Male", "Arabic Male", "Armenian Male", "Czech Female", "Danish Female", "Esperanto Male", "Hatian Creole Female", "Icelandic Male", "Indonesian Female", "Latin Female", "Latvian Male", "Macedonian Male", "Moldavian Male", "Montenegrin Male", "Polish Female", "Brazilian Portuguese Female", "Portuguese Female", "Serbo-Croatian Male", "Slovak Female", "Spanish Latin American Female", "Swahili Male", "Tamil Male", "Thai Female", "Vietnamese Male", "Welsh Male" };
 		public string[] TTSLocales = { "af-ZA", "ar-SA", "bs", "ca-ES", "cs-CZ", "cy", "da-DK", "de-DE", "el-GR", "en-AU", "en-GB", "en-US", "eo", "es-ES", "es-MX", "fi-FI", "fr-FR", "hi-IN", "hr-HR", "hu-HU", "hy-AM", "id-ID", "is-IS", "it-IT", "ja-JP", "ko-KR", "la", "lv-LV", "md", "me", "mk-MK", "nb-NO", "nl-NL", "pl-PL", "pt-BR", "ro-RO", "ru-RU", "sk-SK", "sq-AL", "sr-RS", "sv-SE", "sw-KE", "th-TH", "tr-TR", "vi-VN", "zh-CN", "zh-HK", "zh-TW" };
 		public string[] TTSGenders = { "male", "female" };
@@ -82,23 +74,15 @@ namespace SimpleTTS
 				return;
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
-			BotPlayer.BeforeResourceStarted += BeforeResourceStarted;
-			BotPlayer.BeforeResourceStopped += BeforeResourceStopped;
+			PlayManager.BeforeResourceStopped += BeforeResourceStopped;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
-		}
-
-		private void BeforeResourceStarted(object sender, PlayInfoEventArgs e)
-		{
-			if (!isTalking) return;
-			//e.MetaData.Volume = BOTVolume;
-			//PlayerConnection.Volume = BOTVolume;
-			Log.Debug($"Set Volume to {PlayerConnection.Volume}");
 		}
 
 		private void BeforeResourceStopped(object sender, EventArgs e)
 		{
 			if (!isTalking) return;
 			PlayerConnection.Volume = (float) oldVolume;
+			Log.Debug($"Reset Volume to {oldVolume}");
 			isTalking = false;
 			if (!isBroadcast) return;
 			isBroadcast = false;
@@ -141,6 +125,7 @@ namespace SimpleTTS
 			oldWhisperClients = targetManager.WhisperClients.ToArray();
 			isBroadcast = true;
 			CommandSay(playerConnection, text);
+			// playerConnection.Volume = 100;
 			// targetManager.WhisperClientSubscribe(invoker.ClientId.Value);
 		}
 		[Command("say", "Syntax: !say <text>")]
@@ -154,17 +139,17 @@ namespace SimpleTTS
 				.Replace("{rate}", isBroadcast ? PluginConfig[bsection]["Rate"] : PluginConfig[section]["Rate"])
 				.Replace("{volume}", PluginConfig[section]["Volume"]);
 			oldVolume = playerConnection.Volume;
-			//playerConnection.Paused = true;
-			//playerConnection.Volume = 0;
+			Log.Debug("Saved old volume: {}", oldVolume);
 			isTalking = true;
 			Log.Debug("Saying {}", url);
+#if ALT
 			playerConnection.AudioStart(url);
-			//playManager.Play(InvokerData.Anonymous, url);
-			//playManager.PlaylistManager.Previous();
-			//var stream = new Stream();
-			//var prod = new TS3Client.Audio.StreamAudioProducer(stream);
-			//TS3Client.MixInStreamOnce(prod);
-			//return $"[URL]{url}";
+#else
+			PlayManager.Play(InvokerData.Anonymous, url);
+			PlayManager.PlaylistManager.Previous();
+#endif
+			PlayerConnection.Volume = BOTVolume;
+			Log.Debug($"Set Volume to {PlayerConnection.Volume}");
 		}
 
 		[Command("tts locale", "Syntax: !tts <locale>")]
@@ -214,7 +199,9 @@ namespace SimpleTTS
 			return $"Set SimpleTTS volume to [b]{volume}[/b]";
 		}
 
-		public void Dispose() {
+		public void Dispose()
+		{
+			PlayManager.BeforeResourceStopped -= BeforeResourceStopped;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
