@@ -27,7 +27,6 @@ namespace PMRedirect
     }
     public class PMRedirect : IBotPlugin
     {
-        private static readonly PluginInfo PluginInfo = new PluginInfo();
         private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
         private Core core;

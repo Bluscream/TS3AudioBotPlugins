@@ -77,87 +77,157 @@ namespace AutoChannelCreate
 		}
 
 		private void Ts3Client_OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e) {
-			ChannelIdT found = 0;
-			foreach (ChannelList channel in channelList) {
-				if (channel.Name == Conf.Connect.Channel.Value) {
-					found = channel.ChannelId;
+			try {
+				ChannelIdT found = 0;
+				foreach (ChannelList channel in channelList) {
+					if (channel.Name == Conf.Connect.Channel.Value) {
+						found = channel.ChannelId;
+					}
 				}
+				var bot = Bot.Name;
+				if (!PluginConfig.Sections.ContainsSection(bot)) {
+					Log.Warn("No section found for \"{}\" \"{}\"! Skipping...", bot, PluginConfigFile); return;
+				}
+				var now = DateTime.Now.ToString();
+				var neededTP = PluginConfig[bot]["Needed Talk Power"];
+				var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : int.Parse(neededTP);
+				if (found == 0) {
+					var channel_name = Conf.Connect.Channel.Value;
+					Log.Info("Default channel \"{}\" for template \"{}\" does not exist yet, creating...", channel_name, bot);
+					var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
+						new CommandParameter("channel_name", channel_name)
+					});
+					var channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
+					if (!string.IsNullOrEmpty(channel_password)) commandCreate.AppendParameter(new CommandParameter("channel_password", channel_password));
+					var channel_codec = PluginConfig[bot]["Codec"];
+					if (!string.IsNullOrEmpty(channel_codec)) commandCreate.AppendParameter(new CommandParameter("channel_codec", channel_codec));
+					var channel_codec_quality = PluginConfig[bot]["Codec Quality"];
+					if (!string.IsNullOrEmpty(channel_codec_quality)) commandCreate.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality));
+					var channel_maxclients = PluginConfig[bot]["Maxclients"];
+					if (!string.IsNullOrEmpty(channel_maxclients)) {
+						commandCreate.AppendParameter(new CommandParameter("channel_maxclients", channel_maxclients));
+						commandCreate.AppendParameter(new CommandParameter("channel_flag_maxclients_unlimited", channel_maxclients == "-1"));
+					}
+					if (!string.IsNullOrEmpty(neededTP)) commandCreate.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
+					var channel_topic = PluginConfig[bot]["Topic Template"];
+					if (!string.IsNullOrEmpty(channel_topic)) commandCreate.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", now)));
+					// Log.Debug(commandCreate);
+					var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
+					if (!createResult.Ok) {
+						Log.Debug($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
+					}
+					var createRes = createResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+					found = createRes.ChannelId;
+				}
+				if (found == 0 ) return;
+				var descriptionFile = Path.Combine(ConfRoot.Plugins.Path.Value, "Descriptions", $"{bot}.txt");
+				if (File.Exists(descriptionFile)) {
+					var uid = ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid;
+					var descriptionText = File.ReadAllText(descriptionFile);
+					var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
+					new CommandParameter("cid", found),
+						new CommandParameter("channel_description",
+							descriptionText
+							.Replace("{now}", now)
+							.Replace("{botname}", Conf.Connect.Name)
+							.Replace("{botuid}", uid)
+							.Replace("{botclid}", TS3FullClient.ClientId.ToString())
+							.Replace("{address}", Conf.Connect.Address)
+							.Replace("{onconnect}", Conf.Events.OnConnect)
+							.Replace("{onidle}", Conf.Events.OnIdle)
+							.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
+							.Replace("{template}", Bot.Name)
+						),
+						new CommandParameter("channel_needed_talk_power", channel_needed_talk_power)
+					});
+					var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+					if (!editResult.Ok)
+					{
+						Log.Debug($"{PluginInfo.Name}: Could not set channel description! ({editResult.Error.Message})"); return;
+					}
+				}
+				var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
+				if (tp >= channel_needed_talk_power) return;
+				var commandTP = new Ts3Command("clientedit", new List<ICommandPart>() {
+					new CommandParameter("clid", TS3FullClient.ClientId),
+					new CommandParameter("client_is_talker", true)
+				});
+				var tpResult = TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
+				if (!tpResult.Ok) {
+					Log.Debug($"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
+				}
+				//tpRes = tpResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+			} catch (ArgumentNullException ex) { Log.Error($"{Bot.Name}: Unable to run {PluginInfo.Name}.Ts3Client_OnChannelListFinished ({ex.Message})"); }
+		}
+
+		public Ts3Command ChannelCreateEdit(string bot, bool edit = false, int cid = 0)
+		{
+			var command = new Ts3Command(edit ? "channeledit" : "channelcreate", new List<ICommandPart>());
+			if (edit) {
+				new CommandParameter("cid", cid);
 			}
-			var bot = Bot.Name;
-			if (!PluginConfig.Sections.ContainsSection(bot)) {
-				Log.Warn("No section found for \"{}\" \"{}\"! Skipping...", bot, PluginConfigFile); return;
+
+			var channel_name = PluginConfig[bot]["Name"];
+			if (string.IsNullOrEmpty(channel_name)) {
+				channel_name = Conf.Connect.Channel.Value;
 			}
-			var now = DateTime.Now.ToString();
+			if (!edit) command.AppendParameter(new CommandParameter("channel_name", channel_name.Replace("edit:", "")));
+
+
+			var channel_password = PluginConfig[bot]["Password"];
+			if (string.IsNullOrEmpty(channel_password)) {
+				channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
+			}
+			if (!string.IsNullOrEmpty(channel_password) && (!edit || channel_password.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_password", channel_password.Replace("edit:", "")));
+			}
+
+			var channel_codec = PluginConfig[bot]["Codec"];
+			if (!string.IsNullOrEmpty(channel_codec) && (!edit || channel_codec.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_codec", channel_codec));
+			}
+			var channel_codec_quality = PluginConfig[bot]["Codec Quality"];
+			if (!string.IsNullOrEmpty(channel_codec_quality) && (!edit || channel_codec_quality.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality));
+			}
+
+			var channel_maxclients = PluginConfig[bot]["Maxclients"];
+			if (!string.IsNullOrEmpty(channel_maxclients) && (!edit || channel_maxclients.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_maxclients", channel_maxclients));
+				command.AppendParameter(new CommandParameter("channel_flag_maxclients_unlimited", channel_maxclients == "-1"));
+			}
+
 			var neededTP = PluginConfig[bot]["Needed Talk Power"];
 			var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : int.Parse(neededTP);
-			if (found == 0) {
-				var channel_name = Conf.Connect.Channel.Value;
-				Log.Info("Default channel \"{}\" for template \"{}\" does not exist yet, creating...", channel_name, bot);
-				var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
-					new CommandParameter("channel_name", channel_name)
-				});
-				var channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
-				if (!string.IsNullOrEmpty(channel_password)) commandCreate.AppendParameter(new CommandParameter("channel_password", channel_password));
-				var channel_codec = PluginConfig[bot]["Codec"];
-				if (!string.IsNullOrEmpty(channel_codec)) commandCreate.AppendParameter(new CommandParameter("channel_codec", channel_codec));
-				var channel_codec_quality = PluginConfig[bot]["Codec Quality"];
-				if (!string.IsNullOrEmpty(channel_codec_quality)) commandCreate.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality));
-				var channel_maxclients = PluginConfig[bot]["Maxclients"];
-				if (!string.IsNullOrEmpty(channel_maxclients)) {
-					commandCreate.AppendParameter(new CommandParameter("channel_maxclients", channel_maxclients));
-					commandCreate.AppendParameter(new CommandParameter("channel_flag_maxclients_unlimited", channel_maxclients == "-1"));
-				}
-				if (!string.IsNullOrEmpty(neededTP)) commandCreate.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
-				var channel_topic = PluginConfig[bot]["Topic Template"];
-				if (!string.IsNullOrEmpty(channel_topic)) commandCreate.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", now)));
-				// Log.Debug(commandCreate);
-				var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
-				if (!createResult.Ok) {
-					Log.Debug($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
-				}
-				var createRes = createResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
-				found = createRes.ChannelId;
+			if (!string.IsNullOrEmpty(neededTP) && (!edit || neededTP.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
 			}
-			if (found == 0 ) return;
-			var descriptionFile = Path.Combine(ConfRoot.Plugins.Path.Value, "Descriptions", $"{bot}.txt");
-			if (File.Exists(descriptionFile)) {
-				Log.Debug("Updating channel...");
-				var uid = ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid;
+
+			var channel_topic = PluginConfig[bot]["Topic"];
+			if (!string.IsNullOrEmpty(channel_topic) && (!edit || channel_topic.StartsWith("edit:"))) {
+				command.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", DateTime.Now.ToString())));
+			}
+
+
+			var channel_description = PluginConfig[bot]["DescriptionFile"];
+			if (!string.IsNullOrEmpty(channel_description) && (!edit || channel_description.StartsWith("edit:")))
+			{
+				var descriptionFile = Path.Combine(ConfRoot.Plugins.Path.Value, "Descriptions", $"{channel_description.Replace("edit:", "")}.txt");
 				var descriptionText = File.ReadAllText(descriptionFile);
-				var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
-				new CommandParameter("cid", found),
-					new CommandParameter("channel_description",
-						descriptionText
-						.Replace("{now}", now)
-						.Replace("{botname}", Conf.Connect.Name)
-						.Replace("{botuid}", uid)
-						.Replace("{botclid}", TS3FullClient.ClientId.ToString())
-						.Replace("{address}", Conf.Connect.Address)
-						.Replace("{onconnect}", Conf.Events.OnConnect)
-						.Replace("{onidle}", Conf.Events.OnIdle)
-						.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
-					),
-					new CommandParameter("channel_needed_talk_power", channel_needed_talk_power)
-				});
-				var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
-				if (!editResult.Ok)
-				{
-					Log.Debug($"{PluginInfo.Name}: Could set channel description! ({editResult.Error.Message})"); return;
-				}
-				// var reditRes = editResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
+				command.AppendParameter(new CommandParameter("channel_description", descriptionText
+					.Replace("{now}", DateTime.Now.ToString())
+					.Replace("{botname}", Conf.Connect.Name)
+					.Replace("{botuid}", ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid)
+					.Replace("{botclid}", TS3FullClient.ClientId.ToString())
+					.Replace("{address}", Conf.Connect.Address)
+					.Replace("{onconnect}", Conf.Events.OnConnect)
+					.Replace("{onidle}", Conf.Events.OnIdle)
+					.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
+					.Replace("{template}", Bot.Name)
+				));
 			}
-			var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
-			if (tp >= channel_needed_talk_power) return;
-			var commandTP = new Ts3Command("clientedit", new List<ICommandPart>() {
-				new CommandParameter("clid", TS3FullClient.ClientId),
-				new CommandParameter("client_is_talker", true)
-			});
-			var tpResult = TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
-			if (!tpResult.Ok) {
-				Log.Debug($"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
-			}
-			//tpRes = tpResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
-			
+
+			return command;
 		}
 
 		public void Dispose() {

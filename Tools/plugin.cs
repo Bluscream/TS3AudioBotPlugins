@@ -12,6 +12,7 @@ using TS3AudioBot.Helper;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
 using TS3AudioBot.Config;
+using TS3AudioBot.Helper.Environment;
 
 namespace Tools
 {
@@ -120,6 +121,13 @@ namespace Tools
 			else if (!paused && playing)
 				return true;
 			else throw new Exception("Unknown");
+		}
+
+		[Command("bug")]
+		public static string CommandReportBug()
+		{
+			// WebClient client = new WebClient(); string downloadString = client.DownloadString("https://raw.githubusercontent.com/Splamy/TS3AudioBot/master/.github/ISSUE_TEMPLATE/bug_report.md");
+			return $@"https://github.com/Bluscream/TS3AudioBot/issues/new?template=bug_report_auto.md&version={SystemData.AssemblyData.Version}&branch={SystemData.AssemblyData.Branch}&commit={SystemData.AssemblyData.Branch}&platform={SystemData.PlatformData.ToString()}&runtime={SystemData.RuntimeData.FullName}&log=Nothing%20recorded";
 		}
 
 		public void Dispose()
