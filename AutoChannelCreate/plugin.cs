@@ -120,27 +120,9 @@ namespace AutoChannelCreate
 					found = createRes.ChannelId;
 				}
 				if (found == 0 ) return;
-				var descriptionFile = Path.Combine(ConfRoot.Plugins.Path.Value, "Descriptions", $"{bot}.txt");
-				if (File.Exists(descriptionFile)) {
-					var uid = ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid;
-					var descriptionText = File.ReadAllText(descriptionFile);
-					var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
-					new CommandParameter("cid", found),
-						new CommandParameter("channel_description",
-							descriptionText
-							.Replace("{now}", now)
-							.Replace("{botname}", Conf.Connect.Name)
-							.Replace("{botuid}", uid)
-							.Replace("{botclid}", TS3FullClient.ClientId.ToString())
-							.Replace("{address}", Conf.Connect.Address)
-							.Replace("{onconnect}", Conf.Events.OnConnect)
-							.Replace("{onidle}", Conf.Events.OnIdle)
-							.Replace("{ondisconnect}", Conf.Events.OnDisconnect)
-							.Replace("{template}", Bot.Name)
-						),
-						new CommandParameter("channel_needed_talk_power", channel_needed_talk_power)
-					});
-					var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+				var commandEdit = ChannelCreateEdit(bot, true, found);
+				if (commandEdit.Item1) {
+					var editResult = TS3FullClient.SendNotifyCommand(commandEdit.Item2, NotificationType.ChannelEdited);
 					if (!editResult.Ok)
 					{
 						Log.Debug($"{PluginInfo.Name}: Could not set channel description! ({editResult.Error.Message})"); return;
@@ -160,35 +142,29 @@ namespace AutoChannelCreate
 			} catch (ArgumentNullException ex) { Log.Error($"{Bot.Name}: Unable to run {PluginInfo.Name}.Ts3Client_OnChannelListFinished ({ex.Message})"); }
 		}
 
-		public Ts3Command ChannelCreateEdit(string bot, bool edit = false, int cid = 0)
+		public Tuple<bool,Ts3Command> ChannelCreateEdit(string bot, bool edit = false, ChannelIdT cid = 0)
 		{
 			var command = new Ts3Command(edit ? "channeledit" : "channelcreate", new List<ICommandPart>());
 			if (edit) {
 				new CommandParameter("cid", cid);
+			} else
+			{
+				command.AppendParameter(new CommandParameter("channel_name", Conf.Connect.Channel.Value));
 			}
+			var send = false;
 
-			var channel_name = PluginConfig[bot]["Name"];
-			if (string.IsNullOrEmpty(channel_name)) {
-				channel_name = Conf.Connect.Channel.Value;
-			}
-			if (!edit) command.AppendParameter(new CommandParameter("channel_name", channel_name.Replace("edit:", "")));
-
-
-			var channel_password = PluginConfig[bot]["Password"];
-			if (string.IsNullOrEmpty(channel_password)) {
-				channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
-			}
-			if (!string.IsNullOrEmpty(channel_password) && (!edit || channel_password.StartsWith("edit:"))) {
-				command.AppendParameter(new CommandParameter("channel_password", channel_password.Replace("edit:", "")));
+			var channel_password = Conf.Connect.ChannelPassword.Get().HashedPassword;
+			if (!string.IsNullOrEmpty(channel_password)) {
+				command.AppendParameter(new CommandParameter("channel_password", channel_password));
 			}
 
 			var channel_codec = PluginConfig[bot]["Codec"];
 			if (!string.IsNullOrEmpty(channel_codec) && (!edit || channel_codec.StartsWith("edit:"))) {
-				command.AppendParameter(new CommandParameter("channel_codec", channel_codec));
+				command.AppendParameter(new CommandParameter("channel_codec", channel_codec)); send = true;
 			}
 			var channel_codec_quality = PluginConfig[bot]["Codec Quality"];
 			if (!string.IsNullOrEmpty(channel_codec_quality) && (!edit || channel_codec_quality.StartsWith("edit:"))) {
-				command.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality));
+				command.AppendParameter(new CommandParameter("channel_codec_quality", channel_codec_quality)); send = true;
 			}
 
 			var channel_maxclients = PluginConfig[bot]["Maxclients"];
@@ -208,7 +184,6 @@ namespace AutoChannelCreate
 				command.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", DateTime.Now.ToString())));
 			}
 
-
 			var channel_description = PluginConfig[bot]["DescriptionFile"];
 			if (!string.IsNullOrEmpty(channel_description) && (!edit || channel_description.StartsWith("edit:")))
 			{
@@ -227,7 +202,7 @@ namespace AutoChannelCreate
 				));
 			}
 
-			return command;
+			return Tuple.Create(send,command);
 		}
 
 		public void Dispose() {

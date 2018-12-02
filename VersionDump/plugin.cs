@@ -12,9 +12,9 @@ namespace VersionDetector
 	{
 		public static readonly string ShortName;
 		public static readonly string Name;
-		public static readonly string Description = "";
-		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly string Description;
+		public static readonly string Url;
+		public static readonly string Author = "Splamy";
 		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
 		static PluginInfo()
 		{
@@ -35,10 +35,12 @@ namespace VersionDetector
 
 		public Ts3FullClient Ts3Client { get; set; }
 
+		public TS3AudioBot.Bot Bot { get; set; }
+
 		public VersionDetector()
 		{
 			if (File.Exists(versionFile))
-				versions.IntersectWith(File.ReadAllLines(versionFile));
+				versions.UnionWith(File.ReadAllLines(versionFile));
 			else
 				File.Create(versionFile).Dispose();
 		}
@@ -67,8 +69,11 @@ namespace VersionDetector
 					}
 					catch { return; }
 
+					// checkVersion += $"{}";
+
 					versions.Add(checkVersion);
 					File.AppendAllText(versionFile, checkVersion + "\n");
+					Log.Debug("{0}: Got Version {1} from client {2} ({3}) [{4}] ip:{5}", Bot.Name, checkVersion, info.Name, info.Uid, info.MyTeamSpeakId, info.Ip);
 				}
 			}
 			catch (InvalidOperationException)

@@ -16,25 +16,10 @@ using TS3AudioBot.Helper.Environment;
 
 namespace Tools
 {
-	public static class PluginInfo
-	{
-		public static readonly string ShortName;
-		public static readonly string Name;
-		public static readonly string Description = "";
-		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
-		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
-		static PluginInfo()
-		{
-			ShortName = typeof(PluginInfo).Namespace;
-			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
-			Name = string.IsNullOrEmpty(name) ? ShortName : name;
-		}
-	}
 	public class Tools : IBotPlugin
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
-		public Ts3FullClient Lib { get; set; }
+		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
 		public PlayManager BotPlayer { get; set; }
@@ -44,7 +29,13 @@ namespace Tools
 
 		public void Initialize()
 		{
+			TS3FullClient.OnChannelCreated += OnChannelCreated;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+		}
+
+		private void OnChannelCreated(object sender, System.Collections.Generic.IEnumerable<ChannelCreated> e)
+		{
+			TS3FullClient.ChannelSubscribeAll(); // Proper implementation
 		}
 
 		[Command("id")]
@@ -64,7 +55,7 @@ namespace Tools
 		//[RequiredParameters(0)]
 		public void CommandTPRequest(ExecutionInformation info, string message)
 		{
-			Lib.Send("clientupdate", new CommandParameter("client_talk_request", 1), new CommandParameter("client_talk_request_msg", message = message ?? ""));
+			TS3FullClient.Send("clientupdate", new CommandParameter("client_talk_request", 1), new CommandParameter("client_talk_request_msg", message = message ?? ""));
 		}
 
 		[Command("rawcmd")]
@@ -73,7 +64,7 @@ namespace Tools
 		{
 			try
 			{
-				var result = Lib.Send<TS3Client.Messages.ResponseDictionary>(cmd,
+				var result = TS3FullClient.Send<TS3Client.Messages.ResponseDictionary>(cmd,
 					cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
 				//return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
 				return "Sent command.";
@@ -90,13 +81,13 @@ namespace Tools
 		[Command("ownchannel")]
 		public string CommandGetOwnChannelID(ExecutionInformation info)
 		{
-			return Lib.WhoAmI().Unwrap().ChannelId.ToString();
+			return TS3FullClient.WhoAmI().Unwrap().ChannelId.ToString();
 		}
 
 		[Command("subscribe ownchannel")]
 		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
 		{
-			targetManager.WhisperChannelSubscribe(Lib.WhoAmI().Unwrap().ChannelId, true);
+			targetManager.WhisperChannelSubscribe(TS3FullClient.WhoAmI().Unwrap().ChannelId, true);
 		}
 
 		[Command("isplaying playerconnection")]
@@ -133,6 +124,21 @@ namespace Tools
 		public void Dispose()
 		{
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
+		}
+	}
+	public static class PluginInfo
+	{
+		public static readonly string ShortName;
+		public static readonly string Name;
+		public static readonly string Description = "";
+		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
+		{
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
 }
