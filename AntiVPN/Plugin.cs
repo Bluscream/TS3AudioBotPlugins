@@ -13,7 +13,7 @@ using TS3Client.Messages;
 using TS3AudioBot.Config;
 using System.Text;
 
-namespace DropSystems
+namespace AntiVPN
 {
 	public class Utils
 	{
@@ -33,7 +33,7 @@ namespace DropSystems
 			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
-	public class DropSystems : IBotPlugin
+	public class AntiVPN : IBotPlugin
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
@@ -42,34 +42,19 @@ namespace DropSystems
 		public Bot Bot { get; set; }
 		public TickWorker Timer { get; set; }
 		public ConfRoot ConfRoot { get; set; }
+		private static string PluginConfigFile;
+		public List<ulong> remindSGIDs = new List<ulong>();
+		public List<string> remindUIDs = new List<string>();
+		public List<Tuple<ulong, ulong>> ComplaintCache = new List<Tuple<ulong, ulong>>();
 
-
-		/* [URL=client://12/1pvCr4o4ME05vJ/wnByqETm1rc4=~%C2%BB%20DropVerify]» DropVerify[/URL]
-
-Willkommen » Verifizierung
-
-Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.
-Hierfür gibt es bei uns zwei Möglichkeiten: Sie können entweder diesen Bot mit !verify anschreiben oder in Minecraft /verify eingeben.
-Die beiden Variationen geben Ihnen zwar unterschiedliche Ränge, diese haben aber die gleichen Features.
-
-Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
-
-
-
-
-		*/
-
-		public DropSystems() { }
+		public AntiVPN() { }
 
 		public void Initialize()
 		{
-			// Ts3FullClient.OnEachComplainList += OnComplainList;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
-
 		public void Dispose()
 		{
-			// Ts3FullClient.OnEachComplainList -= OnComplainList;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}

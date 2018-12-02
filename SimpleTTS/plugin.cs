@@ -1,4 +1,4 @@
-#define ALT
+// #define ALT
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,6 +66,7 @@ namespace SimpleTTS
 				PluginConfig[section]["Gender"] = "female";
 				PluginConfig[section]["Pitch"] = "0.5";
 				PluginConfig[section]["Rate"] = "0.5";
+				PluginConfig[section]["Mode"] = "0";
 				// PluginConfig[section]["Volume"] = "1";
 				PluginConfig[bsection]["Gender"] = "male";
 				PluginConfig[bsection]["Rate"] = "0.3";
@@ -80,76 +81,89 @@ namespace SimpleTTS
 
 		private void BeforeResourceStopped(object sender, EventArgs e)
 		{
-			if (!isTalking) return;
-			PlayerConnection.Volume = (float) oldVolume;
-			Log.Debug($"Reset Volume to {oldVolume}");
-			isTalking = false;
-			if (!isBroadcast) return;
-			isBroadcast = false;
-			targetManager.SendMode = oldSendMode;
-			switch (oldSendMode)
-			{
-				case TargetSendMode.None:
-				case TargetSendMode.Voice:
-					targetManager.SendMode = oldSendMode;
-					break;
-				case TargetSendMode.Whisper:
-					foreach (var client in oldWhisperClients)
-						targetManager.WhisperClientSubscribe(client);
-					foreach (var channel in oldWhisperChannels)
-						targetManager.WhisperChannelSubscribe(channel, false);
-					break;
-				case TargetSendMode.WhisperGroup:
-					targetManager.SetGroupWhisper(oldGroupWhisperType, oldGroupWhisperTarget, oldTargetId);
-					break;
-				default: break;
-			}
+			try {
+				if (!isTalking) return;
+				PlayerConnection.Volume = (float) oldVolume;
+				Log.Debug($"Reset Volume to {oldVolume}");
+				isTalking = false;
+				if (!isBroadcast) return;
+				isBroadcast = false;
+				targetManager.SendMode = oldSendMode;
+				switch (oldSendMode)
+				{
+					case TargetSendMode.None:
+					case TargetSendMode.Voice:
+						targetManager.SendMode = oldSendMode;
+						break;
+					case TargetSendMode.Whisper:
+						foreach (var client in oldWhisperClients)
+							targetManager.WhisperClientSubscribe(client);
+						foreach (var channel in oldWhisperChannels)
+							targetManager.WhisperChannelSubscribe(false, channel);
+						break;
+					case TargetSendMode.WhisperGroup:
+						targetManager.SetGroupWhisper(oldGroupWhisperType, oldGroupWhisperTarget, oldTargetId);
+						break;
+					default: break;
+				}
 
 			/*foreach (var client in oldWhisperClients)
-			{
-				targetManager.SetGroupWhisper(GroupWh, GroupWhisperTarget., 0);
-			}
-			targetManager.SetGroupWhisper(oldGroupWhisperType, oldGroupWhisperTarget, 0);*/
+				{
+					targetManager.SetGroupWhisper(GroupWh, GroupWhisperTarget., 0);
+				}
+				targetManager.SetGroupWhisper(oldGroupWhisperType, oldGroupWhisperTarget, 0);*/
+			}  catch (Exception ex) { Log.Error(ex.Message); }
 		}
 
 		[Command("broadcast", "Syntax: !broadcast <text>")]
 		public void CommandBroadCast(IVoiceTarget targetManager, IPlayerConnection playerConnection, PlayManager playManager, params string[] text)
 		{
-			oldGroupWhisperType = targetManager.GroupWhisperType;
-			oldGroupWhisperTarget = targetManager.GroupWhisperTarget;
-			oldSendMode = targetManager.SendMode;
-			targetManager.SetGroupWhisper(GroupWhisperType.AllClients, GroupWhisperTarget.AllChannels, 0);
-			targetManager.SendMode = TargetSendMode.WhisperGroup;
-			oldTargetId = targetManager.GroupWhisperTargetId;
-			oldWhisperChannels = targetManager.WhisperChannel.ToArray();
-			oldWhisperClients = targetManager.WhisperClients.ToArray();
-			isBroadcast = true;
-			CommandSay(playerConnection, text);
-			// playerConnection.Volume = 100;
-			// targetManager.WhisperClientSubscribe(invoker.ClientId.Value);
+			try {
+				oldGroupWhisperType = targetManager.GroupWhisperType;
+				oldGroupWhisperTarget = targetManager.GroupWhisperTarget;
+				oldSendMode = targetManager.SendMode;
+				targetManager.SetGroupWhisper(GroupWhisperType.AllClients, GroupWhisperTarget.AllChannels, 0);
+				targetManager.SendMode = TargetSendMode.WhisperGroup;
+				oldTargetId = targetManager.GroupWhisperTargetId;
+				oldWhisperChannels = targetManager.WhisperChannel.ToArray();
+				oldWhisperClients = targetManager.WhisperClients.ToArray();
+				isBroadcast = true;
+				PlayerConnection.Volume = BOTVolume;
+				Log.Debug($"Set Volume to {PlayerConnection.Volume}");
+				CommandSay(playerConnection, text);
+					// playerConnection.Volume = 100;
+					// targetManager.WhisperClientSubscribe(invoker.ClientId.Value);
+			} catch (Exception ex) { Log.Error(ex.Message); }
 		}
 		[Command("say", "Syntax: !say <text>")]
 		public void CommandSay(IPlayerConnection playerConnection, params string[] _text) {
-			var text = Uri.EscapeUriString(string.Join(" ", _text));
-			var url = PluginConfig[section]["Url"]
-				.Replace("{text}", text)
-				.Replace("{locale}", PluginConfig[section]["Locale"])
-				.Replace("{gender}", isBroadcast ? PluginConfig[bsection]["Gender"] : PluginConfig[section]["Gender"])
-				.Replace("{pitch}", PluginConfig[section]["Pitch"])
-				.Replace("{rate}", isBroadcast ? PluginConfig[bsection]["Rate"] : PluginConfig[section]["Rate"])
-				.Replace("{volume}", PluginConfig[section]["Volume"]);
-			oldVolume = playerConnection.Volume;
-			Log.Debug("Saved old volume: {}", oldVolume);
-			isTalking = true;
-			Log.Debug("Saying {}", url);
-#if ALT
-			playerConnection.AudioStart(url);
-#else
-			PlayManager.Play(InvokerData.Anonymous, url);
-			PlayManager.PlaylistManager.Previous();
-#endif
-			PlayerConnection.Volume = BOTVolume;
-			Log.Debug($"Set Volume to {PlayerConnection.Volume}");
+			try {
+				var text = Uri.EscapeUriString(string.Join(" ", _text));
+				var url = PluginConfig[section]["Url"]
+					.Replace("{text}", text)
+					.Replace("{locale}", PluginConfig[section]["Locale"])
+					.Replace("{gender}", isBroadcast ? PluginConfig[bsection]["Gender"] : PluginConfig[section]["Gender"])
+					.Replace("{pitch}", PluginConfig[section]["Pitch"])
+					.Replace("{rate}", isBroadcast ? PluginConfig[bsection]["Rate"] : PluginConfig[section]["Rate"])
+					.Replace("{volume}", PluginConfig[section]["Volume"]);
+				oldVolume = playerConnection.Volume;
+				Log.Debug("Saved old volume: {}", oldVolume);
+				isTalking = true;
+				Log.Debug("Saying {}", url);
+				var mode = PluginConfig[section]["Mode"];
+				switch (mode)
+				{
+					case "0":
+						PlayManager.Play(InvokerData.Anonymous, url);
+						PlayManager.PlaylistManager.Previous();
+						break;
+					case "1":
+						playerConnection.AudioStart(url);
+						break;
+					default:
+						throw new Exception($"Invalid Mode: {mode}");
+				}
+			} catch(Exception ex) { Log.Error(ex.Message); }
 		}
 
 		[Command("tts locale", "Syntax: !tts <locale>")]

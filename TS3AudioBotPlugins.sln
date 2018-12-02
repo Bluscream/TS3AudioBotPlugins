@@ -61,7 +61,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bluscream.Util", "Bluscream
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplaintReminder", "ComplaintReminder\ComplaintReminder.csproj", "{0F453608-51D8-4064-908A-596D6D493BEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropSystems", "DropSystems\DropSystems.csproj", "{52E8D993-E279-47AB-B9D1-918A14F13D17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DropSystems", "DropSystems\DropSystems.csproj", "{52E8D993-E279-47AB-B9D1-918A14F13D17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiVPN", "AntiVPN\AntiVPN.csproj", "{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISPValidator", "C:\Users\blusc\source\repos\TS3AB\TS3AudioBotPlugins\ISPValidator\ISPValidator.csproj", "{528A23EC-D58D-4265-89E8-1875E3A06898}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -169,6 +173,14 @@ Global
 		{52E8D993-E279-47AB-B9D1-918A14F13D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52E8D993-E279-47AB-B9D1-918A14F13D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52E8D993-E279-47AB-B9D1-918A14F13D17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{528A23EC-D58D-4265-89E8-1875E3A06898}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{528A23EC-D58D-4265-89E8-1875E3A06898}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{528A23EC-D58D-4265-89E8-1875E3A06898}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{528A23EC-D58D-4265-89E8-1875E3A06898}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

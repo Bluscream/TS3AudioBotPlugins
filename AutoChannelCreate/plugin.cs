@@ -36,6 +36,7 @@ namespace AutoChannelCreate
 	public class AutoChannelCreate : IBotPlugin {
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 		private List<ChannelList> channelList = new List<ChannelList>();
+		public Ts3Client TS3Client { get; set; }
 		public Ts3FullClient TS3FullClient { get; set; }
 		public Bot Bot { get; set; }
 		public ConfBot Conf { get; set; }
@@ -192,7 +193,7 @@ namespace AutoChannelCreate
 				command.AppendParameter(new CommandParameter("channel_description", descriptionText
 					.Replace("{now}", DateTime.Now.ToString())
 					.Replace("{botname}", Conf.Connect.Name)
-					.Replace("{botuid}", ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid)
+					.Replace("{botuid}", ((ConnectionDataFull)TS3FullClient.ConnectionData).Identity.ClientUid) // TS3FullClient.IdentityData.ClientUid
 					.Replace("{botclid}", TS3FullClient.ClientId.ToString())
 					.Replace("{address}", Conf.Connect.Address)
 					.Replace("{onconnect}", Conf.Events.OnConnect)
