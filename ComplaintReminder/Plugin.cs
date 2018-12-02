@@ -31,11 +31,22 @@ namespace ComplaintReminder
 			}
 			return ContainsAny((IEnumerable<T>)a, (IEnumerable<T>)b);
 		}
-
 		public static bool ContainsAny<T>(IEnumerable<T> a, IEnumerable<T> b)
 		{
 			HashSet<T> j = new HashSet<T>(a);
 			return b.Any(j.Contains);
+		}
+
+		public static string ClientURL(ushort clientID, string uid = "unknown", string nickname = "Unknown User") {
+			var sb = new StringBuilder("[URL=client://");
+			sb.Append(clientID);
+			sb.Append("/");
+			sb.Append(uid);
+			//sb.Append("~");
+			sb.Append("]\"");
+			sb.Append(nickname);
+			sb.Append("\"[/URL]");
+			return sb.ToString();
 		}
 	}
 	public static class PluginInfo
@@ -78,7 +89,10 @@ namespace ComplaintReminder
 			if (!File.Exists(PluginConfigFile))
 			{
 				PluginConfig = new IniData();
+				PluginConfig["general"]["interval"] = "30";
 				PluginConfig["templates"]["newcomplaint"] = "New complaint for {target} from {source}: {message}";
+				PluginConfig["templates"]["list title"] = "[b]{complaints}[/b] Complaints:";
+				PluginConfig["templates"]["list entry"] = "[{timestamp}] {source} ({sourcedbid}): {target} ({targetdbid}) \"{message}\"";
 				PluginConfig.Sections.Add(new SectionData("servers"));
 				// PluginConfig["servers"]["SERVERUID"] = "SERVERGROUPID,CLIENTUID";
 				PluginConfig.Sections.Add(new SectionData("clients"));
@@ -94,11 +108,31 @@ namespace ComplaintReminder
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
+		private string ClientURL(ushort clientId)
+		{
+			var client = Ts3Client.GetCachedClientById(clientId).Value;
+			return Utils.ClientURL(clientId, client.Uid, client.Name);
+		}
+
+		private Tuple<string, string> ClientURL(ComplainList Complaint)
+		{
+			var sourceURL = "\"" + Complaint.FromName + "\""; var targetURL = "\"" + Complaint.TargetName + "\"";
+			var srcdb = Ts3Client.GetDbClientByDbId(Complaint.FromClientDbId).Value;
+			var _srcids = Ts3FullClient.GetClientIds(srcdb.Uid); var srcids = _srcids.Value;
+			if (_srcids.Ok) sourceURL = Utils.ClientURL(srcids[0].ClientId, srcids[0].ClientUid, srcids[0].Name);
+			var tardb = Ts3Client.GetDbClientByDbId(Complaint.TargetClientDbId).Value;
+			var _tarids = Ts3FullClient.GetClientIds(tardb.Uid); var tarids = _tarids.Value;
+			if (_tarids.Ok) targetURL = Utils.ClientURL(tarids[0].ClientId, tarids[0].ClientUid, tarids[0].Name);
+			return new Tuple<string,string>(sourceURL, targetURL);
+		}
+
+		// private ClientData ClientByDBID
+
 		private void LoadServer(string suid)
 		{
 			ParseSGIDUIDList(PluginConfig["servers"][suid].Split(','));
 			//toRemind = PluginConfig[PluginConfigSection]["toRemind"].Split(',').Select(ulong.Parse).ToList();
-			Timer = TickPool.RegisterTick(Tick, TimeSpan.FromMinutes(1), true);
+			Timer = TickPool.RegisterTick(Tick, TimeSpan.FromSeconds(int.Parse(PluginConfig["general"]["interval"])), true);
 		}
 
 		private void ParseSGIDUIDList(string[] list)
@@ -116,17 +150,17 @@ namespace ComplaintReminder
 			{
 				var entry = new Tuple<ulong,ulong>(Complaint.FromClientDbId,Complaint.TargetClientDbId);
 				if (ComplaintCache.Contains(entry)) return;
+				var (sourceURL, targetURL) = ClientURL(Complaint);
 				var clients = Ts3FullClient.ClientList().Value; //TS3Client.ClientListOptions.groups
 				foreach (var client in clients) // Ts3Client.clientbuffer
 				{
 					if (!remindUIDs.Contains(client.Uid)) {
-					var sgids = Ts3Client.GetClientServerGroups(client.DatabaseId).Value;
-					var hasSGID = Utils.ContainsAny(sgids, remindSGIDs);
-						if (hasSGID) {
+						var sgids = Ts3Client.GetClientServerGroups(client.DatabaseId).Value;
+						if (Utils.ContainsAny(sgids, remindSGIDs)) {
 							Ts3Client.SendMessage(
 								PluginConfig["templates"]["newcomplaint"]
-									.Replace("{target}", Complaint.TargetName)
-									.Replace("{source}", Complaint.FromName)
+									.Replace("{source}", sourceURL)
+									.Replace("{target}", targetURL)
 									.Replace("{message}", Complaint.Message)
 							, client.ClientId);
 						}
@@ -200,10 +234,20 @@ namespace ComplaintReminder
 			}
 			var complaints = Result.Value.Notifications.Cast<ComplainList>();
 			var ret_str = new StringBuilder();
-			ret_str.AppendLine($"[b]{complaints.Count()}[/b] Complaints:");
+			// PluginConfig["templates"]["list title"] = "[b]{complaints}[/b] Complaints:";
+			// PluginConfig["templates"]["list entry"] = "[{timestamp}] {source} ({sourcedbid}): {target} ({targetdbid}) \"{message}\"";
+			ret_str.AppendLine(PluginConfig["templates"]["list title"].Replace("{complaints}",complaints.Count().ToString()));
 			foreach (var complaint in complaints)
 			{
-				ret_str.AppendLine($"[{complaint.Timestamp}] \"{complaint.FromName}\" ({complaint.FromClientDbId}): \"{complaint.TargetName}\" ({complaint.TargetClientDbId}) \"{complaint.Message}\"");
+				var (sourceURL, targetURL) = ClientURL(complaint);
+				ret_str.AppendLine(PluginConfig["templates"]["list entry"]
+					.Replace("{timestamp}", complaint.Timestamp.ToString())
+					.Replace("{source}", sourceURL)
+					.Replace("{sourcedbid}", complaint.FromClientDbId.ToString())
+					.Replace("{target}", targetURL)
+					.Replace("{targetdbid}", complaint.TargetClientDbId.ToString())
+					.Replace("{message}", complaint.Message)
+				);
 			}
 			return ret_str.ToString();
 		}
