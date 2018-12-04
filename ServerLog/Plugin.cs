@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Data.SQLite;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
@@ -12,6 +11,9 @@ using TS3Client.Messages;
 using TS3AudioBot.CommandSystem;
 using System.Text;
 using LiteDB;
+using IniParser;
+using IniParser.Model;
+using TS3Client.Commands;
 
 namespace ServerLog
 {
@@ -32,7 +34,14 @@ namespace ServerLog
 			Name = string.IsNullOrEmpty(name) ? ShortName : name;
 		}
 	}
-#endregion
+	#endregion
+	public class LogEntry
+	{
+		public DateTime TimeStamp { get; set; }
+		public TS3Client.LogLevel LogLevel { get; set; }
+		public string Event { get; set; }
+		public string Message { get; set; }
+	}
 	public class ServerLog : IBotPlugin
 	{
 #region Imports
@@ -47,69 +56,77 @@ namespace ServerLog
 		//public IPlayerConnection PlayerConnection { get; set; }
 		//public IVoiceTarget targetManager { get; set; }
 		//public ConfHistory confHistory { get; set; }
-#endregion
-#region Variables
-		private static string LogDBFile;
-		private static SQLiteConnection dataBase;
+		#endregion
+		#region Variables
+		private static string LogPath; private static string IndexPath;
+		private static FileIniDataParser ConfigParser;
+		private static IniData IndexFile;
+		private static LiteDatabase dataBase;
 		private List<Tuple<string,string>> monitoring = new List<Tuple<string, string>>();
-#endregion
-		// private ServerLog() {}
-
-		private int SQLExec(string sql)
+		private static string lastServerName;
+		#endregion
+		private ServerLog()
 		{
-			var cmd = new SQLiteCommand(sql, dataBase);
-			var result = SQLExec(cmd);
-			return result;
-		}
-		private int SQLExec(SQLiteCommand cmd)
-		{
-			Log.Debug("{}: Executing SQL \"{}\"", Bot.Name, cmd.CommandText);
-			var result = cmd.ExecuteNonQuery();
-			Log.Debug("{}: Executed SQL. Affected Rows: {}", Bot.Name, result);
-			return result;
-		}
-
-		private int LogDB(DateTime _timestamp, TS3Client.LogLevel _logLevel, string Event, string message)
-		{
-			string queryString = $"INSERT INTO Log( timestamp, level, event, message) VALUES (@timestamp, @level, @event, @message);";
-			SQLiteCommand cmd = new SQLiteCommand(dataBase);
-			cmd.CommandType = System.Data.CommandType.Text;
-			cmd.CommandText = queryString;
-			cmd.Parameters.AddWithValue("@timestamp", _timestamp.ToString("yyyy-MM-dd HH:mm:ss"));
-			cmd.Parameters.AddWithValue("@level", _logLevel.ToString());
-			cmd.Parameters.AddWithValue("@event", Event);
-			cmd.Parameters.AddWithValue("@message", message);
-			return SQLExec(cmd);
 		}
 
 		public void Initialize()
 		{
-			// var firstStart = false;
-			LogDBFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.db");
-			if (!File.Exists(LogDBFile))
+			TS3FullClient.OnEachInitServer += OnEachInitServer;
+			LogPath = Path.Combine(ConfRoot.Plugins.Path.Value, PluginInfo.ShortName);
+			IndexPath = Path.Combine(LogPath, "index.ini");
+			ConfigParser = new FileIniDataParser();
+			if (!File.Exists(IndexPath))
 			{
-				SQLiteConnection.CreateFile(LogDBFile);
-				// firstStart = true;
+				if (!Directory.Exists(LogPath)) Directory.CreateDirectory(LogPath);
+				IndexFile = new IniData();
+				IndexFile.Sections.Add(new SectionData("servers"));
+				ConfigParser.WriteFile(IndexPath, IndexFile);
+				Log.Warn("Config for plugin {} created!", PluginInfo.Name);
 			}
-			SQLiteConnection dataBase = new SQLiteConnection($"Data Source={LogDBFile};Version=3;");
-			dataBase.Open();
-			// if (firstStart) {
+			else { IndexFile = ConfigParser.ReadFile(IndexPath); }
 			TS3FullClient.OnChannelListFinished += OnChannelListFinished;
-			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+			var success = InitServer();
+			Log.Info("Plugin {0} v{1} by {2} loaded {3}.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author, success);
+		}
+
+		private enum LogStatus {
+			NOT_CONNECTED,
+			ALREADY_MONITORED,
+			MONITORING
+		}
+		private LogStatus InitServer()
+		{
+			var whoami = TS3FullClient.WhoAmI();
+			if (!whoami.Ok) return LogStatus.NOT_CONNECTED;
+			var suid = whoami.Value.VirtualServerUid;
+			foreach (var server in monitoring) {
+				if (server.Item1 == suid) { return LogStatus.ALREADY_MONITORED; }
+			}
+			dataBase = new LiteDatabase(Path.Combine(LogPath, $"{suid}.db"));
+			monitoring.Add(new Tuple<string, string>(suid, Bot.Name));
+			IndexFile["servers"][suid] = lastServerName;
+			lastServerName = null;
+			ConfigParser.WriteFile(IndexPath, IndexFile);
+			TS3FullClient.OnEachClientUpdated += OnEachClientUpdated;
+			TS3FullClient.
+			return LogStatus.MONITORING;
+		}
+
+		private void OnEachInitServer(object sender, InitServer e)
+		{
+			lastServerName = e.Name;
 		}
 
 		private void OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e)
 		{
-			var suid = TS3FullClient.WhoAmI().Value.VirtualServerUid;
-			SQLExec($"CREATE TABLE IF NOT EXISTS {suid} (\"id\" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, \"timestamp\" TIMESTAMP NOT NULL, \"level\" TEXT NOT NULL, \"event\" TEXT NOT NULL, \"message\"  TEXT NOT NULL);");
-			monitoring.Add(new Tuple<string, string>(suid, Bot.Name));
-			TS3FullClient.OnEachClientUpdated += OnEachClientUpdated;
+			InitServer();
 		}
 
 		#region Events
 		private void OnEachClientUpdated(object sender, ClientUpdated e)
 		{
-			LogDB(DateTime.Now, TS3Client.LogLevel.Info, "Client Updated", e.ClientId.ToString());
+			var col = dataBase.GetCollection<LogEntry>("Server");
+			col.Insert(new LogEntry{ TimeStamp = DateTime.Now, LogLevel = TS3Client.LogLevel.Info, Event = "Client Updated", Message = $"Client ID: {e.ClientId}" });
 		}
 		#endregion
 		#region Commands
@@ -119,10 +136,9 @@ namespace ServerLog
 			var sb = new StringBuilder();
 			sb.AppendLine($"{PluginInfo.Name} Status:");
 			sb.AppendLine($"Bot: {Bot.Name}");
-			sb.AppendLine($"DB: {LogDBFile}");
-			sb.AppendLine($"State: {dataBase.State.ToString()}");
-			sb.AppendLine($"Monitoring {monitoring.Count}: {monitoring.ToString()}");
 			var suid = TS3FullClient.WhoAmI().Value.VirtualServerUid;
+			sb.AppendLine($"DB: {Path.Combine(LogPath, $"{suid}.db")}");
+			sb.AppendLine($"Monitoring {monitoring.Count}: {monitoring.ToString()}");
 			sb.AppendLine($"Current: {suid}");
 			return sb.ToString();
 		}
@@ -130,17 +146,8 @@ namespace ServerLog
 		public void Dispose() {
 			TS3FullClient.OnEachClientUpdated -= OnEachClientUpdated;
 			TS3FullClient.OnChannelListFinished -= OnChannelListFinished;
-			switch (dataBase.State)
-			{
-				case System.Data.ConnectionState.Connecting:
-				case System.Data.ConnectionState.Executing:
-				case System.Data.ConnectionState.Fetching:
-				case System.Data.ConnectionState.Open:
-					dataBase.Close();
-					break;
-				default:
-					break;
-			}
+			TS3FullClient.OnEachInitServer -= OnEachInitServer;
+			dataBase.Dispose();
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}

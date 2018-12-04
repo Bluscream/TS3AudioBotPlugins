@@ -172,7 +172,7 @@ namespace ComplaintReminder
 
 		public R<TS3Client.LazyNotification,CommandError> RequestComplaintList()
 		{
-			Log.Debug($"{Bot.Name}: Requesting Complaints for server \"{Ts3FullClient.ConnectionData.Address}\"");
+			// Log.Debug($"{Bot.Name}: Requesting Complaints for server \"{Ts3FullClient.ConnectionData.Address}\"");
 			var Command = new Ts3Command("complainlist", new List<ICommandPart>(){new CommandParameter("tcldbid", 0)});
 			return Ts3FullClient.SendNotifyCommand(Command, NotificationType.ComplainList);
 		}
