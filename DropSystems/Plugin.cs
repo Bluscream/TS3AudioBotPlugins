@@ -42,34 +42,80 @@ namespace DropSystems
 		public Bot Bot { get; set; }
 		public TickWorker Timer { get; set; }
 		public ConfRoot ConfRoot { get; set; }
+		private const string suid = "uSggaC3Um04QqMB8vrrQJrAMz5Y=";
+		/*private ClientData bot_dropverify = new ClientData() { Name = "» DropVerify", Uid = "1pvCr4o4ME05vJ/wnByqETm1rc4=" };
+		private ClientData bot_dropverifymc = new ClientData() { Uid = "/ngHhrrnQl/JB8seCsgHkpk3xCY=" };
+		private ClientData bot_dropradio = new ClientData() { Name = "DropRadio » Wartungen", Uid = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=" };
+		private ClientData bot_dropradio_whisper = new ClientData() { Name = "DropRadio » Whisper", Uid = "wJhkVvpecZvKl1EucawPBB5I4QM=" };*/
+		private const string uid_bot_dropverify = "1pvCr4o4ME05vJ/wnByqETm1rc4=";
+		private const string uid_bot_dropverifymc = "/ngHhrrnQl/JB8seCsgHkpk3xCY=";
+		private const string uid_bot_dropradio = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=";
+		private const string uid_bot_dropradio_whisper = "wJhkVvpecZvKl1EucawPBB5I4QM=";
+		private const string msg_verification_required = "Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.";
+		private const ulong cid_idle = 1585;
+		private const ulong cid_create = 1597;
 
+		private const string channel_name = "Kein Support";
+		private const string channel_password = "blu";
+		private const string channel_maxclients = "10";
+		private const string channel_needed_tp = "6";
+		private const string channel_topic_template = "";
+		private string channel_description_file;
 
-		/* [URL=client://12/1pvCr4o4ME05vJ/wnByqETm1rc4=~%C2%BB%20DropVerify]» DropVerify[/URL]
-
-Willkommen » Verifizierung
+		private string[] channel_joinfor = {"e3dvocUFTE1UWIvtW8qzulnWErI=", "BnOoI1/YoLpF5jOBxQXxRYc+a28=" };
+/*
+[B]Willkommen[\/B] » Verifizierung
 
 Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.
-Hierfür gibt es bei uns zwei Möglichkeiten: Sie können entweder diesen Bot mit !verify anschreiben oder in Minecraft /verify eingeben.
+Hierfür gibt es bei uns zwei Möglichkeiten: Sie können entweder diesen Bot mit [B]!verify[\/B] anschreiben oder in Minecraft [B]\/verify[\/B] eingeben.
 Die beiden Variationen geben Ihnen zwar unterschiedliche Ränge, diese haben aber die gleichen Features.
 
 Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
+---
+[B]Verifizierung[\/B] » Sie wurden erfolgreich Verifieziert!
+---
+\n[B]RangSteigerung »[/B] [url=http://teamspeak.dropsystems.eu]LevelUp-Stastiken[/url]\r
 
-
-
-
-		*/
+				
+\nHey CONTACT_FRIEND, Sie haben einen höheren Rang bekommen und können sofort anfangen Ihre neuen Features des Levelup's zu entdecken,\r\nMit dem Befehl [B]!nextup[/B] sehen Sie Ihre aktuellen Statisken auf dem DropSystems Teamspeak!\r\nVielen Dank für Ihren Aufenthalt auf unserem Server und noch weiterhin viel Spaß beim Punkten.
+*/
 
 		public DropSystems() { }
 
 		public void Initialize()
 		{
-			// Ts3FullClient.OnEachComplainList += OnComplainList;
+			var _suid = Ts3FullClient.WhoAmI().Value.VirtualServerUid;
+			if (_suid != suid) {
+				Log.Warn("Server UID {} does not match {}. Plugin disabled!", _suid, suid); return;
+			}
+			channel_description_file = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.txt");
+			Ts3FullClient.OnEachTextMessage += OnEachTextMessage;
+			Ts3FullClient.OnChannelListFinished += OnChannelListFinished;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+		}
+
+		private void OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e)
+		{
+			// we are ready
+		}
+
+		private void OnEachTextMessage(object sender, TextMessage e)
+		{
+			if (e.Target != TS3Client.TextMessageTargetMode.Private) return;
+			switch (e.InvokerUid) {
+				case uid_bot_dropverify:
+					if (e.Message.Contains(msg_verification_required)) {
+						Ts3Client.SendMessage("!verify", e.InvokerId);
+					}
+					break;
+				default:
+					break;
+			}
 		}
 
 		public void Dispose()
 		{
-			// Ts3FullClient.OnEachComplainList -= OnComplainList;
+			Ts3FullClient.OnEachTextMessage -= OnEachTextMessage;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
