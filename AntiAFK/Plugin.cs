@@ -3,18 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using TS3AudioBot;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
-using TS3AudioBot;
+using TS3AudioBot.Helper;
 using TS3Client.Full;
 using TS3Client.Messages;
-using IniParser;
-using IniParser.Model;
-using TS3AudioBot.Helper;
 using TS3Client.Commands;
 using TS3AudioBot.CommandSystem;
-using System.Text;
+using IniParser;
+using IniParser.Model;
+using TS3Client;
 
 namespace AntiAFK
 {
@@ -39,7 +40,7 @@ namespace AntiAFK
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-		public Ts3FullClient TS3FullClient { get; set; }
+		public TS3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot ConfBot { get; set; }
 		public ConfRoot ConfRoot { get; set; }
@@ -104,6 +105,8 @@ namespace AntiAFK
 
 		private void OnEachTextMessage(object sender, TextMessage e)
 		{
+			if (e.Target != TextMessageTargetMode.Private) return;
+			if (e.InvokerId == TS3FullClient.ClientId) return;
 			var hasuid = PluginConfig[suid].ContainsKey("Bot UID");
 			if (hasuid && e.InvokerUid != PluginConfig[suid]["Bot UID"]) return;
 			var contains = e.Message.Contains(PluginConfig[suid]["Message"]);

@@ -44,7 +44,7 @@ namespace SimpleTTS
 		// { "UK English Female", "UK English Male", "US English Female", "Spanish Female", "French Female", "Deutsch Female", "Italian Female", "Greek Female", "Hungarian Female", "Turkish Female", "Russian Female", "Dutch Female", "Swedish Female", "Norwegian Female", "Japanese Female", "Korean Female", "Chinese Female", "Hindi Female", "Serbian Male", "Croatian Male", "Bosnian Male", "Romanian Male", "Catalan Male", "Australian Female", "Finnish Female", "Afrikaans Male", "Albanian Male", "Arabic Male", "Armenian Male", "Czech Female", "Danish Female", "Esperanto Male", "Hatian Creole Female", "Icelandic Male", "Indonesian Female", "Latin Female", "Latvian Male", "Macedonian Male", "Moldavian Male", "Montenegrin Male", "Polish Female", "Brazilian Portuguese Female", "Portuguese Female", "Serbo-Croatian Male", "Slovak Female", "Spanish Latin American Female", "Swahili Male", "Tamil Male", "Thai Female", "Vietnamese Male", "Welsh Male" };
 		public string[] TTSLocales = { "af-ZA", "ar-SA", "bs", "ca-ES", "cs-CZ", "cy", "da-DK", "de-DE", "el-GR", "en-AU", "en-GB", "en-US", "eo", "es-ES", "es-MX", "fi-FI", "fr-FR", "hi-IN", "hr-HR", "hu-HU", "hy-AM", "id-ID", "is-IS", "it-IT", "ja-JP", "ko-KR", "la", "lv-LV", "md", "me", "mk-MK", "nb-NO", "nl-NL", "pl-PL", "pt-BR", "ro-RO", "ru-RU", "sk-SK", "sq-AL", "sr-RS", "sv-SE", "sw-KE", "th-TH", "tr-TR", "vi-VN", "zh-CN", "zh-HK", "zh-TW" };
 		public string[] TTSGenders = { "male", "female" };
-		public bool isTalking = false; public bool isBroadcast = false; public float BOTVolume = 100; public float oldVolume = 0;
+		public bool isTalking = false; public bool isBroadcast = false; public float BOTVolume; public float oldVolume = 0;
 		GroupWhisperType oldGroupWhisperType; GroupWhisperTarget oldGroupWhisperTarget; TargetSendMode oldSendMode;
 		ICollection<ushort> oldWhisperClients; ICollection<ulong> oldWhisperChannels; ulong oldTargetId;
 
@@ -66,8 +66,8 @@ namespace SimpleTTS
 				PluginConfig[section]["Gender"] = "female";
 				PluginConfig[section]["Pitch"] = "0.5";
 				PluginConfig[section]["Rate"] = "0.5";
-				PluginConfig[section]["Mode"] = "0";
-				// PluginConfig[section]["Volume"] = "1";
+				PluginConfig[section]["Mode"] = "1";
+				PluginConfig[section]["Volume"] = "50";
 				PluginConfig[bsection]["Gender"] = "male";
 				PluginConfig[bsection]["Rate"] = "0.3";
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
@@ -75,6 +75,7 @@ namespace SimpleTTS
 				return;
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
+			BOTVolume = PluginConfig[section].ContainsKey("Volume") ? float.Parse(PluginConfig[section]["Volume"]) : (float)100;
 			PlayManager.BeforeResourceStopped += BeforeResourceStopped;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
@@ -116,7 +117,7 @@ namespace SimpleTTS
 		}
 
 		[Command("broadcast", "Syntax: !broadcast <text>")]
-		public void CommandBroadCast(IVoiceTarget targetManager, IPlayerConnection playerConnection, PlayManager playManager, params string[] text)
+		public void CommandBroadCast(IVoiceTarget targetManager, IPlayerConnection playerConnection, PlayManager playManager, InvokerData invoker, params string[] text)
 		{
 			try {
 				oldGroupWhisperType = targetManager.GroupWhisperType;
@@ -130,13 +131,13 @@ namespace SimpleTTS
 				isBroadcast = true;
 				PlayerConnection.Volume = BOTVolume;
 				Log.Debug($"Set Volume to {PlayerConnection.Volume}");
-				CommandSay(playerConnection, text);
+				CommandSay(playerConnection, invoker, text);
 					// playerConnection.Volume = 100;
 					// targetManager.WhisperClientSubscribe(invoker.ClientId.Value);
 			} catch (Exception ex) { Log.Error(ex.Message); }
 		}
 		[Command("say", "Syntax: !say <text>")]
-		public void CommandSay(IPlayerConnection playerConnection, params string[] _text) {
+		public void CommandSay(IPlayerConnection playerConnection, InvokerData invoker, params string[] _text) {
 			try {
 				var text = Uri.EscapeUriString(string.Join(" ", _text));
 				var url = PluginConfig[section]["Url"]
@@ -154,11 +155,15 @@ namespace SimpleTTS
 				switch (mode)
 				{
 					case "0":
-						PlayManager.Play(InvokerData.Anonymous, url);
+						PlayManager.Play(invoker, url);
 						PlayManager.PlaylistManager.Previous();
 						break;
 					case "1":
 						playerConnection.AudioStart(url);
+						break;
+					case "2":
+						PlayManager.Play(InvokerData.Anonymous, url); 
+						PlayManager.PlaylistManager.Previous();
 						break;
 					default:
 						throw new Exception($"Invalid Mode: {mode}");
@@ -184,7 +189,7 @@ namespace SimpleTTS
 			return $"Set SimpleTTS gender to [b]{gender}[/b]";
 		}
 
-		[Command("tts pitch", "Syntax: !tts <pitch (0.0-1.0)>")]
+		[Command("tts pitch", "Syntax: !tts pitch <0.0-1.0>")]
 		public string CommandSetPitch(string pitch)
 		{
 			var success = double.TryParse(pitch, out double s);
@@ -194,7 +199,7 @@ namespace SimpleTTS
 			return $"Set SimpleTTS pitch to [b]{pitch}[/b]";
 		}
 
-		[Command("tts rate", "Syntax: !tts <rate (0.0-1.0)>")]
+		[Command("tts rate", "Syntax: !tts rate <0.0-1.0>")]
 		public string CommandSetRate(string rate)
 		{
 			var success = double.TryParse(rate, out double s);
@@ -204,13 +209,24 @@ namespace SimpleTTS
 			return $"Set SimpleTTS rate to [b]{rate}[/b]";
 		}
 
-		[Command("tts volume", "Syntax: !tts <volume (0-100)>")]
+		[Command("tts volume", "Syntax: !tts volume <0-100>")]
 		public string CommandSetVolume(string volume)
 		{
 			var success = float.TryParse(volume, out float s);
 			if (!success) return "Failed to set volume! Make sure it's a valid value between 0 and 100";
 			BOTVolume = s;
+			PluginConfig[section]["Volume"] = s.ToString();
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
 			return $"Set SimpleTTS volume to [b]{volume}[/b]";
+		}
+
+		[Command("tts mode", "Syntax: !tts mode <0-1>")]
+		public string CommandSetMode(string mode = null)
+		{
+			if (mode is null) return $"Mode: {PluginConfig[section]["Mode"]}";
+			PluginConfig[section]["Mode"] = mode;
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return $"Set SimpleTTS mode to [b]{mode}[/b]";
 		}
 
 		public void Dispose()

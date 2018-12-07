@@ -19,7 +19,7 @@ namespace Tools
 	public class Tools : IBotPlugin
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
-		public Ts3FullClient TS3FullClient { get; set; }
+		public TS3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
 		public PlayManager BotPlayer { get; set; }

@@ -32,17 +32,17 @@ namespace AutoFollow
 		}
 	}
 	public class AutoFollow : IBotPlugin
-    {
-        private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
+	{
+		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-        // public Bot bot { get; set; }
+		// public Bot bot { get; set; }
 		public TS3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 
 		//private static Dictionary<int, string> UidCache;
 		private static List<string> following;
 
-        public void Initialize()
+		public void Initialize()
 		{
 			// UidCache = new Dictionary<int, string>();
 			following = new List<string>();
@@ -63,7 +63,8 @@ namespace AutoFollow
 			UidCache.Add(e.ClientId, e.Uid);
 		}*/
 
-		private void OnEachClientMoved(object sender, ClientMoved client) {
+		private void OnEachClientMoved(object sender, ClientMoved client)
+		{
 			var cached = TS3Client.GetCachedClientById(client.ClientId).Value;
 			if (!following.Contains(cached.Uid)) return;
 			Log.Debug("Client-to-follow \"{}\" { changed channels, following into #{}", cached.Name, client.TargetChannelId);
@@ -71,21 +72,25 @@ namespace AutoFollow
 			return;
 		}
 
-        public void Dispose() {
+		public void Dispose()
+		{
 			TS3FullClient.OnEachClientMoved -= OnEachClientMoved;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 
-        [Command("follow", "")]
-        public string CommandToggleAutoFollow(Ts3Client ts3Client, string name) {
+		[Command("follow", "")]
+		public string CommandToggleAutoFollow(Ts3Client ts3Client, string name)
+		{
 			var client = ts3Client.GetClientByName(name).UnwrapThrow();
 			if (string.IsNullOrEmpty(client.Uid)) return "Could not find client!";
 			if (following.Contains(client.Uid))
-            {
-                following.Remove(client.Uid);
-                return $"{PluginInfo.Name}: [color=gray]No longer following[/color] client {ClientURL(client.ClientId, client.Uid, client.Name)}";
-            } else {
-                following.Add(client.Uid);
+			{
+				following.Remove(client.Uid);
+				return $"{PluginInfo.Name}: [color=gray]No longer following[/color] client {ClientURL(client.ClientId, client.Uid, client.Name)}";
+			}
+			else
+			{
+				following.Add(client.Uid);
 				return $"{PluginInfo.Name}: [color=green]Now following[/color] client {ClientURL(client.ClientId, client.Uid, client.Name)}";
 			}
 		}

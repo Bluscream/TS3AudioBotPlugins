@@ -33,7 +33,7 @@ namespace VersionDetector
 
 		private HashSet<string> versions = new HashSet<string>();
 
-		public Ts3FullClient Ts3Client { get; set; }
+		public TS3FullClient Ts3Client { get; set; }
 
 		public TS3AudioBot.Bot Bot { get; set; }
 

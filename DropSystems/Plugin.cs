@@ -38,7 +38,7 @@ namespace DropSystems
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-		public Ts3FullClient Ts3FullClient { get; set; }
+		public TS3FullClient Ts3FullClient { get; set; }
 		public Ts3Client Ts3Client { get; set; }
 		public Bot Bot { get; set; }
 		public TickWorker Timer { get; set; }
@@ -48,7 +48,7 @@ namespace DropSystems
 		private ClientData bot_dropverifymc = new ClientData() { Uid = "/ngHhrrnQl/JB8seCsgHkpk3xCY=" };
 		private ClientData bot_dropradio = new ClientData() { Name = "DropRadio » Wartungen", Uid = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=" };
 		private ClientData bot_dropradio_whisper = new ClientData() { Name = "DropRadio » Whisper", Uid = "wJhkVvpecZvKl1EucawPBB5I4QM=" };*/
-		private const string uid_bot_afk = "9Xx3ciS1+gktsG6Z6MSGM6Z3974=";
+		private const string uid_bot_dropsystems = "9Xx3ciS1+gktsG6Z6MSGM6Z3974=";
 		private const string uid_bot_dropverify = "1pvCr4o4ME05vJ/wnByqETm1rc4=";
 		private const string uid_bot_dropverifymc = "/ngHhrrnQl/JB8seCsgHkpk3xCY=";
 		private const string uid_bot_dropradio = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=";
@@ -116,6 +116,7 @@ Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
 		private void OnEachTextMessage(object sender, TextMessage e)
 		{
 			if (e.Target != TS3Client.TextMessageTargetMode.Private) return;
+			if (e.InvokerId == Ts3FullClient.ClientId) return;
 			switch (e.InvokerUid) {
 				case uid_bot_dropverify:
 					if (e.Message.Contains(msg_verification_required)) {

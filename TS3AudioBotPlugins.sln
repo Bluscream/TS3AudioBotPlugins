@@ -71,6 +71,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerLog", "ServerLog\Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiAFK", "AntiAFK\AntiAFK.csproj", "{24D6068B-F2CD-4F35-89DB-F988D24C03C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotAutoStartQuery", "BotAutoStartQuery\BotAutoStartQuery.csproj", "{5ED05BBD-346A-481D-B7B7-6E0D671B54E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Follow", "Follow\Follow.csproj", "{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +197,14 @@ Global
 		{24D6068B-F2CD-4F35-89DB-F988D24C03C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24D6068B-F2CD-4F35-89DB-F988D24C03C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24D6068B-F2CD-4F35-89DB-F988D24C03C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED05BBD-346A-481D-B7B7-6E0D671B54E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED05BBD-346A-481D-B7B7-6E0D671B54E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED05BBD-346A-481D-B7B7-6E0D671B54E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED05BBD-346A-481D-B7B7-6E0D671B54E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

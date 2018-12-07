@@ -48,7 +48,7 @@ namespace BackToDefaultChannel
 		public void PluginLog(LogLevel logLevel, string Message) { Console.WriteLine($"[{logLevel.ToString()}] {PluginInfo.Name}: {Message}"); }
 
 		public Ts3Client TS3Client { get; set; }
-		public Ts3FullClient TS3FullClient { get; set; }
+		public TS3FullClient TS3FullClient { get; set; }
 
 		Dictionary<ClientId, ChannelId> cache = new Dictionary<ClientId, ChannelId>();
 

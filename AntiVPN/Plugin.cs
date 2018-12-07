@@ -37,7 +37,7 @@ namespace AntiVPN
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-		public Ts3FullClient Ts3FullClient { get; set; }
+		public TS3FullClient Ts3FullClient { get; set; }
 		public Ts3Client Ts3Client { get; set; }
 		public Bot Bot { get; set; }
 		public TickWorker Timer { get; set; }
