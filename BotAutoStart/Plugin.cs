@@ -7,6 +7,7 @@ using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
 using TS3Client.Full;
+using TS3Client.Query;
 using TS3Client.Messages;
 
 namespace BotAutoStart
