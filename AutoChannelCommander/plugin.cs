@@ -47,7 +47,7 @@ namespace AutoChannelCommander
 		private static readonly NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Bot bot;
-		public TS3FullClient TS3FullClient { get; set; }
+		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 
 		public TickWorker Timer { get; set; }

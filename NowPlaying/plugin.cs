@@ -30,7 +30,7 @@ namespace NowPlaying {
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Bot bot;
-		public TS3FullClient lib;
+		public Ts3FullClient lib;
 		public Ts3Client TS3Client;
 		public ConfTools ConfTools;
 

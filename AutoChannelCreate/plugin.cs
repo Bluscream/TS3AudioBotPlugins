@@ -37,7 +37,7 @@ namespace AutoChannelCreate
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 		private List<ChannelList> channelList = new List<ChannelList>();
 		public Ts3Client TS3Client { get; set; }
-		public TS3FullClient TS3FullClient { get; set; }
+		public Ts3FullClient TS3FullClient { get; set; }
 		public Bot Bot { get; set; }
 		public ConfBot Conf { get; set; }
 		public ConfRoot ConfRoot { get; set; }
@@ -55,7 +55,7 @@ namespace AutoChannelCreate
 			if (!File.Exists(PluginConfigFile))
 			{
 				PluginConfig = new IniData();
-				var bot = "default";
+				var bot = "bot name without bot_";
 				PluginConfig[bot]["Name"] = "{auto}";
 				PluginConfig[bot]["Password"] = "{auto}";
 				PluginConfig[bot]["Codec"] = "5";
@@ -80,21 +80,23 @@ namespace AutoChannelCreate
 		private void Ts3Client_OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e) {
 			try {
 				ChannelIdT found = 0;
+				var channel_name = Conf.Connect.Channel.Value.Split('/').Last();
 				foreach (ChannelList channel in channelList) {
-					if (channel.Name == Conf.Connect.Channel.Value) {
+					if (channel.Name == channel_name) {
 						found = channel.ChannelId;
 					}
 				}
 				var bot = Bot.Name;
 				if (!PluginConfig.Sections.ContainsSection(bot)) {
-					Log.Warn("No section found for \"{}\" \"{}\"! Skipping...", bot, PluginConfigFile); return;
+					Log.Warn("No section found for {} in {}! Skipping...", bot, PluginConfigFile); return;
 				}
 				var now = DateTime.Now.ToString();
 				var neededTP = PluginConfig[bot]["Needed Talk Power"];
-				var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : int.Parse(neededTP);
+				int.TryParse(neededTP, out var nTP);
+				var channel_needed_talk_power = (neededTP == "max") ? int.MaxValue: nTP;
+				// Log.Debug(string.Join(", ", channelList.Select(person => person.Name)));
 				if (found == 0) {
-					var channel_name = Conf.Connect.Channel.Value;
-					Log.Info("Default channel \"{}\" for template \"{}\" does not exist yet, creating...", channel_name, bot);
+					Log.Info("Default channel {} for template {} does not exist yet, creating...", channel_name, bot);
 					var commandCreate = new Ts3Command("channelcreate", new List<ICommandPart>() {
 						new CommandParameter("channel_name", channel_name)
 					});
@@ -175,7 +177,8 @@ namespace AutoChannelCreate
 			}
 
 			var neededTP = PluginConfig[bot]["Needed Talk Power"];
-			var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : int.Parse(neededTP);
+			int.TryParse(neededTP, out var nTP);
+			var channel_needed_talk_power = (neededTP == "{max}") ? int.MaxValue : nTP;
 			if (!string.IsNullOrEmpty(neededTP) && (!edit || neededTP.StartsWith("edit:"))) {
 				command.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
 			}

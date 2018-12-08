@@ -6,10 +6,9 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>P:\TS3AB\net46\Plugins\</OutputPath>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <DocumentationFile>P:\Projects\Visual Studio\source\repos\TS3AB\TS3AudioBotPlugins\AntiAFK\AntiAFK.xml</DocumentationFile>
+    <DocumentationFile>P:\Projects\Visual Studio\source\repos\TS3AB\TS3AudioBotPlugins\AutoPause\AutoPause.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
