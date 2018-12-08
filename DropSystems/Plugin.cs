@@ -49,6 +49,8 @@ namespace DropSystems
 		private ClientData bot_dropradio = new ClientData() { Name = "DropRadio » Wartungen", Uid = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=" };
 		private ClientData bot_dropradio_whisper = new ClientData() { Name = "DropRadio » Whisper", Uid = "wJhkVvpecZvKl1EucawPBB5I4QM=" };*/
 		private const string uid_bot_dropsystems = "9Xx3ciS1+gktsG6Z6MSGM6Z3974=";
+		private const string uid_bot_dropranking = "/Evwwvnf2EepICM+M/bVBrmwIIs=";
+		private const string uid_bot_dropcloud = "QuZDxb1ilQHEyo0nnrMLI6toAZ8=";
 		private const string uid_bot_dropverify = "1pvCr4o4ME05vJ/wnByqETm1rc4=";
 		private const string uid_bot_dropverifymc = "/ngHhrrnQl/JB8seCsgHkpk3xCY=";
 		private const string uid_bot_dropradio = "NW+PLhA/dhnxvIVQZGn8GKUGoKE=";
@@ -56,7 +58,8 @@ namespace DropSystems
 		private const string msg_verification_required = "Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.";
 		private const string msg_verification_success = "Sie wurden erfolgreich Verifieziert!";
 		private const string msg_nextup_response = "RangSteigerung";
-		private const string regex_nextup = @"Level: (.*)\nTage: (\d+) \nStunden: (\d+) \nMinuten: (\d+) \n";
+		private const string msg_nextup_newlvl = "Sie haben einen höheren Rang bekommen";
+		private static Regex regex_nextup = new Regex(@"Level: (.*)\n\s*Tage: (\d+)\s*\nStunden: (\d+)\s*\nMinuten: (\d+)\s*\n");
 		private const ulong cid_idle = 1585;
 		private const ulong cid_create = 1597;
 
@@ -70,29 +73,30 @@ namespace DropSystems
 		private string[] channel_joinfor = {"e3dvocUFTE1UWIvtW8qzulnWErI=", "BnOoI1/YoLpF5jOBxQXxRYc+a28=" };
 
 		private (string, TimeSpan) nextUp;
-/*
-[B]Willkommen[\/B] » Verifizierung
+		/*
+		 * [URL=client://24//Evwwvnf2EepICM+M/bVBrmwIIs=~%C2%BB%20DropRanking]» DropRanking[/URL]
+		[B]Willkommen[\/B] » Verifizierung
 
-Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.
-Hierfür gibt es bei uns zwei Möglichkeiten: Sie können entweder diesen Bot mit [B]!verify[\/B] anschreiben oder in Minecraft [B]\/verify[\/B] eingeben.
-Die beiden Variationen geben Ihnen zwar unterschiedliche Ränge, diese haben aber die gleichen Features.
+		Damit Sie unseren TeamSpeak umfangreich nutzen können, müssen Sie sich Verifizieren.
+		Hierfür gibt es bei uns zwei Möglichkeiten: Sie können entweder diesen Bot mit [B]!verify[\/B] anschreiben oder in Minecraft [B]\/verify[\/B] eingeben.
+		Die beiden Variationen geben Ihnen zwar unterschiedliche Ränge, diese haben aber die gleichen Features.
 
-Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
----
-[B]Verifizierung[\/B] » Sie wurden erfolgreich Verifieziert!
----
-\n[B]RangSteigerung »[/B] [url=http://teamspeak.dropsystems.eu]LevelUp-Stastiken[/url]\r
-
-
-\nHey CONTACT_FRIEND, Sie haben einen höheren Rang bekommen und können sofort anfangen Ihre neuen Features des Levelup's zu entdecken,\r\nMit dem Befehl [B]!nextup[/B] sehen Sie Ihre aktuellen Statisken auf dem DropSystems Teamspeak!\r\nVielen Dank für Ihren Aufenthalt auf unserem Server und noch weiterhin viel Spaß beim Punkten.
+		Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
+		---
+		[B]Verifizierung[\/B] » Sie wurden erfolgreich Verifieziert!
+		---
+		\n[B]RangSteigerung »[/B] [url=http://teamspeak.dropsystems.eu]LevelUp-Stastiken[/url]\r
 
 
+		\nHey CONTACT_FRIEND, Sie haben einen höheren Rang bekommen und können sofort anfangen Ihre neuen Features des Levelup's zu entdecken,\r\nMit dem Befehl [B]!nextup[/B] sehen Sie Ihre aktuellen Statisken auf dem DropSystems Teamspeak!\r\nVielen Dank für Ihren Aufenthalt auf unserem Server und noch weiterhin viel Spaß beim Punkten.
 
-[B]AFKChecker[/B] » Sobald Sie für 10 Minuten inaktiv sind, werden Sie in den AFK-Channel verschoben! Nachdem Sie dann für längere Zeit inaktiv sind, werden Sie vom Server gekickt!"
 
-[B]AFKChecker[\/B]\s»\sSie\ssind\snun\sschon\slänger\sals\s10\sMinuten\sinaktiv,\sSie\swerden\sjetzt\sverschoben! target=9 invokerid=6 invokername=»\sDropSystem invokeruid=9Xx3ciS1+gktsG6Z6MSGM6Z3974=
 
-*/
+		[B]AFKChecker[/B] » Sobald Sie für 10 Minuten inaktiv sind, werden Sie in den AFK-Channel verschoben! Nachdem Sie dann für längere Zeit inaktiv sind, werden Sie vom Server gekickt!"
+
+		[B]AFKChecker[\/B]\s»\sSie\ssind\snun\sschon\slänger\sals\s10\sMinuten\sinaktiv,\sSie\swerden\sjetzt\sverschoben! target=9 invokerid=6 invokername=»\sDropSystem invokeruid=9Xx3ciS1+gktsG6Z6MSGM6Z3974=
+
+		*/
 
 		public DropSystems() { }
 
@@ -104,7 +108,7 @@ Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
 			}
 			channel_description_file = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.txt");
 			Ts3FullClient.OnEachTextMessage += OnEachTextMessage;
-			Ts3FullClient.OnChannelListFinished += OnChannelListFinished;
+			// Ts3FullClient.OnChannelListFinished += OnChannelListFinished;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
@@ -117,31 +121,43 @@ Wir wünschen Ihnen noch einen schönen Aufenthalt auf unseren Netzwerken!
 		{
 			if (e.Target != TS3Client.TextMessageTargetMode.Private) return;
 			if (e.InvokerId == Ts3FullClient.ClientId) return;
+			var trimmed = e.Message.Trim().Replace("\t", " ").Replace("\r", "").Replace("\n", " ");
 			switch (e.InvokerUid) {
 				case uid_bot_dropverify:
 					if (e.Message.Contains(msg_verification_required)) {
 						Ts3Client.SendMessage("!verify", e.InvokerId);
-						Log.Info("Trying to verify...");
+						Log.Warn("Trying to verify...");
 					} else if (e.Message.Contains(msg_verification_success)) {
-						Log.Info("Successfully verified...");
-					} else if (e.Message.Contains(msg_nextup_response)) {
-						var g = Regex.Match(e.Message, regex_nextup, RegexOptions.Multiline).Groups;
-						nextUp.Item1 = g[1].Value;var days = int.Parse(g[2].Value);var hours = int.Parse(g[3].Value); var minutes = int.Parse(g[4].Value); // var seconds = int.Parse(g[5].Value)
-						nextUp.Item2 = new TimeSpan(days, hours, minutes, 0); //  .AddDays(days).AddHours(hours).AddMinutes(minutes);
-						Log.Info("Got nextup: {}", e.Message);
+						Log.Warn("Successfully verified...");
 					}
+					// Log.Debug("Message from uid_bot_dropverify: \"{}\"", e.InvokerUid, trimmed);
+					break;
+				case uid_bot_dropranking:
+					if (e.Message.Contains(msg_nextup_newlvl)) {
+						getNextUp();
+					}
+					else if (e.Message.Contains(msg_nextup_response))
+					{
+						var g = regex_nextup.Match(e.Message).Groups;
+						try {
+							nextUp.Item1 = g[1].Value; var days = int.Parse(g[2].Value); var hours = int.Parse(g[3].Value); var minutes = int.Parse(g[4].Value); // var seconds = int.Parse(g[5].Value)
+							nextUp.Item2 = new TimeSpan(days: days, hours: hours, minutes: minutes, seconds: 0); //  .AddDays(days).AddHours(hours).AddMinutes(minutes);
+						} catch (Exception ex) { Log.Error("Error while handling nextup: {}", ex.StackTrace); }
+						// Log.Warn("Got nextup: {}", e.Message);
+					}
+					// Log.Debug("Message from uid_bot_dropranking: \"{}\"", e.InvokerUid, trimmed);
 					break;
 				default:
-					var trimmed = e.Message.Trim().Replace("\t", " ").Replace("\r", "").Replace("\n", " ");
-					Log.Info("Unknown Message: \"{0}\"",trimmed);
+					// File.WriteAllText("msg.txt", e.Message);
+					Log.Info("Message from Unknown UID ({}): \"{}\"", e.InvokerUid, trimmed);
 					break;
 			}
 		}
 
 		public void getNextUp()
 		{
-			var t = Ts3FullClient.GetClientIds(uid_bot_dropverify).Unwrap();
-			Ts3Client.SendMessage("!nextup", t[0].ClientId);
+			var t = Ts3FullClient.GetClientIds(uid_bot_dropranking).Unwrap();
+			Ts3Client.SendMessage("!nextup", t[0].ClientId).UnwrapThrow();
 		}
 
 		[Command("nextup")]
