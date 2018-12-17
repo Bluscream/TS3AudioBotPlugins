@@ -10,6 +10,7 @@ using TS3Client.Full;
 using TS3Client.Messages;
 using IniParser;
 using IniParser.Model;
+using TS3Client;
 
 namespace BotAutoStartQuery
 {
@@ -47,7 +48,7 @@ namespace BotAutoStartQuery
 		private static string PluginConfigFile;
 		private static IniData PluginConfig;
 
-		private static Dictionary<int, string> UidCache;
+		private static Dictionary<int, string> UidCache = new Dictionary<int, string>();
 
 		public void Initialize()
 		{
@@ -63,8 +64,6 @@ namespace BotAutoStartQuery
 				return;
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
-
-			UidCache = new Dictionary<int, string>();
 
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			TS3FullClient.OnEachClientLeftView += OnEachClientLeftView;
@@ -92,16 +91,18 @@ namespace BotAutoStartQuery
 			return TS3FullClient.GetClientIds(uid).Value.Length > 0;
 		}
 
-		private void OnEachClientEnterView(object sender, ClientEnterView e)
+		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
-			var has = HasAutoStart(e.Uid);
-			Log.Debug("Checking if {} has a default bot", e.Uid);
+			if (client.ClientType != ClientType.Full) return;
+			if (client.ClientId == TS3FullClient.ClientId) return;
+			var has = HasAutoStart(client.Uid);
+			Log.Debug("Checking if {} has a default bot", client.Uid);
 			if (string.IsNullOrEmpty(has)) return;
-			Log.Info("{} has a default bot: {}", e.Name, has);
+			Log.Info("{} has a default bot: {}", client.Name, has);
 			if (IsBotConnected(has)) return;
 			Log.Info("{} is not connected", has);
 			BotManager.RunBotTemplate(has);
-			UidCache.Add(e.ClientId, e.Uid);
+			UidCache.Add(client.ClientId, client.Uid);
 		}
 
 		private string HasAutoStart(string Uid)

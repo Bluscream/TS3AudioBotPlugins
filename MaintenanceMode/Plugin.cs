@@ -40,12 +40,15 @@ namespace MaintenanceMode
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
 		public Ts3FullClient TS3FullClient { get; set; }
+		public Ts3Client TS3Client { get; set; }
 		public ConfRoot ConfRoot { get; set; }
 		private static FileIniDataParser ConfigParser;
 		private static string PluginConfigFile;
 		public static IniData PluginConfig;
-		public List<string> whitelist;
-		public bool MaintenanceEnabled = false;
+		private List<string> whitelist = new List<string>();
+		private bool MaintenanceEnabled = false;
+		private DateTime start;
+		private InvokerData Invoker;
 
 		public void Initialize()
 		{
@@ -54,53 +57,55 @@ namespace MaintenanceMode
 			if (!File.Exists(PluginConfigFile))
 			{
 				PluginConfig = new IniData();
-				PluginConfig["general"]["kick reason"] = "Wartungsmodus aktiv, bitte versuche es später nochmal.";
+				PluginConfig["general"]["kick reason"] = "Maintenance Mode, please try again later.";
+				PluginConfig["general"]["poke message"] = string.Empty;
+				PluginConfig["general"]["private message"] = string.Empty;
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
 				Log.Warn("Config for plugin {} created!", PluginInfo.Name);
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			var whitelistFile = Path.Combine(ConfRoot.Plugins.Path.Value, "whitelist.txt");
-			whitelist = File.ReadAllLines(whitelistFile).ToList();
-			TS3FullClient.OnClientEnterView += OnClientEnterView;
-			//TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
+			whitelist = (File.ReadAllLines(whitelistFile)).Select(l => l.Trim()).ToList();
+			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
-		private void OnClientEnterView(object sender, IEnumerable<ClientEnterView> e)
+		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
 			if (!MaintenanceEnabled) return;
-			var toKick = new List<ClientIdT>();
-			foreach (var client in e)
-			{
-				if (whitelist.Contains(client.Uid)) continue;
-				toKick.Add(client.ClientId);
-			}
-			KickFromServer(toKick.ToArray(), PluginConfig["general"]["kick reason"]);
+			if (whitelist.Contains(client.Uid)) return;
+			if (client.ClientType == ClientType.Query) return;
+			if (client.ClientId == TS3FullClient.ClientId) return;
+			KickFromServer(client.ClientId, PluginConfig["general"]["kick reason"]);
 		}
 
-		/*private void OnEachClientEnterView(object sender, ClientEnterView e)
+		private bool KickFromServer(ClientIdT ClientId, string reason)
 		{
-			if (!MaintenanceEnabled) return;
-			if (whitelist.Contains(e.Uid)) return;
-			KickFromServer
-		}*/
-
-
-
-		private bool KickFromServer(ClientIdT[] clientIds, string reason)
-		{
+			var msg = PluginConfig["general"]["private message"];
+			if (!string.IsNullOrWhiteSpace(msg)) {
+				TS3Client.SendMessage(msg, ClientId);
+			}
+			msg = PluginConfig["general"]["poke message"];
+			if (!string.IsNullOrWhiteSpace(msg))
+			{
+				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
+					new CommandParameter("clid", ClientId),
+					new CommandParameter("msg", msg.Replace("{start}", start.ToString()).Replace("{invoker}", Invoker.NickName))
+				});
+				var result = TS3FullClient.SendNotifyCommand(cmd, NotificationType.ClientPokeRequest).Value;
+			}
 			var command = new Ts3Command("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
-					new CommandMultiParameter("clid", clientIds),
+					new CommandParameter("clid", ClientId),
 					new CommandParameter("reasonmsg", reason)
 			});
+			Log.Warn(command);
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
 		}
-		// private bool KickFromServer(ClientIdT ClientId, string reason) => KickFromServer(new ClientIdT[] { ClientId }, reason);
 
 		[Command("wartung", "")]
-		public string CommandSetMaintenanceMode(string toggle="")
+		public string CommandSetMaintenanceMode(InvokerData invoker, string toggle="")
 		{
 			if (string.IsNullOrWhiteSpace(toggle)) {
 				var onoff = MaintenanceEnabled ? "[color=orange]on" : "[color=green]off";
@@ -109,16 +114,21 @@ namespace MaintenanceMode
 			var str = "";
 			toggle = toggle.ToLower();
 			if (toggle == "on") {
+				Invoker = invoker; start = DateTime.Now;
 				MaintenanceEnabled = true;
-				var clients = TS3FullClient.ClientList().Value;
-				var toKick = new List<ClientIdT>();
-				foreach (var client in clients)
+				var clients = TS3FullClient.ClientList(ClientListOptions.uid);
+				if (!clients.Ok) return "[color=red][b]Failed!";
+				var kicked = 0;
+				foreach (var client in clients.Value)
 				{
+					if (client.ClientId == TS3FullClient.ClientId) continue;
+					if (client.ClientType != ClientType.Full) continue;
 					if (whitelist.Contains(client.Uid)) continue;
-					toKick.Add(client.ClientId);
+					Log.Info("\"{}\" not in \"{}\"", client.Uid, string.Join("\", \"", whitelist));
+					KickFromServer(client.ClientId, PluginConfig["general"]["kick reason"]);
+					kicked += 1;
 				}
-				KickFromServer(toKick.ToArray(), PluginConfig["general"]["kick reason"]);
-				str = $"[color=orange][b]Enabled Maintenance Mode, {toKick.Count} clients were kicked!";
+				str = $"[color=orange][b]Enabled Maintenance Mode, {kicked} clients were kicked!";
 			} else if (toggle == "off") {
 				MaintenanceEnabled = false;
 				str = "[color=green][b]Disabled Maintenance Mode";
@@ -128,7 +138,7 @@ namespace MaintenanceMode
 
 		public void Dispose()
 		{
-			// TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView; ;
+			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView; ;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}

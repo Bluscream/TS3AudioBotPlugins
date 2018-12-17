@@ -4,17 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <OutputPath>P:\TS3AB\net46\Plugins\</OutputPath>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ini-parser" Version="2.5.2" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj">
       <Private>false</Private>
