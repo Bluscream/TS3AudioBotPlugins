@@ -47,8 +47,6 @@ namespace MaintenanceMode
 		public static IniData PluginConfig;
 		private List<string> whitelist = new List<string>();
 		private bool MaintenanceEnabled = false;
-		private DateTime start;
-		private InvokerData Invoker;
 
 		public void Initialize()
 		{
@@ -57,6 +55,9 @@ namespace MaintenanceMode
 			if (!File.Exists(PluginConfigFile))
 			{
 				PluginConfig = new IniData();
+				PluginConfig["general"]["active"] = "0";
+				PluginConfig["general"]["invoker"] = string.Empty;
+				PluginConfig["general"]["start"] = string.Empty;
 				PluginConfig["general"]["kick reason"] = "Maintenance Mode, please try again later.";
 				PluginConfig["general"]["poke message"] = string.Empty;
 				PluginConfig["general"]["private message"] = string.Empty;
@@ -66,8 +67,18 @@ namespace MaintenanceMode
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			var whitelistFile = Path.Combine(ConfRoot.Plugins.Path.Value, "whitelist.txt");
 			whitelist = (File.ReadAllLines(whitelistFile)).Select(l => l.Trim()).ToList();
+			MaintenanceEnabled = PluginConfig["general"]["active"].Trim() == "1";
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
+			TS3FullClient.OnChannelListFinished += OnChannelListFinished;
+			if (MaintenanceEnabled)
+				CheckAllClients();
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+		}
+
+		private void OnChannelListFinished(object sender, IEnumerable<ChannelListFinished> e)
+		{
+			if (PluginConfig["general"]["active"].Trim() == "1")
+				CheckAllClients();
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
@@ -76,10 +87,10 @@ namespace MaintenanceMode
 			if (whitelist.Contains(client.Uid)) return;
 			if (client.ClientType == ClientType.Query) return;
 			if (client.ClientId == TS3FullClient.ClientId) return;
-			KickFromServer(client.ClientId, PluginConfig["general"]["kick reason"]);
+			KickFromServer(client.ClientId);
 		}
 
-		private bool KickFromServer(ClientIdT ClientId, string reason)
+		private bool KickFromServer(ClientIdT ClientId)
 		{
 			var msg = PluginConfig["general"]["private message"];
 			if (!string.IsNullOrWhiteSpace(msg)) {
@@ -90,55 +101,82 @@ namespace MaintenanceMode
 			{
 				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("msg", msg.Replace("{start}", start.ToString()).Replace("{invoker}", Invoker.NickName))
+					new CommandParameter("msg", msg.Replace("{start}", PluginConfig["general"]["start"]).Replace("{invoker}", PluginConfig["general"]["invoker"]))
 				});
 				var result = TS3FullClient.SendNotifyCommand(cmd, NotificationType.ClientPokeRequest).Value;
 			}
 			var command = new Ts3Command("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("reasonmsg", reason)
+					new CommandParameter("reasonmsg", PluginConfig["general"]["kick reason"])
 			});
 			Log.Warn(command);
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
 		}
 
-		[Command("wartung", "")]
-		public string CommandSetMaintenanceMode(InvokerData invoker, string toggle="")
+		private int CheckAllClients()
 		{
-			if (string.IsNullOrWhiteSpace(toggle)) {
-				var onoff = MaintenanceEnabled ? "[color=orange]on" : "[color=green]off";
-				return $"Maintenance is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
+			var clients = TS3FullClient.ClientList(ClientListOptions.uid).Value;
+			var kicked = 0;
+			foreach (var client in clients)
+			{
+				if (client.ClientId == TS3FullClient.ClientId) continue;
+				if (client.ClientType != ClientType.Full) continue;
+				if (whitelist.Contains(client.Uid)) continue;
+				Log.Info("\"{}\" not in \"{}\"", client.Uid, string.Join("\", \"", whitelist));
+				KickFromServer(client.ClientId);
+				kicked += 1;
 			}
-			var str = "";
-			toggle = toggle.ToLower();
-			if (toggle == "on") {
-				Invoker = invoker; start = DateTime.Now;
-				MaintenanceEnabled = true;
-				var clients = TS3FullClient.ClientList(ClientListOptions.uid);
-				if (!clients.Ok) return "[color=red][b]Failed!";
-				var kicked = 0;
-				foreach (var client in clients.Value)
-				{
-					if (client.ClientId == TS3FullClient.ClientId) continue;
-					if (client.ClientType != ClientType.Full) continue;
-					if (whitelist.Contains(client.Uid)) continue;
-					Log.Info("\"{}\" not in \"{}\"", client.Uid, string.Join("\", \"", whitelist));
-					KickFromServer(client.ClientId, PluginConfig["general"]["kick reason"]);
-					kicked += 1;
-				}
-				str = $"[color=orange][b]Enabled Maintenance Mode, {kicked} clients were kicked!";
-			} else if (toggle == "off") {
-				MaintenanceEnabled = false;
-				str = "[color=green][b]Disabled Maintenance Mode";
-			} else { str = "[color=red][b]Use \"off\" or \"on\""; }
-			return str;
+			return kicked;
+		}
+
+		[Command("wartung", "")]
+		public string CommandMaintenanceMode()
+		{
+			var onoff = MaintenanceEnabled ? "[color=orange]on" : "[color=green]off";
+			return $"Maintenance is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
+		}
+		[Command("wartung an", "")]
+		public string CommandEnableMaintenanceMode(InvokerData invoker)
+		{
+			PluginConfig["general"]["invoker"] = invoker.NickName;
+			PluginConfig["general"]["start"] = DateTime.Now.ToString();
+			PluginConfig["general"]["active"] = "1";
+			MaintenanceEnabled = true;
+			var kicked = CheckAllClients();
+			return $"[color=orange][b]Enabled Maintenance Mode, {kicked} clients were kicked!";
+		}
+		[Command("wartung aus", "")]
+		public string CommandDisableMaintenanceMode()
+		{
+			MaintenanceEnabled = false;
+			PluginConfig["general"]["active"] = "0";
+			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+			return "[color=green][b]Disabled Maintenance Mode";
+		}
+		[Command("wartung whitelist", "")]
+		public string CommandToggleWhitelist(string uid)
+		{
+			uid = uid.Trim();
+			if (whitelist.Contains(uid))
+			{
+				whitelist.Remove(uid);
+				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+				return $"Removed [b]{uid}[/b] from Maintenance whitelist";
+			} else
+			{
+				whitelist.Add(uid);
+				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+				return $"Added [b]{uid}[/b] to Maintenance whitelist";
+			}
+			
 		}
 
 		public void Dispose()
 		{
-			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView; ;
+			TS3FullClient.OnChannelListFinished -= OnChannelListFinished;
+			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
