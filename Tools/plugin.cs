@@ -13,6 +13,7 @@ using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
 using TS3AudioBot.Config;
 using TS3AudioBot.Helper.Environment;
+using System.Collections.Generic;
 
 namespace Tools
 {
@@ -87,7 +88,7 @@ namespace Tools
 		[Command("subscribe ownchannel")]
 		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
 		{
-			targetManager.WhisperChannelSubscribe(TS3FullClient.WhoAmI().Unwrap().ChannelId, true);
+			targetManager.WhisperChannelSubscribe(true, TS3FullClient.WhoAmI().Unwrap().ChannelId);
 		}
 
 		[Command("isplaying playerconnection")]
@@ -115,10 +116,25 @@ namespace Tools
 		}
 
 		[Command("bug")]
-		public static string CommandReportBug()
+		public string CommandReportBug()
 		{
 			// WebClient client = new WebClient(); string downloadString = client.DownloadString("https://raw.githubusercontent.com/Splamy/TS3AudioBot/master/.github/ISSUE_TEMPLATE/bug_report.md");
 			return $@"https://github.com/Bluscream/TS3AudioBot/issues/new?template=bug_report_auto.md&version={SystemData.AssemblyData.Version}&branch={SystemData.AssemblyData.Branch}&commit={SystemData.AssemblyData.Branch}&platform={SystemData.PlatformData.ToString()}&runtime={SystemData.RuntimeData.FullName}&log=Nothing%20recorded";
+		}
+
+		[Command("channellist")]
+		public JsonArray<ChannelList> CommandListChannels()
+		{
+			var command = new Ts3Command("channellist", new List<ICommandPart>() {});
+			var createResult = TS3FullClient.SendNotifyCommand(command, NotificationType.ChannelList);
+			if (!createResult.Ok) { }
+			var channellist = createResult.Value.Notifications.Cast<ChannelList>();
+			var channelList = new List<ChannelList>();
+			foreach (var channel in channellist)
+			{
+				channelList.Add(channel);
+			}
+			return new JsonArray<ChannelList>(channelList.ToArray());
 		}
 
 		public void Dispose()

@@ -95,10 +95,11 @@ namespace BotAutoStartQuery
 		private void OnEachClientEnterView(object sender, ClientEnterView e)
 		{
 			var has = HasAutoStart(e.Uid);
+			Log.Debug("Checking if {} has a default bot", e.Uid);
 			if (string.IsNullOrEmpty(has)) return;
-			Log.Debug($"{e.Name} has a default bot: {has}");
+			Log.Info("{} has a default bot: {}", e.Name, has);
 			if (IsBotConnected(has)) return;
-			Log.Debug($"{has} is not connected");
+			Log.Info("{} is not connected", has);
 			BotManager.RunBotTemplate(has);
 			UidCache.Add(e.ClientId, e.Uid);
 		}

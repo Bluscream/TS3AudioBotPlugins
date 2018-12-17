@@ -73,7 +73,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotAutoStartQuery", "BotAut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFollow", "Follow\AutoFollow.csproj", "{37AAD288-CEDA-44B8-A3ED-33142A0BFFC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPause", "AutoPause\AutoPause.csproj", "{571550E7-5FC7-4806-A886-0B70EFEBCA8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPause", "AutoPause\AutoPause.csproj", "{571550E7-5FC7-4806-A886-0B70EFEBCA8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaintenanceMode", "MaintenanceMode\MaintenanceMode.csproj", "{558E427A-D911-4FCF-BB26-BCC3116F0F2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -206,6 +208,10 @@ Global
 		{571550E7-5FC7-4806-A886-0B70EFEBCA8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{571550E7-5FC7-4806-A886-0B70EFEBCA8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{571550E7-5FC7-4806-A886-0B70EFEBCA8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{558E427A-D911-4FCF-BB26-BCC3116F0F2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{558E427A-D911-4FCF-BB26-BCC3116F0F2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{558E427A-D911-4FCF-BB26-BCC3116F0F2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{558E427A-D911-4FCF-BB26-BCC3116F0F2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
