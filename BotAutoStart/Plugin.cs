@@ -12,17 +12,16 @@ using IniParser;
 using IniParser.Model;
 using TS3Client;
 
-namespace BotAutoStartQuery
+namespace BotAutoStart
 {
 	public static class PluginInfo
 	{
 		public static readonly string ShortName;
 		public static readonly string Name;
-		public static readonly string Description = "";
-		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly string Description;
+		public static readonly string Url;
+		public static readonly string Author = "Bluscream";
 		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
-
 		static PluginInfo()
 		{
 			ShortName = typeof(PluginInfo).Namespace;
@@ -31,7 +30,7 @@ namespace BotAutoStartQuery
 		}
 	}
 
-	public class BotAutoStartQuery : IBotPlugin
+	public class BotAutoStart : IBotPlugin
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
@@ -58,7 +57,7 @@ namespace BotAutoStartQuery
 			{
 				PluginConfig = new IniData();
 				var section = "botname";
-				PluginConfig[section]["UIDs"] = "";
+				PluginConfig[section]["UIDs"] = string.Empty;
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
 				Log.Warn("Config for plugin {} created, please modify it and reload!", PluginInfo.Name);
 				return;
@@ -95,8 +94,8 @@ namespace BotAutoStartQuery
 		{
 			if (client.ClientType != ClientType.Full) return;
 			if (client.ClientId == TS3FullClient.ClientId) return;
-			var has = HasAutoStart(client.Uid);
 			Log.Debug("Checking if {} has a default bot", client.Uid);
+			var has = HasAutoStart(client.Uid);
 			if (string.IsNullOrEmpty(has)) return;
 			Log.Info("{} has a default bot: {}", client.Name, has);
 			if (IsBotConnected(has)) return;
@@ -112,6 +111,7 @@ namespace BotAutoStartQuery
 				var uids = bot.Keys["UIDs"].Split(',');
 				foreach (var uid in uids)
 				{
+					Log.Info("{} > {} == {} : {}", bot.SectionName, uid.Trim(), Uid, (uid.Trim() == Uid));
 					if (uid.Trim() == Uid) return bot.SectionName;
 				}
 			}

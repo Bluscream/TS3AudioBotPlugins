@@ -22,9 +22,9 @@ namespace AutoChannelCreate
 	{
 		public static readonly string ShortName;
 		public static readonly string Name;
-		public static readonly string Description = "";
-		public static readonly string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
-		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly string Description;
+		public static readonly string Url;
+		public static readonly string Author = "Bluscream";
 		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
 		static PluginInfo()
 		{
@@ -88,7 +88,7 @@ namespace AutoChannelCreate
 				}
 				var bot = Bot.Name;
 				if (!PluginConfig.Sections.ContainsSection(bot)) {
-					Log.Warn("No section found for {} in {}! Skipping...", bot, PluginConfigFile); return;
+					Log.Info("No section found for {} in {}! Skipping...", bot, PluginConfigFile); return;
 				}
 				var now = DateTime.Now.ToString();
 				var neededTP = PluginConfig[bot]["Needed Talk Power"];
@@ -117,7 +117,7 @@ namespace AutoChannelCreate
 					// Log.Debug(commandCreate);
 					var createResult = TS3FullClient.SendNotifyCommand(commandCreate, NotificationType.ChannelCreated);
 					if (!createResult.Ok) {
-						Log.Debug($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
+						Log.Warn($"{PluginInfo.Name}: Could not create default channel! ({createResult.Error.Message})"); return;
 					}
 					var createRes = createResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 					found = createRes.ChannelId;
@@ -128,7 +128,7 @@ namespace AutoChannelCreate
 					var editResult = TS3FullClient.SendNotifyCommand(commandEdit.Item2, NotificationType.ChannelEdited);
 					if (!editResult.Ok)
 					{
-						Log.Debug($"{PluginInfo.Name}: Could not set channel description! ({editResult.Error.Message})"); return;
+						Log.Warn($"{PluginInfo.Name}: Could not edit channel! ({editResult.Error.Message})"); return;
 					}
 				}
 				var tp = TS3FullClient.ClientInfo(TS3FullClient.ClientId).Value.TalkPower;
@@ -139,7 +139,7 @@ namespace AutoChannelCreate
 				});
 				var tpResult = TS3FullClient.SendNotifyCommand(commandTP, NotificationType.ClientUpdated);
 				if (!tpResult.Ok) {
-					Log.Debug($"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
+					Log.Warn($"{PluginInfo.Name}: Could grant own Talk Power! ({tpResult.Error.Message})"); return;
 				}
 				//tpRes = tpResult.Value.Notifications.Cast<ChannelCreated>().FirstOrDefault();
 			} catch (ArgumentNullException ex) { Log.Error($"{Bot.Name}: Unable to run {PluginInfo.Name}.Ts3Client_OnChannelListFinished ({ex.Message})"); }
@@ -183,7 +183,7 @@ namespace AutoChannelCreate
 				command.AppendParameter(new CommandParameter("channel_needed_talk_power", channel_needed_talk_power));
 			}
 
-			var channel_topic = PluginConfig[bot]["Topic"];
+			var channel_topic = PluginConfig[bot]["Topic Template"];
 			if (!string.IsNullOrEmpty(channel_topic) && (!edit || channel_topic.StartsWith("edit:"))) {
 				command.AppendParameter(new CommandParameter("channel_topic", channel_topic.Replace("{now}", DateTime.Now.ToString())));
 			}

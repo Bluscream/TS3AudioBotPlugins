@@ -49,6 +49,13 @@ namespace MaintenanceMode
 		private List<string> whitelist = new List<string>();
 		private bool MaintenanceEnabled = false;
 
+		public static string TruncateLongString(string str, int maxLength)
+		{
+			if (string.IsNullOrEmpty(str))
+				return str;
+			return str.Substring(0, Math.Min(str.Length, maxLength));
+		}
+
 		public void Initialize()
 		{
 			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.ini");
@@ -101,16 +108,17 @@ namespace MaintenanceMode
 			msg = PluginConfig["Templates"]["Poke Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
+				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]);
 				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("msg", msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]))
+					new CommandParameter("msg", TruncateLongString(msg, 100))
 				});
 				var result = TS3FullClient.SendNotifyCommand(cmd, NotificationType.ClientPokeRequest).Value;
 			}
 			var command = new Ts3Command("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("reasonmsg", PluginConfig["Session"]["Kick Reason"])
+					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Session"]["Kick Reason"], 80))
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
