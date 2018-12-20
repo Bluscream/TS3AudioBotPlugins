@@ -71,18 +71,20 @@ namespace BotAutoStart
 
 		private void OnEachClientLeftView(object sender, ClientLeftView e)
 		{
-			if (!UidCache.ContainsKey(e.ClientId)) return;
-			var has = HasAutoStart(UidCache[e.ClientId]);
-			UidCache.Remove(e.ClientId);
-			if (string.IsNullOrEmpty(has)) return;
-			if (!IsBotConnected(has)) return;
-			var uids = PluginConfig[has]["UIDs"].Split(',');
-			foreach (var uid in uids)
-			{
-				if (IsOnline(uid)) return;
-			}
-			var bot = BotByName(has);
-			BotManager.StopBot(bot);
+			try {
+				if (!UidCache.ContainsKey(e.ClientId)) return;
+				var has = HasAutoStart(UidCache[e.ClientId]);
+				UidCache.Remove(e.ClientId);
+				if (string.IsNullOrEmpty(has)) return;
+				if (!IsBotConnected(has)) return;
+				var uids = PluginConfig[has]["UIDs"].Split(',');
+				foreach (var uid in uids)
+				{
+					if (IsOnline(uid)) return;
+				}
+				var bot = BotByName(has);
+				BotManager.StopBot(bot);
+			} catch (Exception ex) { Log.Error(ex.ToString()); }
 		}
 
 		private bool IsOnline(string uid)
@@ -92,16 +94,18 @@ namespace BotAutoStart
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
-			if (client.ClientType != ClientType.Full) return;
-			if (client.ClientId == TS3FullClient.ClientId) return;
-			Log.Debug("Checking if {} has a default bot", client.Uid);
-			var has = HasAutoStart(client.Uid);
-			if (string.IsNullOrEmpty(has)) return;
-			Log.Info("{} has a default bot: {}", client.Name, has);
-			if (IsBotConnected(has)) return;
-			Log.Info("{} is not connected", has);
-			BotManager.RunBotTemplate(has);
-			UidCache.Add(client.ClientId, client.Uid);
+			try {
+				if (client.ClientType != ClientType.Full) return;
+				if (client.ClientId == TS3FullClient.ClientId) return;
+				Log.Debug("Checking if {} has a default bot", client.Uid);
+				var has = HasAutoStart(client.Uid);
+				if (string.IsNullOrEmpty(has)) return;
+				Log.Info("{} has a default bot: {}", client.Name, has);
+				if (IsBotConnected(has)) return;
+				Log.Info("{} is not connected", has);
+				BotManager.RunBotTemplate(has);
+				UidCache.Add(client.ClientId, client.Uid);
+			} catch (Exception ex) { Log.Error(ex.ToString()); }
 		}
 
 		private string HasAutoStart(string Uid)

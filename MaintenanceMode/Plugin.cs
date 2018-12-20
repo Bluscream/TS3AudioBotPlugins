@@ -17,6 +17,9 @@ using IniParser.Model;
 using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
 using System.Text;
+using TS3AudioBot.Helper;
+using TS3AudioBot.Web.Api;
+using TS3AudioBot.Sessions;
 
 namespace MaintenanceMode
 {
@@ -146,16 +149,25 @@ namespace MaintenanceMode
 			return $"Maintenance is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
 		}
 		[Command("wartung an", "")]
-		public string CommandEnableMaintenanceMode(InvokerData invoker)
+		public string CommandEnableMaintenanceMode(InvokerData invoker, UserSession session = null)
 		{
-			PluginConfig["Session"]["Invoker"] = invoker.NickName;
-			PluginConfig["Session"]["Start"] = DateTime.Now.ToString();
-			PluginConfig["Session"]["Active"] = "1";
-			MaintenanceEnabled = true;
-			var kicked = CheckAllClients();
-			ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
-			Log.Info("Maintenance was enabled by \"{}\" ({})", invoker.NickName, invoker.ClientUid);
-			return $"[color=orange][b]Enabled Maintenance Mode, {kicked} clients were kicked!";
+			string ResponseQuit(string message)
+			{
+				if (TextUtil.GetAnswer(message) == Answer.Yes)
+				{
+					PluginConfig["Session"]["Invoker"] = invoker.NickName;
+					PluginConfig["Session"]["Start"] = DateTime.Now.ToString();
+					PluginConfig["Session"]["Active"] = "1";
+					MaintenanceEnabled = true;
+					var kicked = CheckAllClients();
+					ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+					Log.Info("Maintenance was enabled by \"{}\" ({})", invoker.NickName, invoker.ClientUid);
+					return $"[color=orange][b]Enabled Maintenance Mode, {kicked} clients were kicked!";
+				}
+				return null;
+			}
+			session.SetResponse(ResponseQuit);
+			return "You sure about that? (!yes | !no)";
 		}
 		[Command("wartung aus", "")]
 		public string CommandDisableMaintenanceMode(InvokerData invoker)
