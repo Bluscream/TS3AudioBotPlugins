@@ -72,9 +72,10 @@ namespace YoutubeSearchPlugin
 		[Command("search yt", "")]
 		public string CommandSearchYoutube(params string[] _text)
 		{
-			var query = Uri.EscapeUriString(string.Join(" ", _text));
+			var text = string.Join(" ", _text);
+			var query = Uri.EscapeUriString(text);
 			var search = new VideoSearch();
-			var result = new StringBuilder($"[color=black]You[/color][color=red]Tube[/color] Results for \"[b]{query}[/b]\":\n");
+			var result = new StringBuilder($"[color=black]You[/color][color=red]Tube[/color] Results for \"[b]{text}[/b]\":\n");
 			var items = search.SearchQuery(query, 1);
 			for (int i = 0; i < 5; i++) {
 				result.Append($"[url={items[i].Url}]{items[i].Title}[/URL]\n");

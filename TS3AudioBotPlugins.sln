@@ -73,9 +73,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFollow", "Follow\AutoFo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoPause", "AutoPause\AutoPause.csproj", "{571550E7-5FC7-4806-A886-0B70EFEBCA8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaintenanceMode", "MaintenanceMode\MaintenanceMode.csproj", "{558E427A-D911-4FCF-BB26-BCC3116F0F2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaintenanceMode", "MaintenanceMode\MaintenanceMode.csproj", "{558E427A-D911-4FCF-BB26-BCC3116F0F2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelManager", "ChannelManager\ChannelManager.csproj", "{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelWatcher", "ChannelWatcher\ChannelWatcher.csproj", "{952757DD-3296-48E5-98A2-8DAD24C297D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -213,6 +217,14 @@ Global
 		{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}.Release|Any CPU.Build.0 = Release|Any CPU
+		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
