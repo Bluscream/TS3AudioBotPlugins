@@ -77,9 +77,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaintenanceMode", "Maintena
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{8D1B5EF6-323F-4F97-A0F2-4A46ED27FFB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelManager", "ChannelManager\ChannelManager.csproj", "{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelManager", "ChannelManager\ChannelManager.csproj", "{A4F325EC-57EB-4213-85C9-2E8BF3FA5985}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelWatcher", "ChannelWatcher\ChannelWatcher.csproj", "{952757DD-3296-48E5-98A2-8DAD24C297D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelWatcher", "ChannelWatcher\ChannelWatcher.csproj", "{952757DD-3296-48E5-98A2-8DAD24C297D0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiGodZilla", "AntiGodZilla\AntiGodZilla.csproj", "{446F9102-F1F7-4F47-BC24-FBCC347A33FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryWhitelist", "CountryWhitelist\CountryWhitelist.csproj", "{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,6 +229,14 @@ Global
 		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{952757DD-3296-48E5-98A2-8DAD24C297D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{446F9102-F1F7-4F47-BC24-FBCC347A33FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{446F9102-F1F7-4F47-BC24-FBCC347A33FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{446F9102-F1F7-4F47-BC24-FBCC347A33FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{446F9102-F1F7-4F47-BC24-FBCC347A33FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

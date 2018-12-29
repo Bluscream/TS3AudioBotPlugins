@@ -91,6 +91,22 @@ namespace Tools
 			targetManager.WhisperChannelSubscribe(true, TS3FullClient.WhoAmI().Unwrap().ChannelId);
 		}
 
+		[Command("getchannel byname")]
+		public ChannelIdT CommandGetChannelIdByName(params string[] _name)
+		{
+			var name = string.Join(" ", _name);
+			var command = new Ts3Command("channellist", new List<ICommandPart>() { });
+			var createResult = TS3FullClient.SendNotifyCommand(command, NotificationType.ChannelList);
+			if (!createResult.Ok) { }
+			var channellist = createResult.Value.Notifications.Cast<ChannelList>();
+			foreach (var channel in channellist)
+			{
+				if (channel.Name == name)
+					return channel.ChannelId;
+			}
+			return 0;
+		}
+
 		[Command("isplaying playerconnection")]
 		public bool CommandIsPlaying(IPlayerConnection playerConnection)
 		{

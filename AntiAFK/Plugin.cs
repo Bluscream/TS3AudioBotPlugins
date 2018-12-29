@@ -167,9 +167,27 @@ namespace AntiAFK
 
 		public void Dispose()
 		{
-			Timer.Active = false;
-			TickPool.UnregisterTicker(Timer);
-			TS3FullClient.OnEachTextMessage -= OnEachTextMessage;
+			try
+			{
+				if (!(Timer is null)) {
+					if (Timer.Active) {
+						Timer.Active = false;
+					}
+					TickPool.UnregisterTicker(Timer);
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.Warn($"Could not unregister timer {PluginInfo.Name}:\n{ex.Message}");
+			}
+			try
+			{
+				TS3FullClient.OnEachTextMessage -= OnEachTextMessage;
+			}
+			catch (Exception ex)
+			{
+				Log.Warn($"Could not unregister OnEachTextMessage event {PluginInfo.Name}:\n{ex.Message}");
+			}
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
