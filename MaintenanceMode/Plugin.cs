@@ -142,13 +142,13 @@ namespace MaintenanceMode
 			return kicked;
 		}
 
-		[Command("wartung", "")]
+		[Command("maintenance", "")]
 		public string CommandMaintenanceMode()
 		{
 			var onoff = MaintenanceEnabled ? "[color=orange]on" : "[color=green]off";
 			return $"Maintenance is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
 		}
-		[Command("wartung an", "")]
+		[Command("maintenance on", "")]
 		public string CommandEnableMaintenanceMode(InvokerData invoker, UserSession session = null)
 		{
 			string ResponseQuit(string message)
@@ -169,7 +169,7 @@ namespace MaintenanceMode
 			session.SetResponse(ResponseQuit);
 			return "You sure about that? (!yes | !no)";
 		}
-		[Command("wartung aus", "")]
+		[Command("maintenance off", "")]
 		public string CommandDisableMaintenanceMode(InvokerData invoker)
 		{
 			MaintenanceEnabled = false;
@@ -178,7 +178,7 @@ namespace MaintenanceMode
 			Log.Info("Maintenance was disabled by \"{}\" ({})", invoker.NickName, invoker.ClientUid);
 			return "[color=green][b]Disabled Maintenance Mode";
 		}
-		[Command("wartung whitelist", "")]
+		[Command("maintenance whitelist", "")]
 		public string CommandToggleWhitelist(string uid)
 		{
 			uid = uid.Trim();
