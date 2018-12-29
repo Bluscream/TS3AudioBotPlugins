@@ -97,12 +97,13 @@ namespace CountryWhitelist
 			var msg = PluginConfig["Templates"]["Private Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
+				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
 				TS3Client.SendMessage(msg, ClientId);
 			}
 			msg = PluginConfig["Templates"]["Poke Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
-				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]);
+				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
 				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
 					new CommandParameter("msg", TruncateLongString(msg, 100))
