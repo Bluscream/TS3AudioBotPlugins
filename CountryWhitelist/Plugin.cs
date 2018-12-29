@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using TS3AudioBot.Config;
 using TS3AudioBot.Plugins;
 using TS3AudioBot;
@@ -15,10 +13,7 @@ using TS3Client;
 using IniParser;
 using IniParser.Model;
 using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
-using System.Text;
 using TS3AudioBot.Helper;
-using TS3AudioBot.Web.Api;
 using TS3AudioBot.Sessions;
 
 namespace CountryWhitelist
@@ -70,7 +65,7 @@ namespace CountryWhitelist
 				PluginConfig["Session"]["Invoker"] = string.Empty;
 				PluginConfig["Session"]["Start"] = string.Empty;
 				PluginConfig["Templates"]["Kick Reason"] = "Country not whitelisted";
-				PluginConfig["Templates"]["Poke Message"] = "[color=red]Country Whitelist is active since {start}!\n\nOnly {whitelist} are allowed to connect now.";
+				PluginConfig["Templates"]["Poke Message"] = "[color=red]Country Whitelist is active since {start}!\\n\\nOnly {whitelist} are allowed to connect now.";
 				PluginConfig["Templates"]["Private Message"] = string.Empty;
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
 				Log.Warn("Config for plugin {} created!", PluginInfo.Name);
@@ -125,7 +120,7 @@ namespace CountryWhitelist
 			var onoff = WhitelistEnabled ? "[color=orange]on" : "[color=green]off";
 			return $"Country whitelist is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
 		}
-		[Command("countrywhitelist an", "")]
+		[Command("countrywhitelist on", "")]
 		public string CommandEnableCountryWhitelistMode(InvokerData invoker, UserSession session = null)
 		{
 			string ResponseQuit(string message)
@@ -145,7 +140,7 @@ namespace CountryWhitelist
 			session.SetResponse(ResponseQuit);
 			return "You sure about that? (!yes | !no)";
 		}
-		[Command("countrywhitelist aus", "")]
+		[Command("countrywhitelist off", "")]
 		public string CommandDisableCountryWhitelistMode(InvokerData invoker)
 		{
 			WhitelistEnabled = false;
