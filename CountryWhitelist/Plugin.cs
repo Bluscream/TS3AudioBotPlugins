@@ -45,6 +45,7 @@ namespace CountryWhitelist
 		private static IniData PluginConfig;
 		private List<string> whitelist = new List<string>();
 		private bool WhitelistEnabled = false;
+		private ulong DefaultServerGroupId = 0;
 
 		public static string TruncateLongString(string str, int maxLength)
 		{
@@ -73,8 +74,20 @@ namespace CountryWhitelist
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			whitelist = PluginConfig["General"]["Whitelist"].Split(',').ToList();
 			WhitelistEnabled = PluginConfig["Session"]["Active"].Trim() == "1";
+			TS3FullClient.OnEachInitServer += OnEachInitServer;
+			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+		}
+
+		private void OnEachServerEdited(object sender, ServerEdited server)
+		{
+			DefaultServerGroupId = server.DefaultServerGroup;
+		}
+
+		private void OnEachInitServer(object sender, InitServer server)
+		{
+			DefaultServerGroupId = server.DefaultServerGroup;
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
@@ -83,6 +96,11 @@ namespace CountryWhitelist
 			if (whitelist.Contains(client.Uid)) return;
 			if (client.ClientType == ClientType.Query) return;
 			if (client.ClientId == TS3FullClient.ClientId) return;
+			if (DefaultServerGroupId > 0) {
+				// var default_list = new List<ulong>() { DefaultServerGroupId };
+				// var isDefault = client.ServerGroups.All(default_list.Contains) && client.ServerGroups.Count == default_list.Count;
+				if (client.ServerGroups.Contains(DefaultServerGroupId)) return;
+			}
 			if (whitelist.Contains(client.CountryCode)) return;
 			KickFromServer(client.ClientId);
 		}
@@ -173,6 +191,8 @@ namespace CountryWhitelist
 		public void Dispose()
 		{
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
+			TS3FullClient.OnEachServerEdited -= OnEachServerEdited;
+			TS3FullClient.OnEachInitServer -= OnEachInitServer;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
