@@ -7,6 +7,7 @@ using TS3Client.Commands;
 using TS3Client.Full;
 using TS3Client.Messages;
 using TS3Client;
+using TS3Client.Helper;
 using TS3AudioBot.Web.Api;
 using TS3AudioBot.Helper;
 using ClientIdT = System.UInt16;
@@ -67,8 +68,9 @@ namespace Tools
 			{
 				var result = TS3FullClient.Send<TS3Client.Messages.ResponseDictionary>(cmd,
 					cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
-				//return string.Join("\n", result.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
-				return "Sent command.";
+				if (!result.Ok) return result.Error.ErrorFormat();
+				return string.Join("\n", result.Value.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
+				//return "Sent command.";
 			}
 			catch (Ts3Exception ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
 		}

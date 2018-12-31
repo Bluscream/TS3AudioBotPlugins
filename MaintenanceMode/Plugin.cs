@@ -112,16 +112,16 @@ namespace MaintenanceMode
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
 				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]);
-				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
+				var cmd = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
 					new CommandParameter("msg", TruncateLongString(msg, 100))
 				});
-				var result = TS3FullClient.SendNotifyCommand(cmd, NotificationType.ClientPokeRequest).Value;
+				var result = cmd.Ok;
 			}
-			var command = new Ts3Command("clientkick", new List<ICommandPart>() {
+			var command = new Ts3Command("clientkick", new List<ICommandPart>() { // TODO NO NOTIFY
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Session"]["Kick Reason"], 80))
+					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
@@ -146,7 +146,7 @@ namespace MaintenanceMode
 		public string CommandMaintenanceMode()
 		{
 			var onoff = MaintenanceEnabled ? "[color=orange]on" : "[color=green]off";
-			return $"Maintenance is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
+			return $"Maintenance is turned [b]{onoff}[/color] (Last: {PluginConfig["Session"]["Invoker"]} at {PluginConfig["Session"]["Start"]})\n\n{string.Join("\n", whitelist)}";
 		}
 		[Command("maintenance on", "")]
 		public string CommandEnableMaintenanceMode(InvokerData invoker, UserSession session = null)

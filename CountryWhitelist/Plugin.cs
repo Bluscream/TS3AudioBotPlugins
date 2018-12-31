@@ -66,7 +66,7 @@ namespace CountryWhitelist
 				PluginConfig["Session"]["Invoker"] = string.Empty;
 				PluginConfig["Session"]["Start"] = string.Empty;
 				PluginConfig["Templates"]["Kick Reason"] = "Country not whitelisted";
-				PluginConfig["Templates"]["Poke Message"] = "[color=red]Country Whitelist is active since {start}!\\n\\nOnly {whitelist} are allowed to connect now.";
+				PluginConfig["Templates"]["Poke Message"] = "[color=red]Country Whitelist is active since {start}! Only {whitelist} are allowed to connect now.";
 				PluginConfig["Templates"]["Private Message"] = string.Empty;
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
 				Log.Warn("Config for plugin {} created!", PluginInfo.Name);
@@ -77,6 +77,8 @@ namespace CountryWhitelist
 			TS3FullClient.OnEachInitServer += OnEachInitServer;
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
+			/*var result = TS3FullClient.SendNotifyCommand(new Ts3Command("serverinfo", new List<ICommandPart>() { }), NotificationType.ServerInfo).Value;
+			reult.*/
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
@@ -117,16 +119,16 @@ namespace CountryWhitelist
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
 				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
-				var cmd = new Ts3Command("clientpoke", new List<ICommandPart>() {
+				var cmd = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
 					new CommandParameter("msg", TruncateLongString(msg, 100))
 				});
-				var result = TS3FullClient.SendNotifyCommand(cmd, NotificationType.ClientPokeRequest).Value;
+				var result = cmd.Ok;
 			}
 			var command = new Ts3Command("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Session"]["Kick Reason"], 80))
+					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
@@ -136,7 +138,7 @@ namespace CountryWhitelist
 		public string CommandCountryWhitelistMode()
 		{
 			var onoff = WhitelistEnabled ? "[color=orange]on" : "[color=green]off";
-			return $"Country whitelist is turned [b]{onoff}[/color]\n\n{string.Join("\n", whitelist)}";
+			return $"Country whitelist is turned [b]{onoff}[/color]\nInvoker: {PluginConfig["Session"]["Invoker"]}\nStart: {PluginConfig["Session"]["Start"]}\nDefaultServerGroupId: {DefaultServerGroupId}\nWhitelisted:\n{string.Join("\n", whitelist)}";
 		}
 		[Command("countrywhitelist on", "")]
 		public string CommandEnableCountryWhitelistMode(InvokerData invoker, UserSession session = null)

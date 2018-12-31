@@ -83,7 +83,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelWatcher", "ChannelWa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiGodZilla", "AntiGodZilla\AntiGodZilla.csproj", "{446F9102-F1F7-4F47-BC24-FBCC347A33FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryWhitelist", "CountryWhitelist\CountryWhitelist.csproj", "{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CountryWhitelist", "CountryWhitelist\CountryWhitelist.csproj", "{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountdownChannel", "CountdownChannel\CountdownChannel.csproj", "{98F57DC1-FA80-4633-805A-EB7627F0121B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -237,6 +239,10 @@ Global
 		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
