@@ -102,7 +102,7 @@ namespace MaintenanceMode
 			KickFromServer(client.ClientId);
 		}
 
-		private bool KickFromServer(ClientIdT ClientId)
+		private void KickFromServer(ClientIdT ClientId)
 		{
 			var msg = PluginConfig["Templates"]["Private Message"];
 			if (!string.IsNullOrWhiteSpace(msg)) {
@@ -112,19 +112,16 @@ namespace MaintenanceMode
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
 				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]);
-				var cmd = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
+				var ok = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
 					new CommandParameter("msg", TruncateLongString(msg, 100))
-				});
-				var result = cmd.Ok;
+				}).Ok;
 			}
-			var command = new Ts3Command("clientkick", new List<ICommandPart>() { // TODO NO NOTIFY
+			var Ok = TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", ClientId),
 					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
-			});
-			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
-			return Result.Ok;
+			}).Ok;
 		}
 
 		private int CheckAllClients()
