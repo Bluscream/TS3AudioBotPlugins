@@ -12,6 +12,8 @@ using TS3Client.Audio;
 using TS3Client;
 using IniParser;
 using IniParser.Model;
+using TS3AudioBot.History;
+using TS3AudioBot.Helper;
 
 namespace SimpleTTS
 {
@@ -37,6 +39,7 @@ namespace SimpleTTS
 
 		public Ts3Client TS3Client { get; set; }
 		public PlayManager PlayManager { get; set; }
+		public HistoryManager HistoryManager { get; set; }
 		public IPlayerConnection PlayerConnection { get; set; }
 		public IVoiceTarget targetManager { get; set; }
 		public ConfRoot ConfRoot { get; set; }
@@ -46,7 +49,7 @@ namespace SimpleTTS
 		public string[] TTSGenders = { "male", "female" };
 		public bool isTalking = false; public bool isBroadcast = false; public float BOTVolume; public float oldVolume = 0;
 		GroupWhisperType oldGroupWhisperType; GroupWhisperTarget oldGroupWhisperTarget; TargetSendMode oldSendMode;
-		ICollection<ushort> oldWhisperClients; ICollection<ulong> oldWhisperChannels; ulong oldTargetId;
+		ICollection<ushort> oldWhisperClients; ICollection<ulong> oldWhisperChannels; ulong oldTargetId; bool waiting_for_end = false;
 
 		private static FileIniDataParser ConfigParser;
 		private static string PluginConfigFile;
@@ -67,6 +70,7 @@ namespace SimpleTTS
 				PluginConfig[section]["Pitch"] = "0.5";
 				PluginConfig[section]["Rate"] = "0.5";
 				PluginConfig[section]["Mode"] = "1";
+				PluginConfig[section]["Resume"] = "0";
 				PluginConfig[section]["Volume"] = "50";
 				PluginConfig[bsection]["Gender"] = "male";
 				PluginConfig[bsection]["Rate"] = "0.3";
@@ -77,6 +81,7 @@ namespace SimpleTTS
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			BOTVolume = PluginConfig[section].ContainsKey("Volume") ? float.Parse(PluginConfig[section]["Volume"]) : (float)100;
 			PlayManager.BeforeResourceStopped += BeforeResourceStopped;
+			PlayManager.AfterResourceStopped += AfterResourceStopped;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
@@ -116,6 +121,28 @@ namespace SimpleTTS
 			}  catch (Exception ex) { Log.Error(ex.Message); }
 		}
 
+		private void AfterResourceStopped(object sender, EventArgs e)
+		{
+			if (!waiting_for_end) return;
+			waiting_for_end = false;
+			var resume = PluginConfig[section]["Resume"];
+			if (string.IsNullOrWhiteSpace("resume")) return;
+			if (resume == "0") return;
+			if (PluginConfig[section]["Resume"] == "0") return;
+			switch (resume)
+			{
+				case "1":
+					PlayManager.PlaylistManager.Previous();
+					break;
+				case "2":
+					var ale = HistoryManager.GetEntryById(2).UnwrapThrow();
+					PlayManager.Play(InvokerData.Anonymous, ale.AudioResource).UnwrapThrow();
+					break;
+				default:
+					break;
+			}
+		}
+
 		[Command("broadcast", "Syntax: !broadcast <text>")]
 		public void CommandBroadCast(IVoiceTarget targetManager, IPlayerConnection playerConnection, PlayManager playManager, InvokerData invoker, params string[] text)
 		{
@@ -149,21 +176,19 @@ namespace SimpleTTS
 					.Replace("{volume}", PluginConfig[section]["Volume"]);
 				oldVolume = playerConnection.Volume;
 				Log.Debug("Saved old volume: {}", oldVolume);
-				isTalking = true;
+				isTalking = true;waiting_for_end = true;
 				Log.Debug("Saying {}", url);
 				var mode = PluginConfig[section]["Mode"];
 				switch (mode)
 				{
 					case "0":
 						PlayManager.Play(invoker, url);
-						PlayManager.PlaylistManager.Previous();
 						break;
 					case "1":
 						playerConnection.AudioStart(url);
 						break;
 					case "2":
 						PlayManager.Play(InvokerData.Anonymous, url); 
-						PlayManager.PlaylistManager.Previous();
 						break;
 					default:
 						throw new Exception($"Invalid Mode: {mode}");
@@ -231,6 +256,7 @@ namespace SimpleTTS
 
 		public void Dispose()
 		{
+			PlayManager.AfterResourceStopped -= AfterResourceStopped;
 			PlayManager.BeforeResourceStopped -= BeforeResourceStopped;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}

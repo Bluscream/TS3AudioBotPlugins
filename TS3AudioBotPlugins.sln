@@ -85,7 +85,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiGodZilla", "AntiGodZill
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CountryWhitelist", "CountryWhitelist\CountryWhitelist.csproj", "{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountdownChannel", "CountdownChannel\CountdownChannel.csproj", "{98F57DC1-FA80-4633-805A-EB7627F0121B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CountdownChannel", "CountdownChannel\CountdownChannel.csproj", "{98F57DC1-FA80-4633-805A-EB7627F0121B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeaSpeak", "TeaSpeak\TeaSpeak.csproj", "{50E18FF8-BF21-4FAD-BEC9-584EA2BAFED7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToggleSupport", "ToggleSupport\ToggleSupport.csproj", "{C92AFA2A-97EB-4C0F-8493-43017763FED3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -243,6 +247,14 @@ Global
 		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98F57DC1-FA80-4633-805A-EB7627F0121B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50E18FF8-BF21-4FAD-BEC9-584EA2BAFED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E18FF8-BF21-4FAD-BEC9-584EA2BAFED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E18FF8-BF21-4FAD-BEC9-584EA2BAFED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E18FF8-BF21-4FAD-BEC9-584EA2BAFED7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92AFA2A-97EB-4C0F-8493-43017763FED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92AFA2A-97EB-4C0F-8493-43017763FED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92AFA2A-97EB-4C0F-8493-43017763FED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92AFA2A-97EB-4C0F-8493-43017763FED3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
