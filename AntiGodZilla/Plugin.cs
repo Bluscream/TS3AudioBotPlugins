@@ -105,7 +105,7 @@ namespace AntiGodZilla
 		}
 		private bool BanClient(ClientIdT clientId)
 		{ // banclient uid=NndkCcFnoemS6mjQscpryybk6As= time=1 banreason=1 return_code=1:5z:0
-			var command = new Ts3Command("clientban", new List<ICommandPart>() {
+			var command = new Ts3Command("banclient", new List<ICommandPart>() {
 					new CommandParameter("time", BanTime),
 					new CommandParameter("clid", clientId),
 					new CommandParameter("banreason", TruncateLongString(BanReason, 80))
@@ -115,7 +115,7 @@ namespace AntiGodZilla
 		}
 		private bool BanClient(ClientUidT clientUid)
 		{
-			var command = new Ts3Command("clientban", new List<ICommandPart>() {
+			var command = new Ts3Command("banclient", new List<ICommandPart>() {
 					new CommandParameter("time", BanTime),
 					new CommandParameter("uid", clientUid),
 					new CommandParameter("banreason", TruncateLongString(BanReason, 80))
