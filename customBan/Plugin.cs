@@ -140,6 +140,49 @@ namespace customBan
 			return;
 		}*/
 
+		public static TimeSpan parseTimespan(string input)
+		{
+			input = input.ToLower();
+			var perms = new List<string>() { "p", "perm", "permanent" };
+			if (perms.Contains(input)) return TimeSpan.MinValue;
+
+			long timeMultiplication = 0;
+
+			switch (input[input.Length - 1])
+			{
+				case 's':
+					timeMultiplication = 1;
+					break;
+
+				case 'm':
+					timeMultiplication = 60;
+					break;
+
+				case 'h':
+					timeMultiplication = 3600;
+					break;
+
+				case 'd':
+					timeMultiplication = 86400;
+					break;
+
+				case 'w':
+					timeMultiplication = 604800;
+					break;
+
+				case 'n':
+					timeMultiplication = 2592000;
+					break;
+
+				case 'y':
+					timeMultiplication = 31104000;
+					break;
+			}
+			long totalSeconds = long.Parse(input.Remove(input.Length - 1)) * timeMultiplication;
+
+			return TimeSpan.FromSeconds(totalSeconds);
+		}
+
 		public static TimeSpan ParseTimeSpan(String value)
 		{
 			Dictionary<String, long> seconds = new Dictionary<String, long>() {
@@ -178,15 +221,14 @@ namespace customBan
 					reason = key;
 					var mduration_str = banTemplates.Templates[key];
 					Log.Info("mduration_str " + mduration_str);
-					Log.Info(ParseTimeSpan(mduration_str).TotalSeconds);
-					Log.Info((ulong)ParseTimeSpan(mduration_str).TotalSeconds);
-					duration = ParseTimeSpan(mduration_str);
+					duration = parseTimespan(mduration_str);
 					found+=1;break;
 				}
 			}
 			if (found < 1) return "[color=red]No matching reason found, try again!";
 			else if (found > 1) return "[color=red]Too many matching reasons found, try again!";
 			var client = TS3Client.GetClientByName(name).UnwrapThrow();
+			var duration_str = (duration.TotalSeconds < 1) ? "Permanent" : duration.ToString();
 			string ResponseQuit(string message)
 			{
 				if (TextUtil.GetAnswer(message) == Answer.Yes)
@@ -194,10 +236,10 @@ namespace customBan
 					var sb = new StringBuilder(reason);
 					if (!string.IsNullOrEmpty(banTemplates.Prefix))
 					{
-						sb.Append(banTemplates.Prefix.Replace("%duration%", duration.TotalSeconds.ToString()).Replace("%ownnick%", invoker.NickName));
+						sb.Append(banTemplates.Prefix.Replace("%duration%", duration_str).Replace("%ownnick%", invoker.NickName));
 					}
 					if (!string.IsNullOrEmpty(banTemplates.Suffix)) {
-						sb.Append(banTemplates.Suffix.Replace("%duration%", duration.TotalSeconds.ToString()).Replace("%ownnick%", invoker.NickName));
+						sb.Append(banTemplates.Suffix.Replace("%duration%", duration_str).Replace("%ownnick%", invoker.NickName));
 					}
 					
 					var Reason = sb.ToString();
@@ -213,7 +255,6 @@ namespace customBan
 				return null;
 			}
 			session.SetResponse(ResponseQuit);
-			var duration_str = (duration.TotalSeconds < 1) ? "Permanent" : duration.ToString();
 			return $"[color=orange]Sure that you want to ban \"{client.Name}\" for \"{reason}\" (\"{duration_str}\")? (!yes | !no)";
 		}
 
