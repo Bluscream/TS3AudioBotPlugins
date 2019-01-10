@@ -145,35 +145,27 @@ namespace customBan
 			input = input.ToLower();
 			var perms = new List<string>() { "p", "perm", "permanent" };
 			if (perms.Contains(input)) return TimeSpan.MinValue;
-
 			long timeMultiplication = 0;
-
 			switch (input[input.Length - 1])
 			{
 				case 's':
 					timeMultiplication = 1;
 					break;
-
 				case 'm':
 					timeMultiplication = 60;
 					break;
-
 				case 'h':
 					timeMultiplication = 3600;
 					break;
-
 				case 'd':
 					timeMultiplication = 86400;
 					break;
-
 				case 'w':
 					timeMultiplication = 604800;
 					break;
-
-				case 'n':
+				case 'M':
 					timeMultiplication = 2592000;
 					break;
-
 				case 'y':
 					timeMultiplication = 31104000;
 					break;
