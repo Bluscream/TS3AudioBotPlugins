@@ -95,7 +95,6 @@ namespace customBan
 			{
 				var json = wc.DownloadString(PluginConfig["general"]["template"]);
 				banTemplates = JsonConvert.DeserializeObject<templates>(json);
-				TS3Client.SendServerMessage(banTemplates.Suffix);
 			}
 		}
 		private void LoadWhitelist()
@@ -104,7 +103,6 @@ namespace customBan
 			{
 				var whitelist_str = wc.DownloadString(PluginConfig["general"]["whitelist"]);
 				ipWhitelist = whitelist_str.Split(new string[] { Environment.NewLine, "\n", "\"r" }, StringSplitOptions.None);
-				TS3Client.SendServerMessage(ipWhitelist[1]);
 			}
 		}
 

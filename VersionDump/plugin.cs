@@ -29,7 +29,7 @@ namespace VersionDetector
 
 		private static WebClient wc = new WebClient();
 
-		const string versionFile = "versions.csv";
+		const string versionFile = "../../versions.csv";
 
 		private HashSet<string> versions = new HashSet<string>();
 
@@ -55,29 +55,28 @@ namespace VersionDetector
 		{
 			try
 			{
-				var info = Ts3Client.ClientInfo(e.ClientId).Unwrap();
-
-				var checkVersion = string.Format("{0},{1},{2}", info.ClientVersion, info.ClientPlatform, info.ClientVersionSign);
+				var info = Ts3Client.ClientInfo(e.ClientId);
+				if (!info.Ok) return;
+				var checkVersion = string.Format("{0},{1},{2}", info.Value.ClientVersion, info.Value.ClientPlatform, info.Value.ClientVersionSign);
 
 				if (!versions.Contains(checkVersion))
 				{
-					//Ts3Client.SendPrivateMessage("Thanks for submitting your soul!", e.ClientId);
 					try
 					{
 						wc.UploadData(string.Format("https://splamy.de/api/teamspeak/version/{0}/{1}?sign={2}",
-							info.ClientVersion, info.ClientPlatform, Uri.EscapeDataString(info.ClientVersionSign)), "POST", Array.Empty<byte>());
+							info.Value.ClientVersion, info.Value.ClientPlatform, Uri.EscapeDataString(info.Value.ClientVersionSign)), "POST", Array.Empty<byte>());
 					}
 					catch { return; }
-
-					// checkVersion += $"{}";
-
 					versions.Add(checkVersion);
 					File.AppendAllText(versionFile, checkVersion + "\n");
-					Log.Debug("{0}: Got Version {1} from client {2} ({3}) [{4}] ip:{5}", Bot.Name, checkVersion, info.Name, info.Uid, info.MyTeamSpeakId, info.Ip);
+					var myTSID = string.IsNullOrEmpty(info.Value.MyTeamSpeakId) ? "" : info.Value.MyTeamSpeakId;
+					var IP = string.IsNullOrEmpty(info.Value.Ip) ? "" : info.Value.Ip;
+					Log.Debug("{0}: Got Version {1} from client {2} ({3}) [{4}] ip:{5}", Bot.Name, checkVersion, info.Value.Name, info.Value.Uid, myTSID, IP);
 				}
 			}
-			catch (InvalidOperationException)
+			catch (InvalidOperationException ex)
 			{
+				Log.Warn("Failed to read version info for client {} ({})", e.ClientId, ex.Message);
 			}
 		}
 
