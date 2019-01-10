@@ -112,12 +112,14 @@ namespace SimpleVerify
 			StartVerification(client.ClientType, client.ClientId, client.ServerGroups, client.Uid, client.Name);
 		}
 
-		private void StartVerification(ClientType clientType, ClientIdT clientId, ulong[] serverGroups, string uid, string name)
+		private void StartVerification(ClientType clientType, ClientIdT clientId, ulong[] serverGroups, string uid, string name /*, ChannelIdT unverifiedChannel = null*/)
 		{
 			if (!VerificationEnabled) return;
 			if (clientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
 			if (!serverGroups.Contains(DefaultServerGroupId)) return;
+			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
+			if (cid > 0) TS3FullClient.ClientMove(clientId, cid);
 			//var session = new UserSession();
 			var msg = PluginConfig["Templates"]["Poke Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
@@ -146,7 +148,8 @@ namespace SimpleVerify
 				if (sgid == DefaultServerGroupId) continue;
 				TS3FullClient.ServerGroupDelClient(sgid, client.DatabaseId);
 			}
-			TS3Client.KickClientFromChannel(e.ClientId);
+			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
+			if (cid < 1) TS3Client.KickClientFromChannel(e.ClientId);
 			StartVerification(client.ClientType, e.ClientId, client.ServerGroups, e.ClientUid, client.Name);
 		}
 
@@ -180,6 +183,8 @@ namespace SimpleVerify
 				}
 			}
 			TS3FullClient.ServerGroupAddClient(ulong.Parse(PluginConfig["Groups"]["Verified"]), (ulong)invoker.DatabaseId);
+			var cid = ulong.Parse(PluginConfig["Channels"]["Verified"]);
+			if (cid > 0) TS3FullClient.ClientMove((ushort)invoker.ClientId, cid);
 			return PluginConfig["Templates"]["Verified Response"];
 		}
 
@@ -213,6 +218,9 @@ namespace SimpleVerify
 				PluginConfig[section]["Verified Response"] = @"[color=green]Now you can use this TeamSpeak 3 server. Have fun :)";
 				PluginConfig[section]["Kick Reason"] = "ToS not accepted!";
 				section = "Groups";
+				PluginConfig[section]["Unverified"] = "0";
+				PluginConfig[section]["Verified"] = "0";
+				section = "Channels";
 				PluginConfig[section]["Unverified"] = "0";
 				PluginConfig[section]["Verified"] = "0";
 				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
