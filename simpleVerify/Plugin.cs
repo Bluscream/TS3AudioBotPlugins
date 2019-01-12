@@ -93,7 +93,7 @@ namespace SimpleVerify
 			TS3FullClient.OnEachInitServer += OnEachInitServer;
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
-			TS3FullClient.OnEachClientServerGroupAdded += OnEachClientServerGroupAdded;
+			TS3FullClient.OnEachClientServerGroupRemoved += OnEachClientServerGroupRemoved;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
@@ -135,18 +135,24 @@ namespace SimpleVerify
 			}
 		}
 
-		private void OnEachClientServerGroupAdded(object sender, ClientServerGroupAdded e)
+		private void OnEachClientServerGroupRemoved(object sender, ClientServerGroupRemoved e)
 		{
+			Log.Debug($"OnEachClientServerGroupRemoved: ClientId: {e.ClientId} ClientUid: {e.ClientUid} Name: {e.Name} ServerGroupId: {e.ServerGroupId} NotifyType: {e.NotifyType}");
 			if (!VerificationEnabled) return;
 			if (e.ClientId == TS3FullClient.ClientId) return;
 			var client = TS3Client.GetClientInfoById(e.ClientId).Value;
 			if (client.ClientType == ClientType.Query) return;
-			if (e.ServerGroupId != DefaultServerGroupId) return;
-			OnHold["Clients"][e.ClientUid] = string.Join(",", client.ServerGroups);
-			foreach (var sgid in client.ServerGroups)
-			{
-				if (sgid == DefaultServerGroupId) continue;
-				TS3FullClient.ServerGroupDelClient(sgid, client.DatabaseId);
+			var verified_group = ulong.Parse(PluginConfig["Groups"]["Verified"]);
+			if (e.ServerGroupId != verified_group) return;
+			if (!client.ServerGroups.SequenceEqual(new ulong[] { verified_group })) {
+				var uid_str = e.ClientUid.Replace("=", string.Empty);
+				OnHold["Clients"][uid_str] = string.Join(",", client.ServerGroups);
+				foreach (var sgid in client.ServerGroups)
+				{
+					if (sgid == DefaultServerGroupId) continue;
+					TS3FullClient.ServerGroupDelClient(sgid, client.DatabaseId);
+				}
+				ConfigParser.WriteFile(OnHoldFile, OnHold);
 			}
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
 			if (cid < 1) TS3Client.KickClientFromChannel(e.ClientId);
@@ -173,14 +179,17 @@ namespace SimpleVerify
 		[Command("accept", "")]
 		public string CommandAcceptToS(InvokerData invoker)
 		{
-			if (!VerificationEnabled) return "Verification is disabled!";
-			if (OnHold["clients"].ContainsKey(invoker.ClientUid))
+			if (!VerificationEnabled) return PluginConfig["Templates"]["Verification Disabled"];
+			var uid_str = invoker.ClientUid.Replace("=", string.Empty);
+			if (OnHold["Clients"].ContainsKey(uid_str))
 			{
-				var groups = Array.ConvertAll(OnHold["clients"][invoker.ClientUid].Split(','), ulong.Parse).ToList();
+				var groups = Array.ConvertAll(OnHold["Clients"][uid_str].Split(','), ulong.Parse).ToList();
 				foreach (var group in groups)
 				{
 					TS3FullClient.ServerGroupAddClient(group, (ulong)invoker.DatabaseId);
 				}
+				OnHold["Clients"].RemoveKey(uid_str);
+				ConfigParser.WriteFile(OnHoldFile, OnHold);
 			}
 			TS3FullClient.ServerGroupAddClient(ulong.Parse(PluginConfig["Groups"]["Verified"]), (ulong)invoker.DatabaseId);
 			var cid = ulong.Parse(PluginConfig["Channels"]["Verified"]);
@@ -217,6 +226,7 @@ namespace SimpleVerify
 				PluginConfig[section]["Chat Message"] = @"Welcome %client%,\n\nBefore you can use this TeamSpeak Server you have to agree to our Terms of service\n\nYou can find them at [url]https://termsfeed.com/assets/pdf/privacy-policy-template.pdf[/url]\n\nAfter reading them you have to choose [b]!accept[/b] or [b]!deny[/b]";
 				PluginConfig[section]["Verified Response"] = @"[color=green]Now you can use this TeamSpeak 3 server. Have fun :)";
 				PluginConfig[section]["Kick Reason"] = "ToS not accepted!";
+				PluginConfig[section]["Verification Disabled"] = "Verification is currently disabled!";
 				section = "Groups";
 				PluginConfig[section]["Unverified"] = "0";
 				PluginConfig[section]["Verified"] = "0";
@@ -237,7 +247,7 @@ namespace SimpleVerify
 			if (!File.Exists(OnHoldFile))
 			{
 				OnHold = new IniData();
-				OnHold.Sections.Add(new SectionData("clients"));
+				OnHold.Sections.Add(new SectionData("Clients"));
 				ConfigParser.WriteFile(OnHoldFile, OnHold);
 			}
 			else { OnHold = ConfigParser.ReadFile(OnHoldFile); }
@@ -245,7 +255,7 @@ namespace SimpleVerify
 
 		public void Dispose()
 		{
-			TS3FullClient.OnEachClientServerGroupAdded -= OnEachClientServerGroupAdded;
+			TS3FullClient.OnEachClientServerGroupRemoved -= OnEachClientServerGroupRemoved;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachServerEdited -= OnEachServerEdited;
 			TS3FullClient.OnEachInitServer -= OnEachInitServer;
