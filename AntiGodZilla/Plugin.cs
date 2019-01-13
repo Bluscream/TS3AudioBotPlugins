@@ -88,7 +88,8 @@ namespace ModBlackList
 		// private static readonly TimeSpan BanTime = TimeSpan.FromMinutes(1);
 
 		private static TimeSpan banTime;
-
+		private static List<ClientUidT> whitelistUID;
+		private static List<ulong> whitelistSGID;
 		private static Dictionary<ClientIdT, ClientUidT> clientCache;
 
 		public static string TruncateLongString(string str, int maxLength)
@@ -124,6 +125,9 @@ namespace ModBlackList
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 			var banStr = PluginConfig["General"]["Ban Time"];
+			whitelistUID = PluginConfig["Whitelist"]["UIDs"].Split(',').ToList();
+			whitelistSGID = PluginConfig["Whitelist"]["SGIDs"].Split(',').Select(ulong.Parse).ToList();
+			PluginConfig["Templates"]["Poke Message"] = PluginConfig["Templates"]["Poke Message"].Replace("\\n","\n");
 			if (!string.IsNullOrEmpty(banStr)) banTime = parseTimespan(banStr);
 			clientCache = new Dictionary<ClientIdT, ClientUidT>();
 			/*var clientList = TS3FullClient.ClientList().Value;
@@ -141,13 +145,16 @@ namespace ModBlackList
 			try {
 				// var client = TS3Client.GetCachedClientById(e.ClientId).Value;
 				if (e.Reason == Reason.LeftServer) {
-					if (!string.IsNullOrEmpty(e.ReasonMessage)) {
-						var match = CheckSection("Disconnect Message", e.ReasonMessage);
-						if (match.Item1)
-						{
-							var splitted = match.Item2.Split(':');
-							TS3FullClient.BanClient(clientCache[e.ClientId], parseTimespan(splitted[0]), splitted[1]);
-							Log.Info("Banned client {} for Disconnect Message \"{}\"", clientCache[e.ClientId], splitted[1]);
+					var uid = clientCache[e.ClientId];
+					if (!whitelistUID.Contains(uid)) {
+						if (!string.IsNullOrEmpty(e.ReasonMessage)) {
+							var match = CheckSection("Disconnect Message", e.ReasonMessage);
+							if (match.Item1)
+							{
+								var splitted = match.Item2.Split(':');
+								TS3FullClient.BanClient(uid, parseTimespan(splitted[0]), splitted[1]);
+								Log.Info("Banned client {} for Disconnect Message \"{}\"", uid, splitted[1]);
+							}
 						}
 					}
 				}
@@ -166,9 +173,12 @@ namespace ModBlackList
 
 		private void CheckClient(ClientIdT clientId)
 		{
+			if (clientId == TS3FullClient.ClientId) return;
 			var client = TS3Client.GetClientInfoById(clientId).Value;
 			if (client.ClientType == ClientType.Query) return;
-			if (clientId == TS3FullClient.ClientId) return;
+			if (whitelistUID.Contains(client.Uid)) return;
+			// bool hasMatch = parameters.Select(x => x.source).Intersect(myStrings).Any();
+			if (whitelistSGID.Intersect(client.ServerGroups).Any()) return;
 			if (!string.IsNullOrEmpty(client.Description))
 			{
 				var match = CheckSection("Description", client.Description);
@@ -215,7 +225,6 @@ namespace ModBlackList
 					break;
 				case MatchType.Regex:
 					throw new Exception("Regex is not yet supported, sorry!");
-					break;
 				default:
 					break;
 			}
