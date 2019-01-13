@@ -89,6 +89,8 @@ namespace ModBlackList
 
 		private static TimeSpan banTime;
 
+		private static Dictionary<ClientIdT, ClientUidT> clientCache;
+
 		public static string TruncateLongString(string str, int maxLength)
 		{
 			if (string.IsNullOrEmpty(str))
@@ -98,7 +100,7 @@ namespace ModBlackList
 
 		public void Initialize()
 		{
-			PluginDir = Path.Combine(ConfRoot.Plugins.Path.Value, PluginInfo.ShortName);
+			PluginDir = Path.Combine(ConfRoot.Plugins.Path.Value, PluginInfo.ShortName); //TODO: REMOVE
 			bool exists = System.IO.Directory.Exists(PluginDir);
 			if (!exists) System.IO.Directory.CreateDirectory(PluginDir);
 			PluginConfigFile = Path.Combine(PluginDir, $"{PluginInfo.ShortName}.ini");
@@ -121,7 +123,14 @@ namespace ModBlackList
 				Log.Warn("Config for plugin {} created!", PluginInfo.Name);
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
-			banTime = parseTimespan(PluginConfig["General"]["Ban Time"]);
+			var banStr = PluginConfig["General"]["Ban Time"];
+			if (!string.IsNullOrEmpty(banStr)) banTime = parseTimespan(banStr);
+			clientCache = new Dictionary<ClientIdT, ClientUidT>();
+			/*var clientList = TS3FullClient.ClientList().Value;
+			foreach (var client in clientList)
+			{
+				clientCache.Add(client.ClientId, client.Uid);
+			}*/
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			TS3FullClient.OnEachClientLeftView += OnEachClientLeftView;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
@@ -129,18 +138,28 @@ namespace ModBlackList
 
 		private void OnEachClientLeftView(object sender, ClientLeftView e)
 		{
-			if (e.Reason != Reason.LeftServer) return;
-			if (string.IsNullOrEmpty(e.ReasonMessage)) return;
-			var match = CheckSection("Disconnect Message", e.ReasonMessage);
-			if (match.Item1)
-			{
-				var splitted = match.Item2.Split(':');
-				TS3FullClient.BanClient(e.ClientId, parseTimespan(splitted[0]), splitted[1]);
-			}
+			try {
+				// var client = TS3Client.GetCachedClientById(e.ClientId).Value;
+				if (e.Reason == Reason.LeftServer) {
+					if (!string.IsNullOrEmpty(e.ReasonMessage)) {
+						var match = CheckSection("Disconnect Message", e.ReasonMessage);
+						if (match.Item1)
+						{
+							var splitted = match.Item2.Split(':');
+							TS3FullClient.BanClient(clientCache[e.ClientId], parseTimespan(splitted[0]), splitted[1]);
+							Log.Info("Banned client {} for Disconnect Message \"{}\"", clientCache[e.ClientId], splitted[1]);
+						}
+					}
+				}
+				if (clientCache.ContainsKey(e.ClientId))
+					clientCache.Remove(e.ClientId);
+			} catch	(Exception ex) { Log.Error(ex.StackTrace); }
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
+			if (!clientCache.ContainsKey(client.ClientId))
+				clientCache.Add(client.ClientId, client.Uid);
 			CheckClient(client.ClientId);
 		}
 
@@ -150,11 +169,13 @@ namespace ModBlackList
 			var client = TS3Client.GetClientInfoById(clientId).Value;
 			if (client.ClientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
-			if (!string.IsNullOrEmpty(client.Description)) {
+			if (!string.IsNullOrEmpty(client.Description))
+			{
 				var match = CheckSection("Description", client.Description);
 				if (match.Item1) { TakeAction(clientId, match.Item2); return; }
 			}
-			if (!string.IsNullOrEmpty(client.Metadata)) {
+			if (!string.IsNullOrEmpty(client.Metadata))
+			{
 				var match = CheckSection("MetaData", client.Metadata);
 				if (match.Item1) { TakeAction(clientId, match.Item2); return; }
 			}
@@ -229,7 +250,7 @@ namespace ModBlackList
 				default:
 					break;
 			}
-			return new Tuple<MatchType, MatchCase, ClientUidT>(matchType, matchCase, splitted[1]);
+			return new Tuple<MatchType, MatchCase, ClientUidT>(matchType, matchCase, splitted[2]);
 		}
 
 		private enum MatchType
@@ -300,9 +321,11 @@ namespace ModBlackList
 			if (banTime != null)
 			{
 				TS3FullClient.KickClientFromServer(clientId, reason);
+				Log.Info("Kicked client {} for {}", clientId, reason);
 			} else
 			{
 				TS3FullClient.BanClient(clientId, banTime, reason);
+				Log.Info("Banned client {} for {}", clientId, reason);
 			}
 			
 		}
