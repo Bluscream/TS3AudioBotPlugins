@@ -119,16 +119,18 @@ namespace CountryWhitelist
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
 				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
-				var ok = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
+				/*var ok = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("msg", TruncateLongString(msg, 100))
-				}).Ok;
+					new CommandParameter("msg", )
+				}).Ok;*/
+				TS3FullClient.PokeClient(ClientId, TruncateLongString(msg, 100));
 			}
-			var Ok = TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
+			/*var Ok = TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
 				new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 				new CommandParameter("clid", ClientId),
-				new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
-			}).Ok;
+				new CommandParameter("reasonmsg", )
+			}).Ok;*/
+			TS3FullClient.KickClientFromServer(ClientId, TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80));
 	}
 
 		[Command("countrywhitelist", "")]

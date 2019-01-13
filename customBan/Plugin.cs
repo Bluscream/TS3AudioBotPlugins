@@ -122,7 +122,7 @@ namespace customBan
 			}
 			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
 		}
-		private bool BanClient(ClientIdT clientId, ulong duration, string reason)
+		/*private bool BanClient(ClientIdT clientId, ulong duration, string reason)
 		{ // banclient uid=NndkCcFnoemS6mjQscpryybk6As= time=1 banreason=1 return_code=1:5z:0
 			var command = new Ts3Command("banclient", new List<ICommandPart>() {
 					new CommandParameter("time", duration),
@@ -131,7 +131,7 @@ namespace customBan
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ClientLeftView);
 			return Result.Ok;
-		}
+		}*/
 
 		/*private ulong ConvertDuration(string input)
 		{
@@ -235,13 +235,13 @@ namespace customBan
 					}
 					
 					var Reason = sb.ToString();
-					var success = BanClient(client.ClientId, (ulong)duration.TotalSeconds, Reason);
-					if (success)
+					var ban = TS3FullClient.BanClient(client.ClientId, duration, reason);
+					if (ban.Ok)
 					{
 						return $"Banned client \"{client.Name}\" for \"{reason}\"";
 					} else
 					{
-						return $"[color=red]Failed to ban [b]\"{client.Name}\" ( {client.ClientId} )";
+						return $"[color=red]Failed to ban [b]\"{client.Name}\" ( {client.ClientId} ) Reason: {ban.Error.Message} ({ban.Error.ExtraMessage}";
 					}
 				}
 				return null;

@@ -105,23 +105,27 @@ namespace MaintenanceMode
 		private void KickFromServer(ClientIdT ClientId)
 		{
 			var msg = PluginConfig["Templates"]["Private Message"];
-			if (!string.IsNullOrWhiteSpace(msg)) {
+			if (!string.IsNullOrWhiteSpace(msg))
+			{
+				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
 				TS3Client.SendMessage(msg, ClientId);
 			}
 			msg = PluginConfig["Templates"]["Poke Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
-				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]);
-				var ok = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
+				msg = msg.Replace("{start}", PluginConfig["Session"]["Start"]).Replace("{invoker}", PluginConfig["Session"]["Invoker"]).Replace("{whitelist}", string.Join(", ", whitelist));
+				/*var ok = TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 					new CommandParameter("clid", ClientId),
-					new CommandParameter("msg", TruncateLongString(msg, 100))
-				}).Ok;
+					new CommandParameter("msg", )
+				}).Ok;*/
+				TS3FullClient.PokeClient(ClientId, TruncateLongString(msg, 100));
 			}
-			var Ok = TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
-					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
-					new CommandParameter("clid", ClientId),
-					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
-			}).Ok;
+			/*var Ok = TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
+				new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
+				new CommandParameter("clid", ClientId),
+				new CommandParameter("reasonmsg", )
+			}).Ok;*/
+			TS3FullClient.KickClientFromServer(ClientId, TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80));
 		}
 
 		private int CheckAllClients()

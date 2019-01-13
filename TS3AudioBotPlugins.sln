@@ -81,7 +81,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelManager", "ChannelMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChannelWatcher", "ChannelWatcher\ChannelWatcher.csproj", "{952757DD-3296-48E5-98A2-8DAD24C297D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiGodZilla", "AntiGodZilla\AntiGodZilla.csproj", "{446F9102-F1F7-4F47-BC24-FBCC347A33FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModBlackList", "AntiGodZilla\ModBlackList.csproj", "{446F9102-F1F7-4F47-BC24-FBCC347A33FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CountryWhitelist", "CountryWhitelist\CountryWhitelist.csproj", "{AEDC8210-5FB7-427E-A5DD-4BBC951862A7}"
 EndProject
@@ -93,7 +93,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToggleSupport", "ToggleSupp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "customBan", "customBan\customBan.csproj", "{5DD6B50A-AA57-4C05-9726-71F833122D50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleVerify", "simpleVerify\SimpleVerify.csproj", "{08A60A7F-4842-4C93-9CD9-87AB6CB61023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleVerify", "simpleVerify\SimpleVerify.csproj", "{08A60A7F-4842-4C93-9CD9-87AB6CB61023}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
