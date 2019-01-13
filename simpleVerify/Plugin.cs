@@ -94,6 +94,7 @@ namespace SimpleVerify
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			TS3FullClient.OnEachClientServerGroupRemoved += OnEachClientServerGroupRemoved;
+			TS3FullClient.OnEachClientServerGroupAdded += OnEachClientServerGroupAdded;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
@@ -117,6 +118,7 @@ namespace SimpleVerify
 			if (!VerificationEnabled) return;
 			if (clientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
+			Log.Warn($"StartVerification serverGroups={serverGroups}");
 			if (!serverGroups.Contains(DefaultServerGroupId)) return;
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
 			if (cid > 0) TS3FullClient.ClientMove(clientId, cid);
@@ -135,9 +137,23 @@ namespace SimpleVerify
 			}
 		}
 
+		private void OnEachClientServerGroupAdded(object sender, ClientServerGroupAdded e)
+		{
+			var uid_str = e.ClientUid.Replace("=", string.Empty);
+			if (!OnHold["Clients"].ContainsKey(uid_str)) return;
+			var groups = Array.ConvertAll(OnHold["Clients"][uid_str].Split(','), ulong.Parse).ToList();
+			var client = TS3Client.GetCachedClientById(e.ClientId).Value;
+			foreach (var group in groups)
+			{
+				TS3FullClient.ServerGroupAddClient(group, (ulong)client.DatabaseId);
+			}
+			OnHold["Clients"].RemoveKey(uid_str);
+			ConfigParser.WriteFile(OnHoldFile, OnHold);
+		}
+
 		private void OnEachClientServerGroupRemoved(object sender, ClientServerGroupRemoved e)
 		{
-			Log.Debug($"OnEachClientServerGroupRemoved: ClientId: {e.ClientId} ClientUid: {e.ClientUid} Name: {e.Name} ServerGroupId: {e.ServerGroupId} NotifyType: {e.NotifyType}");
+			// Log.Debug($"OnEachClientServerGroupRemoved: ClientId: {e.ClientId} ClientUid: {e.ClientUid} Name: {e.Name} ServerGroupId: {e.ServerGroupId} NotifyType: {e.NotifyType}");
 			if (!VerificationEnabled) return;
 			if (e.ClientId == TS3FullClient.ClientId) return;
 			var client = TS3Client.GetClientInfoById(e.ClientId).Value;
@@ -156,6 +172,7 @@ namespace SimpleVerify
 			}
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
 			if (cid < 1) TS3Client.KickClientFromChannel(e.ClientId);
+			client = TS3Client.GetClientInfoById(e.ClientId).Value;
 			StartVerification(client.ClientType, e.ClientId, client.ServerGroups, e.ClientUid, client.Name);
 		}
 
@@ -166,13 +183,12 @@ namespace SimpleVerify
 				new CommandParameter("msg", TruncateLongString(message, 100))
 			}).Ok;
 		}
-		private bool KickFromServer(ClientIdT clientId)
+		private bool KickFromServer(ClientIdT clientId, string reason = "")
 		{
-
 			return TS3FullClient.Send<ResponseVoid>("clientkick", new List<ICommandPart>() {
 					new CommandParameter("reasonid", (int)ReasonIdentifier.Server),
 					new CommandParameter("clid", clientId),
-					new CommandParameter("reasonmsg", TruncateLongString(PluginConfig["Templates"]["Kick Reason"], 80))
+					new CommandParameter("reasonmsg", TruncateLongString(reason, 80))
 			}).Ok;
 		}
 
@@ -180,20 +196,15 @@ namespace SimpleVerify
 		public string CommandAcceptToS(InvokerData invoker)
 		{
 			if (!VerificationEnabled) return PluginConfig["Templates"]["Verification Disabled"];
-			var uid_str = invoker.ClientUid.Replace("=", string.Empty);
-			if (OnHold["Clients"].ContainsKey(uid_str))
-			{
-				var groups = Array.ConvertAll(OnHold["Clients"][uid_str].Split(','), ulong.Parse).ToList();
-				foreach (var group in groups)
-				{
-					TS3FullClient.ServerGroupAddClient(group, (ulong)invoker.DatabaseId);
-				}
-				OnHold["Clients"].RemoveKey(uid_str);
-				ConfigParser.WriteFile(OnHoldFile, OnHold);
-			}
+			var kick = PluginConfig["Templates"]["Reconnect Kick Reason"];
+			var k = (string.IsNullOrWhiteSpace(kick));
+			// TS3Client.SendServerMessage($"kick:{kick} k:{k}");
+			if (!k) KickFromServer((ushort)invoker.ClientId, kick);
 			TS3FullClient.ServerGroupAddClient(ulong.Parse(PluginConfig["Groups"]["Verified"]), (ulong)invoker.DatabaseId);
-			var cid = ulong.Parse(PluginConfig["Channels"]["Verified"]);
-			if (cid > 0) TS3FullClient.ClientMove((ushort)invoker.ClientId, cid);
+			if (k) {
+				var cid = ulong.Parse(PluginConfig["Channels"]["Verified"]);
+				if (cid > 0) TS3FullClient.ClientMove((ushort)invoker.ClientId, cid);
+			}
 			return PluginConfig["Templates"]["Verified Response"];
 		}
 
@@ -202,7 +213,7 @@ namespace SimpleVerify
 		public void CommandDenyToS(InvokerData invoker)
 		{
 			if (!VerificationEnabled) return;
-			KickFromServer((ClientIdT)invoker.ClientId);
+			KickFromServer((ClientIdT)invoker.ClientId, PluginConfig["Templates"]["Kick Reason"]);
 		}
 
 
@@ -227,6 +238,7 @@ namespace SimpleVerify
 				PluginConfig[section]["Verified Response"] = @"[color=green]Now you can use this TeamSpeak 3 server. Have fun :)";
 				PluginConfig[section]["Kick Reason"] = "ToS not accepted!";
 				PluginConfig[section]["Verification Disabled"] = "Verification is currently disabled!";
+				PluginConfig[section]["Reconnect Kick Reason"] = "Please reconnect!";
 				section = "Groups";
 				PluginConfig[section]["Unverified"] = "0";
 				PluginConfig[section]["Verified"] = "0";
@@ -255,6 +267,7 @@ namespace SimpleVerify
 
 		public void Dispose()
 		{
+			TS3FullClient.OnEachClientServerGroupAdded -= OnEachClientServerGroupAdded;
 			TS3FullClient.OnEachClientServerGroupRemoved -= OnEachClientServerGroupRemoved;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachServerEdited -= OnEachServerEdited;
