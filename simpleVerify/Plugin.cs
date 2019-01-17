@@ -118,8 +118,9 @@ namespace SimpleVerify
 			if (!VerificationEnabled) return;
 			if (clientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
-			Log.Warn($"StartVerification serverGroups={serverGroups}");
+			// Log.Debug($"Verification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId}) required = {serverGroups.Contains(DefaultServerGroupId)}");
 			if (!serverGroups.Contains(DefaultServerGroupId)) return;
+			Log.Info($"StartVerification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId})");
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
 			if (cid > 0) TS3FullClient.ClientMove(clientId, cid);
 			//var session = new UserSession();
@@ -160,7 +161,7 @@ namespace SimpleVerify
 			if (client.ClientType == ClientType.Query) return;
 			var verified_group = ulong.Parse(PluginConfig["Groups"]["Verified"]);
 			if (e.ServerGroupId != verified_group) return;
-			if (!client.ServerGroups.SequenceEqual(new ulong[] { verified_group })) {
+			if (!client.ServerGroups.SequenceEqual(new ulong[] { DefaultServerGroupId })) {
 				var uid_str = e.ClientUid.Replace("=", string.Empty);
 				OnHold["Clients"][uid_str] = string.Join(",", client.ServerGroups);
 				foreach (var sgid in client.ServerGroups)
@@ -223,6 +224,20 @@ namespace SimpleVerify
 			VerificationEnabled = !VerificationEnabled;
 			var enabled = VerificationEnabled ? "[color=green]Enabled" : "[color=orange]Disabled";
 			return $"{enabled} Verification!\n\nDefaultServerGroupId: {DefaultServerGroupId}";
+		}
+
+		[Command("verification remove", "")]
+		public void CommandRemoveFromWaiting(string uid)
+		{
+			var uid_str = uid.Replace("=", string.Empty);
+			OnHold["Clients"].RemoveKey(uid_str);
+			ConfigParser.WriteFile(OnHoldFile, OnHold);
+		}
+
+		[Command("verification list", "")]
+		public string CommandListWaiting()
+		{
+			return OnHoldFile + Environment.NewLine + File.ReadAllText(OnHoldFile);
 		}
 
 		private void LoadConfig()
