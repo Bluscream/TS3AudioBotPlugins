@@ -64,7 +64,7 @@ namespace customBan
 		private static IniData PluginConfig;
 
 		// ^((?P<years>\d+?)y)?((?P<months>\d+?)M)?((?P<days>\d+?)d)?((?P<hours>\d+?)h)?((?P<minutes>\d+?)m)?((?P<seconds>\d+?)s)?$
-		private static readonly Regex regex_time = new Regex(@"^((\d+?)y)?((\d+?)M)?((\d+?)d)?((\d+?)h)?((\d+?)m)?((\d+?)s)?$");
+		// private static readonly Regex regex_time = new Regex(@"^((\d+?)y)?((\d+?)M)?((\d+?)d)?((\d+?)h)?((\d+?)m)?((\d+?)s)?$");
 
 		// private string templateURL = "https://raw.githubusercontent.com/MexoGames/Teamspeak/master/templates/bans.json";
 		// private string whitelistURL = "https://raw.githubusercontent.com/MexoGames/Teamspeak/master/templates/ip-whitelist.txt";
@@ -175,7 +175,7 @@ namespace customBan
 			return TimeSpan.FromSeconds(totalSeconds);
 		}
 
-		public static TimeSpan ParseTimeSpan(String value)
+		/*public static TimeSpan ParseTimeSpan(String value)
 		{
 			Dictionary<String, long> seconds = new Dictionary<String, long>() {
 			{"y", 31536000 },
@@ -198,6 +198,23 @@ namespace customBan
 			}
 			Log.Warn("result " + result);
 			return TimeSpan.FromSeconds(result);
+		}*/
+
+		[Command("customban", "")]
+		public string CommandInfo() {
+			var sb = new StringBuilder(Environment.NewLine);
+			sb.AppendLine(PluginConfig.ToString());
+			sb.AppendLine(banTemplates.Prefix);
+			sb.AppendLine(banTemplates.Suffix);
+			foreach (var template in banTemplates.Templates)
+			{
+				var duration = parseTimespan(template.Value);
+				var duration_str = (duration.TotalSeconds < 1) ? "Permanent" : duration.ToString();
+				sb.AppendLine($"{template.Key}={template.Value} ({duration_str})");
+			}
+			sb.AppendLine(banTemplates.ToString());
+			sb.AppendLine(string.Join(", ", ipWhitelist));
+			return sb.ToString();
 		}
 
 		[Command("ban", "Syntax: !ban <reason> <name>")]
@@ -214,7 +231,7 @@ namespace customBan
 					var mduration_str = banTemplates.Templates[key];
 					Log.Info("mduration_str " + mduration_str);
 					duration = parseTimespan(mduration_str);
-					found+=1;break;
+					found+=1;break; // Todo: Not break
 				}
 			}
 			if (found < 1) return "[color=red]No matching reason found, try again!";
@@ -235,7 +252,7 @@ namespace customBan
 					}
 					
 					var Reason = sb.ToString();
-					var ban = TS3FullClient.BanClient(client.ClientId, duration, reason);
+					var ban = TS3FullClient.BanClient(client.ClientId, duration, Reason);
 					if (ban.Ok)
 					{
 						return $"Banned client \"{client.Name}\" for \"{reason}\"";
