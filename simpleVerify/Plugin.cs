@@ -118,7 +118,7 @@ namespace SimpleVerify
 			if (!VerificationEnabled) return;
 			if (clientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
-			// Log.Debug($"Verification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId}) required = {serverGroups.Contains(DefaultServerGroupId)}");
+			Log.Debug($"Verification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId}) required = {serverGroups.Contains(DefaultServerGroupId)}");
 			if (!serverGroups.Contains(DefaultServerGroupId)) return;
 			Log.Info($"StartVerification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId})");
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
