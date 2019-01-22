@@ -132,9 +132,12 @@ namespace ModBlackList
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
-			if (!clientCache.ContainsKey(client.ClientId))
-				clientCache.Add(client.ClientId, client.Uid);
-			CheckClient(client.ClientId);
+			try
+			{
+				if (!clientCache.ContainsKey(client.ClientId))
+					clientCache.Add(client.ClientId, client.Uid);
+				CheckClient(client.ClientId);
+			} catch (Exception ex) { Log.Error(ex.StackTrace); }
 		}
 
 
