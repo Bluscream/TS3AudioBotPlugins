@@ -53,26 +53,37 @@ namespace Dynamic_Slots
 		private bool PluginEnabled = true;
 		private int CurrentUsers = 0;
 		private int CurrentUsersQueries = 0;
-		private int CurrentVisibleUsers = 0;
-		private int CurrentSlots;
+		// private int CurrentVisibleUsers = 0;
+		// private int CurrentVisibleQueries = 0;
+		private int CurrentSlots = 32;
 		// private bool CheckNext = false;
 		private bool InitializedVisible = false;
 		private bool InitializedUsers = false;
-		private List<ClientEnterView> clientCache;
+		private bool InitializedSlots = false;
+		private List<ClientIdT> clientCache;
+		private List<ClientIdT> queryCache;
 
-		private readonly List<int> steps = new List<int>() { 32, 64, 128, 256, 512, 1024 };
+		private readonly List<int> steps = new List<int>() { 5, 10, 32, 64, 128, 256, 512, 1024 };
 
 		public void Initialize()
 		{
-			clientCache = new List<ClientEnterView>();
+			clientCache = new List<ClientIdT>(); queryCache = new List<ClientIdT>();
 			InitializedVisible = false; InitializedUsers = false; ServerGetVariables();
 			TS3FullClient.OnEachInitServer += OnEachInitServer;
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachServerUpdated += OnEachServerUpdated;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			TS3FullClient.OnEachClientLeftView += OnEachClientLeftView;
+			TS3FullClient.OnEachChannelListFinished += OnEachChannelListFinished;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
+
+		private void OnEachChannelListFinished(object sender, ChannelListFinished e)
+		{
+			Log.Debug("OnEachChannelListFinished");
+			ServerGetVariables();
+		}
+
 		private void OnEachInitServer(object sender, InitServer server) => CheckSlots(server.MaxClients);
 		private void OnEachServerUpdated(object sender, ServerUpdated server){
 			CheckSlots(server.MaxClients, server.ReservedSlots);
@@ -82,12 +93,47 @@ namespace Dynamic_Slots
 			{
 				InitializedUsers = true;
 				Log.Debug("Initialized user counts: CurrentUsersQueries: {} CurrentUsers: {}",CurrentUsersQueries,CurrentUsers);
+				CheckVisible();
 			}
 
+		}
+
+		private void buildCaches(bool clear = true)
+		{
+			if (clientCache == null) clientCache = new List<ClientIdT>();
+			if (queryCache == null) queryCache = new List<ClientIdT>();
+			if (clear) clientCache.Clear(); queryCache.Clear();
+			var clients = TS3FullClient.ClientList(ClientListOptions.info).Value;
+			foreach (var client in clients)
+			{
+				switch (client.ClientType)
+				{
+					case ClientType.Full:
+						if (!clientCache.Contains(client.ClientId))
+							clientCache.Add(client.ClientId);
+						continue;
+					case ClientType.Query:
+						if (!queryCache.Contains(client.ClientId))
+							queryCache.Add(client.ClientId);
+						continue;
+					default:
+						break;
+				}
+			}
+			Log.Debug("(Re)built caches > Clients: {} Queries: {}",clientCache.Count,queryCache.Count);
+		}
+
+		private void ServerGetVariables()
+		{
+			var Ok = TS3FullClient.Send<ResponseVoid>("servergetvariables", new List<ICommandPart>() { }).Ok;
 		}
 		private bool CheckSlots(int maxclients, int reserved = 0)
 		{
 			var realSlots = maxclients - reserved;
+			if (!InitializedSlots) {
+				Log.Debug("Initialized CurrentSlots: {} | realSlots: {} ({}-{}).", CurrentSlots, realSlots, maxclients, reserved);
+				InitializedSlots = true;
+			}
 			if (realSlots != CurrentSlots)
 			{
 				Log.Info("Slots changed from {} to {} ({}-{}). Updating...", CurrentSlots, realSlots, maxclients, reserved);
@@ -96,11 +142,9 @@ namespace Dynamic_Slots
 			}
 			return false;
 		}
-		private void ServerGetVariables() {
-			var Ok = TS3FullClient.Send<ResponseVoid>("servergetvariables", new List<ICommandPart>() { }).Ok;
-		}
 		private void CheckClients()
 		{
+			if (!InitializedSlots) return;
 			if (!InitializedVisible) {
 				if (InitializedUsers && (CurrentUsersQueries >= CurrentSlots)) {
 					Log.Info("Editing Maxclients to {} because {} >= {} - 1", CurrentUsersQueries + 1, CurrentUsersQueries, CurrentSlots);
@@ -109,14 +153,14 @@ namespace Dynamic_Slots
 				}
 				return;
 			}
-			if (CurrentVisibleUsers == (CurrentSlots - 1)) {
+			/*if (CurrentVisibleUsers == (CurrentSlots - 1)) { // TODO
 				Log.Info("Editing Maxclients to {} because {} == {} - 1", CurrentVisibleUsers + 1, CurrentVisibleUsers, CurrentSlots);
 				EditMaxClients(CurrentVisibleUsers + 1);
 			} else if (CurrentSlots == (CurrentVisibleUsers + 1))
 			{
 				Log.Info("Editing Maxclients to {} because {} > {} + 1", CurrentVisibleUsers - 1, CurrentVisibleUsers, CurrentSlots);
 				EditMaxClients(CurrentVisibleUsers - 1);
-			}
+			}*/
 		}
 
 		private void OnEachServerEdited(object sender, ServerEdited server)
@@ -131,14 +175,38 @@ namespace Dynamic_Slots
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
-			// if (client.ClientType == ClientType.Query) return; // TODO: FIX
-			// var clientInfo = TS3Client.GetClientInfoById(client.ClientId)
-			clientCache.Add(client);
-			CurrentVisibleUsers += 1;
-			Log.Debug("User joined: {} ({}): Increasing CurrentVisibleUsers to {} / {}", client.Name,client.ClientId,CurrentVisibleUsers,CurrentSlots);
+			switch (client.ClientType)
+			{
+				case ClientType.Full:
+					if (!clientCache.Contains(client.ClientId)){
+						clientCache.Add(client.ClientId);
+						Log.Debug("Client joined: {} ({}): Increasing clientCache to {} / {}", client.Name, client.ClientId, clientCache.Count, CurrentSlots);
+					}
+					break;
+				case ClientType.Query:
+					if (!queryCache.Contains(client.ClientId)){
+						queryCache.Add(client.ClientId);
+						Log.Debug("Query joined: {} ({}): Increasing queryCache to {} / {}", client.Name, client.ClientId, queryCache.Count, CurrentSlots);
+					}
+					break;
+				default:
+					break;
+			}
+			// CurrentVisibleUsers += 1;
+			// Log.Debug("User joined: {} ({}): Increasing CurrentVisibleUsers to {} / {}", client.Name,client.ClientId,CurrentVisibleUsers,CurrentSlots);
 			CheckClients();
 			// Log.Debug("InitializedUsers: {} !InitializedVisible: {} clientCache.Count: {} >= {} === {}", InitializedUsers, !InitializedVisible, clientCache.Count, CurrentUsersQueries, (InitializedUsers && !InitializedVisible && (clientCache.Count >= CurrentUsersQueries)));
-			if (InitializedUsers && !InitializedVisible && (clientCache.Count >= CurrentUsersQueries)) {
+			if (InitializedUsers && !InitializedVisible) {
+				CheckVisible();
+			}
+		}
+
+		private void CheckVisible()
+		{
+			var all_users_visible = clientCache.Count >= CurrentUsersQueries;
+			Log.Trace("{} >= {}: {}", clientCache.Count, CurrentUsersQueries, all_users_visible);
+			if (all_users_visible)
+			{
 				Log.Debug("InitializedVisible because clientCache.Count: {} >= {}", clientCache.Count, CurrentUsersQueries);
 				InitializedVisible = true;
 			}
@@ -146,17 +214,16 @@ namespace Dynamic_Slots
 
 		private void OnEachClientLeftView(object sender, ClientLeftView client)
 		{
-			ClientEnterView found = null;
-			foreach (var cachedClient in clientCache) {
-				if (cachedClient.ClientId == client.ClientId) {
-					found = cachedClient; break;
-				}
+			if (clientCache.Contains(client.ClientId)) {
+				clientCache.Remove(client.ClientId);
+				Log.Debug("Client left: {}: Decreasing clientCache to {} / {}", client.ClientId, clientCache.Count, CurrentSlots);
 			}
-			if (found == null) return;
-			// if (found.ClientType == ClientType.Query) return; // TODO: FIX
-			CurrentVisibleUsers -= 1;
-			Log.Debug("User left: {}: Decreasing CurrentVisibleUsers to {} / {}", client.ClientId, CurrentVisibleUsers, CurrentSlots);
-			clientCache.Remove(found);
+			if (queryCache.Contains(client.ClientId)) {
+				queryCache.Remove(client.ClientId);
+				Log.Debug("Query left: {}: Decreasing queryCache to {} / {}", client.ClientId, queryCache.Count, CurrentSlots);
+			}
+			// CurrentVisibleUsers -= 1;
+			// Log.Debug("User left: {}: Decreasing CurrentVisibleUsers to {} / {}", client.ClientId, CurrentVisibleUsers, CurrentSlots);
 			CheckClients();
 		}
 
@@ -174,18 +241,19 @@ namespace Dynamic_Slots
 		{
 			var sb = new StringBuilder(PluginInfo.Name);
 			sb.AppendLine();
-			sb.AppendLine($"Clients: {CurrentVisibleUsers} ({CurrentUsersQueries}) / {CurrentSlots}");
+			sb.AppendLine($"Clients: {{CurrentVisibleUsers}} ({CurrentUsersQueries}) / {CurrentSlots}");
 			sb.AppendLine($"PluginEnabled: {PluginEnabled}");
 			// sb.AppendLine($"CheckNext: {CheckNext}");
 			sb.AppendLine($"InitializedVisible: {InitializedVisible}");
-			sb.AppendLine($"clientCache: {clientCache.Count}");
+			sb.AppendLine($"clientCache ({clientCache.Count}): {string.Join(", ", clientCache)}");
+			sb.AppendLine($"queryCache ({queryCache.Count}): {string.Join(", ", queryCache)}");
 			sb.AppendLine($"steps: {string.Join(", ", steps)}");
 			return sb.ToString();
 		}
 
 		public void Dispose()
 		{
-			clientCache.Clear();CurrentSlots = 0;CurrentVisibleUsers = 0;
+			clientCache.Clear(); queryCache.Clear(); CurrentSlots = 0; // CurrentVisibleUsers = 0;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachServerUpdated -= OnEachServerUpdated;
