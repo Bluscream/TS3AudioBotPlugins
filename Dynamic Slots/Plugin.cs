@@ -162,7 +162,7 @@ namespace Dynamic_Slots
 		public void Dispose()
 		{
 			TS3FullClient.OnEachChannelListFinished -= OnEachChannelListFinished;
-			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
+			TS3FullClient.OnEachClientLeftView -= OnEachClientLeftView;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachServerUpdated -= OnEachServerUpdated;
 			TS3FullClient.OnEachServerEdited -= OnEachServerEdited;
