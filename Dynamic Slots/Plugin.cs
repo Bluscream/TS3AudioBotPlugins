@@ -50,26 +50,16 @@ namespace Dynamic_Slots
 		public Ts3Client TS3Client { get; set; }
 		public ConfRoot ConfRoot { get; set; }
 
-		private bool PluginEnabled = true;
-		private int CurrentUsers = 0;
-		private int CurrentUsersQueries = 0;
-		// private int CurrentVisibleUsers = 0;
-		// private int CurrentVisibleQueries = 0;
-		private int CurrentSlots = 32;
-		// private bool CheckNext = false;
-		private bool InitializedVisible = false;
-		private bool InitializedUsers = false;
-		private bool InitializedSlots = false;
-		private List<ClientIdT> clientCache;
-		private List<ClientIdT> queryCache;
+		private readonly bool PluginEnabled = true;
+		private bool Initialized = false;
 
-		private readonly List<int> steps = new List<int>() { 5, 10, 32, 64, 128, 256, 512, 1024 };
+		private readonly List<int> steps = new List<int>() { 32, 64, 128, 256, 512, 1024 }; // TODO: Config
+		private int currentStep = 0;
+		private const int stepTriggerUp = 0;
+		private const int stepTriggerDown = 4;
 
 		public void Initialize()
 		{
-			clientCache = new List<ClientIdT>(); queryCache = new List<ClientIdT>();
-			InitializedVisible = false; InitializedUsers = false; ServerGetVariables();
-			TS3FullClient.OnEachInitServer += OnEachInitServer;
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachServerUpdated += OnEachServerUpdated;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
@@ -80,151 +70,69 @@ namespace Dynamic_Slots
 
 		private void OnEachChannelListFinished(object sender, ChannelListFinished e)
 		{
-			Log.Debug("OnEachChannelListFinished");
+			if (Initialized) return;
+			Initialized = true;
 			ServerGetVariables();
 		}
 
-		private void OnEachInitServer(object sender, InitServer server) => CheckSlots(server.MaxClients);
-		private void OnEachServerUpdated(object sender, ServerUpdated server){
-			CheckSlots(server.MaxClients, server.ReservedSlots);
-			CurrentUsersQueries = server.ClientsOnline; // - server.QueriesOnline;
-			CurrentUsers = server.ClientsOnline - server.QueriesOnline;
-			if (!InitializedUsers)
-			{
-				InitializedUsers = true;
-				Log.Debug("Initialized user counts: CurrentUsersQueries: {} CurrentUsers: {}",CurrentUsersQueries,CurrentUsers);
-				CheckVisible();
-			}
-
-		}
-
-		private void buildCaches(bool clear = true)
+		private void OnEachServerUpdated(object sender, ServerUpdated server)
 		{
-			if (clientCache == null) clientCache = new List<ClientIdT>();
-			if (queryCache == null) queryCache = new List<ClientIdT>();
-			if (clear) clientCache.Clear(); queryCache.Clear();
-			var clients = TS3FullClient.ClientList(ClientListOptions.info).Value;
-			foreach (var client in clients)
+			if (!Initialized) return;
+
+			var realSlots = server.MaxClients - server.ReservedSlots;
+			var realClients = server.ClientsOnline;
+			// var realClients = server.ClientsOnline - server.QueriesOnline;
+
+			// t = stepTriggerRange
+			// Case A
+			// (cur: 30) | (max: 64)
+			// cur > step[current] - t => step up
+
+			// Case B
+			// cur: 65 | max 128
+			// cur: 64
+			// cur: 62 | max 64
+			// cur < step[current - 1] + 2
+
+			var lastStep = currentStep;
+			if (realClients >= steps[currentStep] - stepTriggerUp)
 			{
-				switch (client.ClientType)
-				{
-					case ClientType.Full:
-						if (!clientCache.Contains(client.ClientId))
-							clientCache.Add(client.ClientId);
-						continue;
-					case ClientType.Query:
-						if (!queryCache.Contains(client.ClientId))
-							queryCache.Add(client.ClientId);
-						continue;
-					default:
-						break;
-				}
+				while (realClients >= steps[currentStep] - stepTriggerUp && currentStep < steps.Count - 1)
+					++currentStep;
 			}
-			Log.Debug("(Re)built caches > Clients: {} Queries: {}",clientCache.Count,queryCache.Count);
+			else if (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
+			{
+				while (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
+					--currentStep;
+			}
+
+			if (lastStep != currentStep)
+			{
+				EditMaxClients(steps[currentStep]);
+			}
 		}
 
 		private void ServerGetVariables()
 		{
 			var Ok = TS3FullClient.Send<ResponseVoid>("servergetvariables", new List<ICommandPart>() { }).Ok;
 		}
-		private bool CheckSlots(int maxclients, int reserved = 0)
-		{
-			var realSlots = maxclients - reserved;
-			if (!InitializedSlots) {
-				Log.Debug("Initialized CurrentSlots: {} | realSlots: {} ({}-{}).", CurrentSlots, realSlots, maxclients, reserved);
-				InitializedSlots = true;
-			}
-			if (realSlots != CurrentSlots)
-			{
-				Log.Info("Slots changed from {} to {} ({}-{}). Updating...", CurrentSlots, realSlots, maxclients, reserved);
-				CurrentSlots = realSlots;
-				return true;
-			}
-			return false;
-		}
-		private void CheckClients()
-		{
-			if (!InitializedSlots) return;
-			if (!InitializedVisible) {
-				if (InitializedUsers && (CurrentUsersQueries >= CurrentSlots)) {
-					Log.Info("Editing Maxclients to {} because {} >= {} - 1", CurrentUsersQueries + 1, CurrentUsersQueries, CurrentSlots);
-					EditMaxClients(CurrentUsersQueries + 1);
-					ServerGetVariables();
-				}
-				return;
-			}
-			/*if (CurrentVisibleUsers == (CurrentSlots - 1)) { // TODO
-				Log.Info("Editing Maxclients to {} because {} == {} - 1", CurrentVisibleUsers + 1, CurrentVisibleUsers, CurrentSlots);
-				EditMaxClients(CurrentVisibleUsers + 1);
-			} else if (CurrentSlots == (CurrentVisibleUsers + 1))
-			{
-				Log.Info("Editing Maxclients to {} because {} > {} + 1", CurrentVisibleUsers - 1, CurrentVisibleUsers, CurrentSlots);
-				EditMaxClients(CurrentVisibleUsers - 1);
-			}*/
-		}
 
 		private void OnEachServerEdited(object sender, ServerEdited server)
 		{
-			// if (CheckNext) return;
 			if (server.InvokerId == TS3FullClient.ClientId) return;
-			// CheckNext = true;
 			ServerGetVariables();
-			// var result = TS3FullClient.SendNotifyCommand(new Ts3Command("serverinfo", new List<ICommandPart>() { }), NotificationType.ServerInfo).Value;
-			// var result = TS3FullClient.Send<ResponseVoid>("serverinfo", new List<ICommandPart>() { });
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
 		{
-			switch (client.ClientType)
-			{
-				case ClientType.Full:
-					if (!clientCache.Contains(client.ClientId)){
-						clientCache.Add(client.ClientId);
-						Log.Debug("Client joined: {} ({}): Increasing clientCache to {} / {}", client.Name, client.ClientId, clientCache.Count, CurrentSlots);
-					}
-					break;
-				case ClientType.Query:
-					if (!queryCache.Contains(client.ClientId)){
-						queryCache.Add(client.ClientId);
-						Log.Debug("Query joined: {} ({}): Increasing queryCache to {} / {}", client.Name, client.ClientId, queryCache.Count, CurrentSlots);
-					}
-					break;
-				default:
-					break;
-			}
-			// CurrentVisibleUsers += 1;
-			// Log.Debug("User joined: {} ({}): Increasing CurrentVisibleUsers to {} / {}", client.Name,client.ClientId,CurrentVisibleUsers,CurrentSlots);
-			CheckClients();
-			// Log.Debug("InitializedUsers: {} !InitializedVisible: {} clientCache.Count: {} >= {} === {}", InitializedUsers, !InitializedVisible, clientCache.Count, CurrentUsersQueries, (InitializedUsers && !InitializedVisible && (clientCache.Count >= CurrentUsersQueries)));
-			if (InitializedUsers && !InitializedVisible) {
-				CheckVisible();
-			}
-		}
-
-		private void CheckVisible()
-		{
-			var all_users_visible = clientCache.Count >= CurrentUsersQueries;
-			Log.Trace("{} >= {}: {}", clientCache.Count, CurrentUsersQueries, all_users_visible);
-			if (all_users_visible)
-			{
-				Log.Debug("InitializedVisible because clientCache.Count: {} >= {}", clientCache.Count, CurrentUsersQueries);
-				InitializedVisible = true;
-			}
+			if (!Initialized) return;
+			ServerGetVariables();
 		}
 
 		private void OnEachClientLeftView(object sender, ClientLeftView client)
 		{
-			if (clientCache.Contains(client.ClientId)) {
-				clientCache.Remove(client.ClientId);
-				Log.Debug("Client left: {}: Decreasing clientCache to {} / {}", client.ClientId, clientCache.Count, CurrentSlots);
-			}
-			if (queryCache.Contains(client.ClientId)) {
-				queryCache.Remove(client.ClientId);
-				Log.Debug("Query left: {}: Decreasing queryCache to {} / {}", client.ClientId, queryCache.Count, CurrentSlots);
-			}
-			// CurrentVisibleUsers -= 1;
-			// Log.Debug("User left: {}: Decreasing CurrentVisibleUsers to {} / {}", client.ClientId, CurrentVisibleUsers, CurrentSlots);
-			CheckClients();
+			if (!Initialized) return;
+			ServerGetVariables();
 		}
 
 		private bool EditMaxClients(int maxClients)
@@ -234,31 +142,30 @@ namespace Dynamic_Slots
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ServerEdited);
 			return Result.Ok;
-		}
+		} // c===3
 
 		[Command("dynamicslots", "")]
 		public string CommandListWaiting()
 		{
 			var sb = new StringBuilder(PluginInfo.Name);
 			sb.AppendLine();
-			sb.AppendLine($"Clients: {{CurrentVisibleUsers}} ({CurrentUsersQueries}) / {CurrentSlots}");
+			// sb.AppendLine($"Clients: {{CurrentVisibleUsers}} ({CurrentUsersQueries}) / {CurrentSlots}");
 			sb.AppendLine($"PluginEnabled: {PluginEnabled}");
 			// sb.AppendLine($"CheckNext: {CheckNext}");
-			sb.AppendLine($"InitializedVisible: {InitializedVisible}");
-			sb.AppendLine($"clientCache ({clientCache.Count}): {string.Join(", ", clientCache)}");
-			sb.AppendLine($"queryCache ({queryCache.Count}): {string.Join(", ", queryCache)}");
+			// sb.AppendLine($"InitializedVisible: {InitializedVisible}");
+			// sb.AppendLine($"clientCache ({clientCache.Count}): {string.Join(", ", clientCache)}");
+			// sb.AppendLine($"queryCache ({queryCache.Count}): {string.Join(", ", queryCache)}");
 			sb.AppendLine($"steps: {string.Join(", ", steps)}");
 			return sb.ToString();
 		}
 
 		public void Dispose()
 		{
-			clientCache.Clear(); queryCache.Clear(); CurrentSlots = 0; // CurrentVisibleUsers = 0;
+			TS3FullClient.OnEachChannelListFinished -= OnEachChannelListFinished;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			TS3FullClient.OnEachServerUpdated -= OnEachServerUpdated;
 			TS3FullClient.OnEachServerEdited -= OnEachServerEdited;
-			TS3FullClient.OnEachInitServer -= OnEachInitServer;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}
