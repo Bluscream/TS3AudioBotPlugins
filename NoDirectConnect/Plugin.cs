@@ -106,7 +106,7 @@ namespace NoDirectConnect
 			{
 				var timeout = timeoutCache[client.Uid];
 				var timeoutvalid = (timeout - DateTime.Now) < maxTimeOutPassed;
-				Log.Debug("Found matching {} timeout for client {} ({}): {} ({})", (timeoutvalid?"valid":"invalid"), client.Name, client.Uid, timeout);
+				Log.Debug("Found matching {} timeout for client {} ({}): {}", (timeoutvalid?"valid":"invalid"), client.Name, client.Uid, timeout);
 				timeoutCache.Remove(client.Uid);
 				if (timeoutvalid) return;
 			}
