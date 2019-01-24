@@ -50,12 +50,12 @@ namespace Dynamic_Slots
 		public Ts3Client TS3Client { get; set; }
 		public ConfRoot ConfRoot { get; set; }
 
-		private readonly bool PluginEnabled = true;
-		private bool Initialized = false;
+		private static bool PluginEnabled = true;
+		private static bool Initialized = false;
 
 		private readonly List<int> steps = new List<int>() { 32, 64, 128, 256, 512, 1024 }; // TODO: Config
 		private int currentStep = 0;
-		private const int stepTriggerUp = 0;
+		private const int stepTriggerUp = 2;
 		private const int stepTriggerDown = 4;
 
 		public void Initialize()
@@ -70,57 +70,85 @@ namespace Dynamic_Slots
 
 		private void OnEachChannelListFinished(object sender, ChannelListFinished e)
 		{
-			if (Initialized) return;
-			Initialized = true;
+			// if (Initialized) return;
+			// Initialized = true;
 			ServerGetVariables();
 		}
 
 		private void OnEachServerUpdated(object sender, ServerUpdated server)
 		{
-			if (!Initialized) return;
-
-			var realSlots = server.MaxClients - server.ReservedSlots;
-			var realClients = server.ClientsOnline;
-			// var realClients = server.ClientsOnline - server.QueriesOnline;
-
-			// t = stepTriggerRange
-			// Case A
-			// (cur: 30) | (max: 64)
-			// cur > step[current] - t => step up
-
-			// Case B
-			// cur: 65 | max 128
-			// cur: 64
-			// cur: 62 | max 64
-			// cur < step[current - 1] + 2
-
-			var lastStep = currentStep;
-			if (realClients >= steps[currentStep] - stepTriggerUp)
+			try
 			{
-				while (realClients >= steps[currentStep] - stepTriggerUp && currentStep < steps.Count - 1)
-					++currentStep;
+				if (!PluginEnabled) return;
+				var realSlots = server.MaxClients - server.ReservedSlots;
+				var realClients = server.ClientsOnline;
+				if (!Initialized)
+				{
+					Log.Debug($"realClients: {realClients}");
+					Log.Debug($"steps: {string.Join(", ", steps)}");
+					int closest = steps.Aggregate((x, y) => Math.Abs(x - realClients) < Math.Abs(y - realClients) ? x : y);
+					Log.Debug($"closest: {closest}");
+					currentStep = steps.IndexOf(closest);
+					Initialized = true;
+					return;
+				}
+
+				// var realClients = server.ClientsOnline - server.QueriesOnline;
+
+				// t = stepTriggerRange
+				// Case A
+				// (cur: 30) | (max: 64)
+				// cur > step[current] - t => step up
+
+				// Case B
+				// cur: 65 | max 128
+				// cur: 64
+				// cur: 62 | max 64
+				// cur < step[current - 1] + 2
+
+				var lastStep = currentStep;
+				if (realClients >= steps[currentStep] - stepTriggerUp)
+				{
+					while (realClients >= steps[currentStep] - stepTriggerUp && currentStep < steps.Count - 1)
+						++currentStep;
+				}
+				else if (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
+				{
+					while (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
+						--currentStep;
+				}
+
+				if (lastStep != currentStep)
+				{
+					EditMaxClients(steps[currentStep]);
+				}
 			}
-			else if (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
+			catch (Exception ex)
 			{
-				while (currentStep > 0 && realClients <= steps[currentStep - 1] - stepTriggerDown)
-					--currentStep;
-			}
-
-			if (lastStep != currentStep)
-			{
-				EditMaxClients(steps[currentStep]);
+				Log.Error($"Got Exception: {ex.ToString()}");
 			}
 		}
 
 		private void ServerGetVariables()
 		{
+			if (!PluginEnabled) return;
 			var Ok = TS3FullClient.Send<ResponseVoid>("servergetvariables", new List<ICommandPart>() { }).Ok;
 		}
 
 		private void OnEachServerEdited(object sender, ServerEdited server)
 		{
-			if (server.InvokerId == TS3FullClient.ClientId) return;
-			ServerGetVariables();
+			return;
+			if (server.InvokerId == TS3FullClient.ClientId)
+			{
+				// ServerGetVariables();
+			}
+			else if (PluginEnabled)
+			{
+				PluginEnabled = false;
+				var slots = steps.Last();
+				EditMaxClients(slots);
+				Log.Warn("Plugin disabled because server was edited by {} ({})! Not setting maxclients to {}", server.InvokerName, server.InvokerId, slots);
+			}
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
@@ -142,21 +170,44 @@ namespace Dynamic_Slots
 			});
 			var Result = TS3FullClient.SendNotifyCommand(command, NotificationType.ServerEdited);
 			return Result.Ok;
-		} // c===3
+		}
 
 		[Command("dynamicslots", "")]
 		public string CommandListWaiting()
 		{
 			var sb = new StringBuilder(PluginInfo.Name);
 			sb.AppendLine();
+			// var vars = TS3FullClient.SendNotifyCommand(new Ts3Command("servergetvariables", new List<ICommandPart>() { }), NotificationType.ServerUpdated);
 			// sb.AppendLine($"Clients: {{CurrentVisibleUsers}} ({CurrentUsersQueries}) / {CurrentSlots}");
 			sb.AppendLine($"PluginEnabled: {PluginEnabled}");
-			// sb.AppendLine($"CheckNext: {CheckNext}");
-			// sb.AppendLine($"InitializedVisible: {InitializedVisible}");
-			// sb.AppendLine($"clientCache ({clientCache.Count}): {string.Join(", ", clientCache)}");
-			// sb.AppendLine($"queryCache ({queryCache.Count}): {string.Join(", ", queryCache)}");
+			sb.AppendLine($"Initialized: {Initialized}");
+			sb.AppendLine($"currentStep: {currentStep}");
+			try
+			{
+				sb.AppendLine($"stepTriggerUp: {stepTriggerUp} next: {steps[currentStep + 1] - stepTriggerUp}");
+			}
+			catch (Exception ex)
+			{
+				sb.AppendLine($"stepTriggerUp: {stepTriggerUp}");
+			}
+			try
+			{
+				sb.AppendLine($"stepTriggerDown: {stepTriggerDown} next: {steps[currentStep - 1] - stepTriggerDown}");
+			}
+			catch (Exception ex)
+			{
+				sb.AppendLine($"stepTriggerDown: {stepTriggerDown}");
+			}
 			sb.AppendLine($"steps: {string.Join(", ", steps)}");
 			return sb.ToString();
+		}
+
+		[Command("dynamicslots toggle", "")]
+		public string CommandToggle()
+		{
+			PluginEnabled = !PluginEnabled;
+			var toggle = PluginEnabled ? "Enabled" : "Disabled";
+			return $"{toggle} {PluginInfo.Name}";
 		}
 
 		public void Dispose()

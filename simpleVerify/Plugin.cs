@@ -89,7 +89,13 @@ namespace SimpleVerify
 		public void Initialize()
 		{
 			LoadOnHold(); LoadConfig();
-			DefaultServerGroupId = ulong.Parse(PluginConfig["Groups"]["Unverified"]);
+			var cfgdsgid = PluginConfig["Groups"]["Unverified"];
+			if (!string.IsNullOrWhiteSpace(cfgdsgid))
+			{
+				var dsgid = ulong.Parse(cfgdsgid);
+				if (dsgid > 0)
+					DefaultServerGroupId = dsgid;
+			}
 			TS3FullClient.OnEachInitServer += OnEachInitServer;
 			TS3FullClient.OnEachServerEdited += OnEachServerEdited;
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
@@ -100,12 +106,14 @@ namespace SimpleVerify
 
 		private void OnEachServerEdited(object sender, ServerEdited server)
 		{
-			DefaultServerGroupId = server.DefaultServerGroup;
+			if (server.DefaultServerGroup > 0)
+				DefaultServerGroupId = server.DefaultServerGroup;
 		}
 
 		private void OnEachInitServer(object sender, InitServer server)
 		{
-			DefaultServerGroupId = server.DefaultServerGroup;
+			if (server.DefaultServerGroup > 0)
+				DefaultServerGroupId = server.DefaultServerGroup;
 		}
 
 		private void OnEachClientEnterView(object sender, ClientEnterView client)
@@ -118,7 +126,7 @@ namespace SimpleVerify
 			if (!VerificationEnabled) return;
 			if (clientType == ClientType.Query) return;
 			if (clientId == TS3FullClient.ClientId) return;
-			Log.Debug($"Verification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId}) required = {serverGroups.Contains(DefaultServerGroupId)}");
+			// Log.Debug($"Verification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId}) required = {serverGroups.Contains(DefaultServerGroupId)}");
 			if (!serverGroups.Contains(DefaultServerGroupId)) return;
 			Log.Info($"StartVerification for client \"{name}\" [{uid}] ({clientId}) with groups {string.Join(", ", serverGroups)} ({DefaultServerGroupId})");
 			var cid = ulong.Parse(PluginConfig["Channels"]["Unverified"]);
@@ -128,7 +136,7 @@ namespace SimpleVerify
 			if (!string.IsNullOrWhiteSpace(msg))
 			{
 				msg = msg.Replace("%clientname%", name).Replace("\\n", "\n");
-				PokeClient(clientId, msg);
+				TS3FullClient.PokeClient(clientId, msg);
 			}
 			msg = PluginConfig["Templates"]["Chat Message"];
 			if (!string.IsNullOrWhiteSpace(msg))
@@ -177,7 +185,7 @@ namespace SimpleVerify
 			StartVerification(client.ClientType, e.ClientId, client.ServerGroups, e.ClientUid, client.Name);
 		}
 
-		private bool PokeClient(ClientIdT clientId, string message)
+		/*private bool PokeClient(ClientIdT clientId, string message)
 		{
 			return TS3FullClient.Send<ResponseVoid>("clientpoke", new List<ICommandPart>() {
 				new CommandParameter("clid", clientId),
@@ -191,7 +199,7 @@ namespace SimpleVerify
 					new CommandParameter("clid", clientId),
 					new CommandParameter("reasonmsg", TruncateLongString(reason, 80))
 			}).Ok;
-		}
+		}*/
 
 		[Command("accept", "")]
 		public string CommandAcceptToS(InvokerData invoker)
@@ -200,7 +208,7 @@ namespace SimpleVerify
 			var kick = PluginConfig["Templates"]["Reconnect Kick Reason"];
 			var k = (string.IsNullOrWhiteSpace(kick));
 			// TS3Client.SendServerMessage($"kick:{kick} k:{k}");
-			if (!k) KickFromServer((ushort)invoker.ClientId, kick);
+			if (!k) TS3FullClient.KickClientFromServer((ushort)invoker.ClientId, kick);
 			TS3FullClient.ServerGroupAddClient(ulong.Parse(PluginConfig["Groups"]["Verified"]), (ulong)invoker.DatabaseId);
 			if (k) {
 				var cid = ulong.Parse(PluginConfig["Channels"]["Verified"]);
@@ -214,7 +222,7 @@ namespace SimpleVerify
 		public void CommandDenyToS(InvokerData invoker)
 		{
 			if (!VerificationEnabled) return;
-			KickFromServer((ClientIdT)invoker.ClientId, PluginConfig["Templates"]["Kick Reason"]);
+			TS3FullClient.KickClientFromServer((ClientIdT)invoker.ClientId, PluginConfig["Templates"]["Kick Reason"]);
 		}
 
 
