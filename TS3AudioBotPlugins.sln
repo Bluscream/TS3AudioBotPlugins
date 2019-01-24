@@ -99,7 +99,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DynamicSlots", "Dynamic Slo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinecraftLink", "MinecraftLink\MinecraftLink.csproj", "{B53BFE87-BFA3-4E3F-B560-5B49E93A48D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoDirectConnect", "NoDirectConnect\NoDirectConnect.csproj", "{09546958-A8EB-4917-8CA4-EE4C2776E1E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoDirectConnect", "NoDirectConnect\NoDirectConnect.csproj", "{09546958-A8EB-4917-8CA4-EE4C2776E1E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupOnConnect", "GroupOnConnect\GroupOnConnect.csproj", "{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -285,6 +287,10 @@ Global
 		{09546958-A8EB-4917-8CA4-EE4C2776E1E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09546958-A8EB-4917-8CA4-EE4C2776E1E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09546958-A8EB-4917-8CA4-EE4C2776E1E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

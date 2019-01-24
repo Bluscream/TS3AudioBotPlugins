@@ -62,6 +62,8 @@ namespace SimpleVerify
 		private bool VerificationEnabled = true;
 		private ulong DefaultServerGroupId = 0;
 
+		private List<string> defaultNames = new List<string>() { "teamspeakuser", "android" };
+
 		public static string TruncateLongString(string str, int maxLength)
 		{
 			if (string.IsNullOrEmpty(str))
@@ -205,6 +207,14 @@ namespace SimpleVerify
 		public string CommandAcceptToS(InvokerData invoker)
 		{
 			if (!VerificationEnabled) return PluginConfig["Templates"]["Verification Disabled"];
+			Log.Debug(invoker.NickName.ToLower());
+			foreach (var name in defaultNames)
+			{
+				var startswith = invoker.NickName.ToLower().StartsWith(name);
+				Log.Debug($"{name}: {startswith} ");
+				if (startswith)
+					return PluginConfig["Templates"]["Invalid Name"];
+			}
 			var kick = PluginConfig["Templates"]["Reconnect Kick Reason"];
 			var k = (string.IsNullOrWhiteSpace(kick));
 			// TS3Client.SendServerMessage($"kick:{kick} k:{k}");
@@ -262,6 +272,7 @@ namespace SimpleVerify
 				PluginConfig[section]["Kick Reason"] = "ToS not accepted!";
 				PluginConfig[section]["Verification Disabled"] = "Verification is currently disabled!";
 				PluginConfig[section]["Reconnect Kick Reason"] = "Please reconnect!";
+				PluginConfig[section]["Invalid Name"] = "You have to use a unique nickname to verify your (not TeamSpeakUser, etc)!";
 				section = "Groups";
 				PluginConfig[section]["Unverified"] = "0";
 				PluginConfig[section]["Verified"] = "0";
