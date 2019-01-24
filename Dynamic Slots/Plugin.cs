@@ -84,10 +84,10 @@ namespace Dynamic_Slots
 				var realClients = server.ClientsOnline;
 				if (!Initialized)
 				{
-					Log.Debug($"realClients: {realClients}");
-					Log.Debug($"steps: {string.Join(", ", steps)}");
+					// Log.Debug($"realClients: {realClients}");
+					// Log.Debug($"steps: {string.Join(", ", steps)}");
 					int closest = steps.Aggregate((x, y) => Math.Abs(x - realClients) < Math.Abs(y - realClients) ? x : y);
-					Log.Debug($"closest: {closest}");
+					// Log.Debug($"closest: {closest}");
 					currentStep = steps.IndexOf(closest);
 					Initialized = true;
 					return;
@@ -181,23 +181,10 @@ namespace Dynamic_Slots
 			// sb.AppendLine($"Clients: {{CurrentVisibleUsers}} ({CurrentUsersQueries}) / {CurrentSlots}");
 			sb.AppendLine($"PluginEnabled: {PluginEnabled}");
 			sb.AppendLine($"Initialized: {Initialized}");
-			sb.AppendLine($"currentStep: {currentStep}");
-			try
-			{
-				sb.AppendLine($"stepTriggerUp: {stepTriggerUp} next: {steps[currentStep + 1] - stepTriggerUp}");
-			}
-			catch (Exception ex)
-			{
-				sb.AppendLine($"stepTriggerUp: {stepTriggerUp}");
-			}
-			try
-			{
-				sb.AppendLine($"stepTriggerDown: {stepTriggerDown} next: {steps[currentStep - 1] - stepTriggerDown}");
-			}
-			catch (Exception ex)
-			{
-				sb.AppendLine($"stepTriggerDown: {stepTriggerDown}");
-			}
+			sb.AppendLine($"currentStep: {currentStep} ({steps[currentStep]})");
+			sb.AppendLine($"stepTriggerUp: {stepTriggerUp} stepTriggerDown: {stepTriggerDown}");
+			try { sb.AppendLine($"nextUp: {steps[currentStep + 1] - stepTriggerUp}"); } catch (Exception ex) { }
+			try { sb.AppendLine($"nextDown: {steps[currentStep - 1] - stepTriggerDown}"); } catch (Exception ex) { }
 			sb.AppendLine($"steps: {string.Join(", ", steps)}");
 			return sb.ToString();
 		}

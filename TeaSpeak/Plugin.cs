@@ -10,11 +10,12 @@ using TS3Client;
 using TS3Client.Helper;
 using TS3AudioBot.Web.Api;
 using TS3AudioBot.Helper;
-using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
 using TS3AudioBot.Config;
 using TS3AudioBot.Helper.Environment;
 using System.Collections.Generic;
+
+using ClientIdT = System.UInt16;
+using ChannelIdT = System.UInt64;
 
 namespace TeaSpeak
 {
@@ -29,130 +30,92 @@ namespace TeaSpeak
 		public IVoiceTarget targetManager { get; set; }
 		public ConfRoot ConfRoot { get; set; }
 
+		private ulong neededTP = 2000000;
+		private List<ChannelIdT> channels;
+		private List<ChannelIdT> toEdit;
+
 		public void Initialize()
 		{
-			TS3FullClient.OnChannelCreated += OnChannelCreated;
+			channels = new List<ChannelIdT>() {
+				205,	// ┗ Leitung | Warteraum
+				229,	// ┗ Technik | Warteraum
+				17,		// ┗ Admin | Warteraum
+				219,	// ┏ Bewerbung | Warteraum
+				227,	// ┗ Bewerbung | Beendet
+				37,		// ┏ Support | Warteraum
+				44,		// ┗ Support | Beendet
+				50,		// [cspacer]◆ＶＥＲＩＦＩＺＩＥＲＵＮＧ◆
+				54,		// [cspacer]◆ＥＩＮＧＡＮＧＳＨＡＬＬＥ◆
+				61,		// ┏» Radio |  HappyFM
+				191,	// ┣» Radio | Radio25
+				224,	// ┣» Radio | RandyFM
+				203,	// ┣» Radio | ZONERADIO
+				180,	// ┣» Radio | NexusFM
+				63,		// ┗ » Radio | I ♥ Radio
+				225,	// ┗ » Radio | Spotify
+				68,		// ┏ AFK | Kurz
+				69,		// ┣ AFK | AutoMove
+				70		// ┗ AFK | Lang
+			};
+			toEdit = new List<ChannelIdT>() { };
+			TS3FullClient.OnEachChannelList += OnEachChannelList;
+			TS3FullClient.OnEachChannelListFinished += OnEachChannelListFinished;
+			TS3FullClient.OnEachChannelEdited += OnEachChannelEdited;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
 
-		private void OnChannelCreated(object sender, System.Collections.Generic.IEnumerable<ChannelCreated> e)
+		private void OnEachChannelEdited(object sender, ChannelEdited channel)
 		{
-			TS3FullClient.ChannelSubscribeAll(); // Proper implementation
+			if (!channels.Contains(channel.ChannelId)) return;
+			if (channel.NeededTalkPower == (int)neededTP) return;
+			setChannelTP(channel.ChannelId);
 		}
 
-		[Command("id")]
-		public static JsonValue<ClientData> CommandGetUserByName(Ts3Client ts3Client, string username)
+		private void OnEachChannelListFinished(object sender, ChannelListFinished e)
 		{
-			var client = ts3Client.GetClientByName(username).UnwrapThrow();
-			return new JsonValue<ClientData>(client, $"\nClient: [url=client://{client.ClientId}/{client.Uid}]{client.Name}[/url]\nClient ID: [b]{client.ClientId}[/b]\nDatabase ID: [b]{client.DatabaseId}[/b]\nChannel ID: [b]{client.ChannelId}[/b]\nUnique ID: [b]{client.Uid}");
-		}
-
-		[Command("isowner", "Check if you're owner")]
-		public string CommandCheckOwner(ExecutionInformation info)
-		{
-			return info.HasRights("*").ToString();
-		}
-
-		[Command("talkpowerrequest", "Request Talk Power!")]
-		//[RequiredParameters(0)]
-		public void CommandTPRequest(ExecutionInformation info, string message)
-		{
-			TS3FullClient.Send("clientupdate", new CommandParameter("client_talk_request", 1), new CommandParameter("client_talk_request_msg", message = message ?? ""));
-		}
-
-		[Command("rawcmd")]
-		//[RequiredParameters(1)]
-		public string CommandRawCmd(ExecutionInformation info, string cmd, params string[] cmdpara)
-		{
-			try
+			if (toEdit.Count < 1) return; 
+			foreach (var cid in toEdit)
 			{
-				var result = TS3FullClient.Send<TS3Client.Messages.ResponseDictionary>(cmd,
-					cmdpara.Select(x => x.Split(new[] { '=' }, 2)).Select(x => new CommandParameter(x[0], x[1])).Cast<ICommandPart>().ToList());
-				if (!result.Ok) return result.Error.ErrorFormat();
-				return string.Join("\n", result.Value.Select(x => string.Join(", ", x.Select(kvp => kvp.Key + "=" + kvp.Value))));
-				//return "Sent command.";
+				setChannelTP(cid);
 			}
-			catch (Ts3Exception ex) { throw new CommandException(ex.Message, CommandExceptionReason.CommandError); }
+			toEdit.Clear();
 		}
 
-		[Command("hashpassword")]
-		public string CommandHashPassword(ExecutionInformation info, string pw)
+		private void OnEachChannelList(object sender, ChannelList channel)
 		{
-			return Ts3Crypt.HashPassword(pw);
+			if (!channels.Contains(channel.ChannelId)) return;
+			if (channel.NeededTalkPower == (int)neededTP) return;
+			toEdit.Add(channel.ChannelId);
 		}
 
-		[Command("ownchannel")]
-		public string CommandGetOwnChannelID(ExecutionInformation info)
+		private void setChannelTP(ChannelIdT cid)
 		{
-			return TS3FullClient.WhoAmI().Unwrap().ChannelId.ToString();
+			if (!channels.Contains(cid)) return;
+			var commandEdit = new Ts3Command("channeledit", new List<ICommandPart>() {
+						new CommandParameter("cid", cid),
+						new CommandParameter("channel_needed_talk_power", neededTP)
+				});
+			var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
+			if (!editResult.Ok) { Log.Warn($"{PluginInfo.Name}: Could not edit channel {cid}! ({editResult.Error.Message})"); return; }
 		}
 
-		[Command("subscribe ownchannel")]
-		public void CommandSubscribeOwnChannel(IVoiceTarget targetManager)
+		private ulong FixChannelsTP()
 		{
-			targetManager.WhisperChannelSubscribe(true, TS3FullClient.WhoAmI().Unwrap().ChannelId);
-		}
-
-		[Command("getchannel byname")]
-		public ChannelIdT CommandGetChannelIdByName(params string[] _name)
-		{
-			var name = string.Join(" ", _name);
-			var command = new Ts3Command("channellist", new List<ICommandPart>() { });
-			var createResult = TS3FullClient.SendNotifyCommand(command, NotificationType.ChannelList);
-			if (!createResult.Ok) { }
-			var channellist = createResult.Value.Notifications.Cast<ChannelList>();
-			foreach (var channel in channellist)
-			{
-				if (channel.Name == name)
-					return channel.ChannelId;
+			var Channels = TS3FullClient.Send<ChannelData>("channellist");
+			if (!Channels.Ok) return 0;
+			ulong edited = 0;
+			foreach (var channel in Channels.Value) {
+				if (!channels.Contains(channel.Id)) continue;
+				setChannelTP(channel.Id);
 			}
-			return 0;
+			return edited;
 		}
 
-		[Command("isplaying playerconnection")]
-		public bool CommandIsPlaying(IPlayerConnection playerConnection)
+		[Command("teaspeakfix tp")]
+		public string CommandFixTP()
 		{
-			return !playerConnection.Paused;
-		}
-
-		[Command("isplaying playmanager")]
-		public bool CommandIsPlaying2(PlayManager playManager)
-		{
-			return playManager.IsPlaying;
-		}
-
-		[Command("isplaying weird")]
-		public bool CommandIsPlaying3(IPlayerConnection playerConnection, PlayManager playManager)
-		{
-			var paused = playerConnection.Paused;
-			var playing = playManager.IsPlaying;
-			if (paused && !playing)
-				return false;
-			else if (!paused && playing)
-				return true;
-			else throw new Exception("Unknown");
-		}
-
-		[Command("bug")]
-		public string CommandReportBug()
-		{
-			// WebClient client = new WebClient(); string downloadString = client.DownloadString("https://raw.githubusercontent.com/Splamy/TS3AudioBot/master/.github/ISSUE_TEMPLATE/bug_report.md");
-			return $@"https://github.com/Bluscream/TS3AudioBot/issues/new?template=bug_report_auto.md&version={SystemData.AssemblyData.Version}&branch={SystemData.AssemblyData.Branch}&commit={SystemData.AssemblyData.Branch}&platform={SystemData.PlatformData.ToString()}&runtime={SystemData.RuntimeData.FullName}&log=Nothing%20recorded";
-		}
-
-		[Command("channellist")]
-		public JsonArray<ChannelList> CommandListChannels()
-		{
-			var command = new Ts3Command("channellist", new List<ICommandPart>() { });
-			var createResult = TS3FullClient.SendNotifyCommand(command, NotificationType.ChannelList);
-			if (!createResult.Ok) { }
-			var channellist = createResult.Value.Notifications.Cast<ChannelList>();
-			var channelList = new List<ChannelList>();
-			foreach (var channel in channellist)
-			{
-				channelList.Add(channel);
-			}
-			return new JsonArray<ChannelList>(channelList.ToArray());
+			var edited = FixChannelsTP();
+			return $"Edited {edited} channels.";
 		}
 
 		public void Dispose()
