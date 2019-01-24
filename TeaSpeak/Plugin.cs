@@ -1,20 +1,10 @@
 using System;
-using System.Linq;
 using TS3AudioBot.CommandSystem;
 using TS3AudioBot.Plugins;
-using TS3AudioBot;
 using TS3Client.Commands;
 using TS3Client.Full;
 using TS3Client.Messages;
-using TS3Client;
-using TS3Client.Helper;
-using TS3AudioBot.Web.Api;
-using TS3AudioBot.Helper;
-using TS3AudioBot.Config;
-using TS3AudioBot.Helper.Environment;
 using System.Collections.Generic;
-
-using ClientIdT = System.UInt16;
 using ChannelIdT = System.UInt64;
 
 namespace TeaSpeak
@@ -23,12 +13,6 @@ namespace TeaSpeak
 	{
 		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 		public Ts3FullClient TS3FullClient { get; set; }
-		public Ts3Client TS3Client { get; set; }
-		public ConfBot Conf { get; set; }
-		public PlayManager BotPlayer { get; set; }
-		public IPlayerConnection PlayerConnection { get; set; }
-		public IVoiceTarget targetManager { get; set; }
-		public ConfRoot ConfRoot { get; set; }
 
 		private ulong neededTP = 2000000;
 		private List<ChannelIdT> channels;
@@ -66,6 +50,7 @@ namespace TeaSpeak
 
 		private void OnEachChannelEdited(object sender, ChannelEdited channel)
 		{
+			if (channel.InvokerId == TS3FullClient.ClientId) return; // TODO: Check?
 			if (!channels.Contains(channel.ChannelId)) return;
 			if (channel.NeededTalkPower == (int)neededTP) return;
 			setChannelTP(channel.ChannelId);
