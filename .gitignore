@@ -266,3 +266,5 @@ __pycache__/
 /NowPlaying_/app.config
 /NowPlaying_/NowPlaying_.csproj
 /NowPlaying_/plugin.cs
+/BewerbungNotify/Class1.cs
+/BewerbungNotify/Plugin.cs
