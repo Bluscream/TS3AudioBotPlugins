@@ -233,7 +233,7 @@ namespace BotAutoStart
 			return false;
 		}
 
-		[TS3AudioBot.CommandSystem.Command("test")]
+		[TS3AudioBot.CommandSystem.Command("plugin info botautostart")]
 		public string CommandTest() {
 			var test = IsBotConnectedAPI("");
 			return $"{test}";

@@ -15,6 +15,9 @@ using ChannelIdT = System.UInt64;
 using TS3AudioBot.Config;
 using TS3AudioBot.Helper.Environment;
 using System.Collections.Generic;
+using IniParser;
+using IniParser.Model;
+using System.IO;
 
 namespace ToggleSupport
 {
@@ -28,18 +31,66 @@ namespace ToggleSupport
 		public IPlayerConnection PlayerConnection { get; set; }
 		public IVoiceTarget targetManager { get; set; }
 		public ConfRoot ConfRoot { get; set; }
-		private ChannelIdT cid = 37;
+
+		private static FileIniDataParser ConfigParser;
+		private static string PluginConfigFile;
+		private static IniData PluginConfig;
+
+		/* private ChannelIdT cid = 37;
 		private string name_open = "┏ Support | Warteraum";
-		private string name_closed = "┏ Support | Warteraum [Geschlossen]";
+		private string name_closed = "┏ Support | Warteraum [Geschlossen]"; */
 		private bool closed = false;
 
 		public void Initialize()
 		{
+			LoadConfig();
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
 		}
-		[Command("support toggle")]
-		public string CommandToggleSupport(InvokerData invoker)
+
+		private void LoadConfig()
 		{
+			PluginConfigFile = Path.Combine(ConfRoot.Plugins.Path.Value, $"{PluginInfo.ShortName}.ini");
+			if (ConfigParser == null) ConfigParser = new FileIniDataParser();
+			if (!File.Exists(PluginConfigFile))
+			{
+				PluginConfig = new IniData();
+				var section = "Templates";
+				PluginConfig[section]["Section not found"] = "[color=red]Channel %section% not found, only %available% are available!";
+				PluginConfig[section]["Action Close"] = "zu";
+				section = "support";
+				PluginConfig[section]["Channel ID"] = "0";
+				PluginConfig[section]["Name Open"] = " Support | Waiting Room";
+				PluginConfig[section]["Name Closed"] = " Support | Waiting Room [Closed]";
+				PluginConfig[section]["Permissions Open"] = "support_open.csv";
+				PluginConfig[section]["Permissions Closed"] = "support_closed.csv";
+				PluginConfig[section]["Open At"] = "14:00";
+				PluginConfig[section]["Close At"] = "22:00";
+				PluginConfig[section]["Allowed Groups"] = "2,6";
+				ConfigParser.WriteFile(PluginConfigFile, PluginConfig);
+				Log.Warn("Config for plugin {} created, please modify it and reload!", PluginInfo.Name);
+				return;
+			}
+			else { PluginConfig = ConfigParser.ReadFile(PluginConfigFile); }
+		}
+
+
+		[Command("channel")]
+		public string CommandToggleSupport(InvokerData invoker, string name, string action)
+		{
+			name = name.Trim().ToLower();
+			var sectionfound = false;
+			var sections = new List<string>(){ };
+			foreach (var section in PluginConfig.Sections)
+			{
+				if (section.SectionName == "Templates") continue;
+				sections.Add(section.SectionName);
+				if (section.SectionName == name) { sectionfound = true; break; }
+			}
+			if (!sectionfound) {
+				return PluginConfig["Templates"]["Section not found"].Replace("%section%", name).Replace("%available%", string.Join(", ", sections); // Todo: Do select
+			}
+			sections.Clear();
+			action = action.Trim().ToLower();
 			closed = !closed;
 			return editSupportChannel(cid, closed, invoker);
 		}

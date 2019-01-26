@@ -190,7 +190,7 @@ namespace AutoPause
 			Log.ConditionalDebug("{}: OnEachClientLeftView: {} {}", PluginInfo.Name, e.ClientId, e.TargetChannelId);
 		}
 
-		[Command("autopause")]
+		[Command("plugin info autopause")]
 		public string CommandInfo()
 		{
 			return string.Join(", ", ownChannelClients);

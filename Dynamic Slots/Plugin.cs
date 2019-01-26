@@ -172,7 +172,7 @@ namespace Dynamic_Slots
 			return Result.Ok;
 		}
 
-		[Command("dynamicslots", "")]
+		[Command("plugin info dynamicslots", "")]
 		public string CommandListWaiting()
 		{
 			var sb = new StringBuilder(PluginInfo.Name);

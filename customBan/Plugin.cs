@@ -200,7 +200,7 @@ namespace customBan
 			return TimeSpan.FromSeconds(result);
 		}*/
 
-		[Command("customban", "")]
+		[Command("plugin info customban", "")]
 		public string CommandInfo() {
 			var sb = new StringBuilder(Environment.NewLine);
 			sb.AppendLine(PluginConfig.ToString());

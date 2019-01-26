@@ -168,7 +168,7 @@ namespace CountryWhitelist
 			Log.Info("Country Whitelist was disabled by \"{}\" ({})", invoker.NickName, invoker.ClientUid);
 			return "[color=green][b]Disabled Country Whitelist";
 		}
-		[Command("wartung whitelist", "")]
+		[Command("countrywhitelist whitelist", "")]
 		public string CommandToggleWhitelist(string uid)
 		{
 			uid = uid.Trim();

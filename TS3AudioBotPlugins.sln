@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bluscream.Util", "Bluscream
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplaintReminder", "ComplaintReminder\ComplaintReminder.csproj", "{0F453608-51D8-4064-908A-596D6D493BEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DropSystems", "DropSystems\DropSystems.csproj", "{52E8D993-E279-47AB-B9D1-918A14F13D17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DropSystems (Deprecated)", "DropSystems\DropSystems (Deprecated).csproj", "{52E8D993-E279-47AB-B9D1-918A14F13D17}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiVPN", "AntiVPN\AntiVPN.csproj", "{B194E827-F3B2-45BC-BAB1-88FC0BC36E20}"
 EndProject
@@ -101,7 +101,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinecraftLink", "MinecraftL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoDirectConnect", "NoDirectConnect\NoDirectConnect.csproj", "{09546958-A8EB-4917-8CA4-EE4C2776E1E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupOnConnect", "GroupOnConnect\GroupOnConnect.csproj", "{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroupOnConnect", "GroupOnConnect\GroupOnConnect.csproj", "{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BewerbungNotify", "BewerbungNotify\BewerbungNotify.csproj", "{9CA9A6CD-596C-4A35-B566-754731998E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -291,6 +293,10 @@ Global
 		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA9A6CD-596C-4A35-B566-754731998E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA9A6CD-596C-4A35-B566-754731998E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA9A6CD-596C-4A35-B566-754731998E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA9A6CD-596C-4A35-B566-754731998E96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

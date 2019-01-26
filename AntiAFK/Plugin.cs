@@ -139,7 +139,7 @@ namespace AntiAFK
 		}
 
 
-		[Command("antiafk")]
+		[Command("plugin info antiafk")]
 		public string CommandInfo()
 		{
 			var sb = new StringBuilder(Environment.NewLine);

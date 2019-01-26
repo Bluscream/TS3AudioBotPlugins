@@ -128,7 +128,7 @@ namespace NoDirectConnect
 			}
 		}
 
-		[Command("nodirectconnect", "")]
+		[Command("plugin info nodirectconnect", "")]
 		public string CommandInfo()
 		{
 			var sb = new StringBuilder(PluginInfo.Name);

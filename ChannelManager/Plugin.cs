@@ -167,7 +167,7 @@ public class ChannelManager : IBotPlugin
 			return CommandInfo();
 		}
 
-		[Command("cm info", "")]
+		[Command("plugin info channelmanager", "")]
 		public string CommandInfo()
 		{
 			var sb = new StringBuilder(PluginInfo.Name);
