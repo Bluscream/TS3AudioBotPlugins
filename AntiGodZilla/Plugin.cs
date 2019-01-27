@@ -104,7 +104,24 @@ namespace ModBlackList
 			}*/
 			TS3FullClient.OnEachClientEnterView += OnEachClientEnterView;
 			TS3FullClient.OnEachClientLeftView += OnEachClientLeftView;
+			// TS3FullClient.OnEachPluginCommand += OnEachPluginCommand;
 			Log.Info("Plugin {0} v{1} by {2} loaded.", PluginInfo.Name, PluginInfo.Version, PluginInfo.Author);
+		}
+
+		private void OnEachPluginCommand(object sender, PluginCommand e)
+		{
+			return;
+			var strings = new List<string>() { e.Data.ToLower(), e.Name.ToLower() };
+			foreach (var str in strings)
+			{
+				if (str.Contains("notify"))
+				{
+					// Kick doesn't work here
+				}
+			}
+	{
+
+	}
 		}
 
 		private void OnEachClientLeftView(object sender, ClientLeftView e)
@@ -325,6 +342,7 @@ namespace ModBlackList
 		}
 		public void Dispose()
 		{
+			// TS3FullClient.OnEachPluginCommand -= OnEachPluginCommand;
 			TS3FullClient.OnEachClientLeftView -= OnEachClientLeftView;
 			TS3FullClient.OnEachClientEnterView -= OnEachClientEnterView;
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
