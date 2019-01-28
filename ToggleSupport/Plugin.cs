@@ -29,9 +29,6 @@ namespace ToggleSupport
 		public Ts3FullClient TS3FullClient { get; set; }
 		public Ts3Client TS3Client { get; set; }
 		public ConfBot Conf { get; set; }
-		public PlayManager BotPlayer { get; set; }
-		public IPlayerConnection PlayerConnection { get; set; }
-		public IVoiceTarget targetManager { get; set; }
 		public ConfRoot ConfRoot { get; set; }
 
 		private static FileIniDataParser ConfigParser;
@@ -59,7 +56,7 @@ namespace ToggleSupport
 			return sb.ToString();
 		}
 
-	public void Initialize()
+		public void Initialize()
 		{
 			LoadConfig();
 			actions_open = PluginConfig["Templates"]["Actions Open"].Split(',').ToList();
@@ -76,7 +73,7 @@ namespace ToggleSupport
 				PluginConfig = new IniData();
 				var section = "Templates";
 				PluginConfig[section]["Section not found"] = "[color=red]Channel %section% not found, only %available% are available!";
-				PluginConfig[section]["Action not found"] = "[color=red]Action %section% not found, only %available% are available!";
+				PluginConfig[section]["Action not found"] = "[color=red]Action %action% not found, only %available% are available!";
 				PluginConfig[section]["Server Message Closed"] = "%section% channel was [color=orange]closed[/color] by %invoker% .";
 				PluginConfig[section]["Server Message Open"] = "%section% channel was [color=green]opened[/color] by %invoker%.";
 				PluginConfig[section]["Response Closed"] = "[color=orange]Succsessfully closed %section%[/color].";
@@ -107,18 +104,22 @@ namespace ToggleSupport
 		[Command("channel")]
 		public string CommandToggleSupport(InvokerData invoker, string name, string action)
 		{
+			Log.Debug("Test1");
 			name = name.Trim().ToLower();
 			var sectionfound = false;
-			var sections = new List<string>(){ };
+			var sections = new List<string>() { };
 			foreach (var section in PluginConfig.Sections)
 			{
 				if (section.SectionName == "Templates") continue;
 				sections.Add(section.SectionName);
 				if (section.SectionName == name) { sectionfound = true; break; }
 			}
-			if (!sectionfound) {
+			Log.Debug("Test2");
+			if (!sectionfound)
+			{
 				return PluginConfig["Templates"]["Section not found"].Replace("%section%", name).Replace("%available%", string.Join(", ", sections)); // Todo: Do select
 			}
+			Log.Debug("Test3");
 			sections.Clear();
 			var allowed_groups_open = PluginConfig[name]["Allowed Groups Open"].Split(',').Select(ChannelIdT.Parse).ToList();
 			var allowed_groups_close = PluginConfig[name]["Allowed Groups Close"].Split(',').Select(ChannelIdT.Parse).ToList();
@@ -136,16 +137,21 @@ namespace ToggleSupport
 			{
 				if (action == close_action) { actionfound = 2; break; }
 			}
+			Log.Debug("Test4");
 			if (actionfound < 1)
 			{
 				var available = string.Join(", ", actions_open) + string.Join(", ", actions_close);
 				return PluginConfig["Templates"]["Action not found"].Replace("%action%", action).Replace("%available%", available); // Todo: Do select
 			}
-			if (actionfound == 1) {
+			if (actionfound == 1)
+			{
 				if (!sgids.Intersect(allowed_groups_open).Any()) return PluginConfig[name]["Insufficient Permissions"];
-			} else {
+			}
+			else
+			{
 				if (!sgids.Intersect(allowed_groups_close).Any()) return PluginConfig[name]["Insufficient Permissions"];
 			}
+			Log.Debug("Test5");
 			var close = actionfound == 2;
 			return editSupportChannel(name, close, invoker);
 		}
@@ -159,12 +165,14 @@ namespace ToggleSupport
 						new CommandParameter("channel_flag_maxclients_unlimited", close ? false : true)
 				});
 			var editResult = TS3FullClient.SendNotifyCommand(commandEdit, NotificationType.ChannelEdited);
-			if (!editResult.Ok) {
-				var err = $"Could not {(close?"close":"open")} channel {PluginConfig[section]["Channel ID"]} ! ({editResult.Error.Message})";
+			if (!editResult.Ok)
+			{
+				var err = $"Could not {(close ? "close" : "open")} channel {PluginConfig[section]["Channel ID"]} ! ({editResult.Error.Message})";
 				Log.Warn($"{PluginInfo.Name}: {err}"); return err;
 			}
 			var smsg = close ? PluginConfig[section]["Server Message Closed"] : PluginConfig[section]["Server Message Open"];
-			if (!string.IsNullOrWhiteSpace(smsg)) {
+			if (!string.IsNullOrWhiteSpace(smsg))
+			{
 				TS3Client.SendServerMessage(smsg
 					.Replace("%invoker%", ClientURL((ushort)invoker.ClientId, invoker.ClientUid, invoker.NickName))
 					.Replace("%section%", section));
@@ -174,7 +182,7 @@ namespace ToggleSupport
 
 		public void Dispose()
 		{
-			actions_open.Clear();actions_close.Clear();
+			actions_open.Clear(); actions_close.Clear();
 			Log.Info("Plugin {} unloaded.", PluginInfo.Name);
 		}
 	}

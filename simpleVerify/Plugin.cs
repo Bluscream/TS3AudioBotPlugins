@@ -207,11 +207,11 @@ namespace SimpleVerify
 		public string CommandAcceptToS(InvokerData invoker)
 		{
 			if (!VerificationEnabled) return PluginConfig["Templates"]["Verification Disabled"];
-			Log.Debug(invoker.NickName.ToLower());
+			// Log.Debug(invoker.NickName.ToLower());
 			foreach (var name in defaultNames)
 			{
 				var startswith = invoker.NickName.ToLower().StartsWith(name);
-				Log.Debug($"{name}: {startswith} ");
+				// Log.Debug($"{name}: {startswith} ");
 				if (startswith)
 					return PluginConfig["Templates"]["Invalid Name"];
 			}

@@ -20,4 +20,8 @@
     </ProjectReference>
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="explorer.exe &quot;P:\TS3AB\net46\Plugins\netstandard2.0&quot;" />
+  </Target>
+
 </Project>
