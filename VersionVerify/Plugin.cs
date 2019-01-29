@@ -46,7 +46,7 @@ namespace VersionVerify
 
 		private static List<ClientUidT> whitelistUID = new List<ClientUidT>() { };
 		private static List<ulong> whitelistSGID = new List<ulong>() { 2,204,203,210,254,252,228,268 };
-		private bool PluginEnabled = false;
+		private bool PluginEnabled = true;
 
 		public static string TruncateLongString(string str, int maxLength)
 		{
