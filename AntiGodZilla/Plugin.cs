@@ -15,6 +15,7 @@ using IniParser;
 using IniParser.Model;
 using ClientIdT = System.UInt16;
 using ClientUidT = System.String;
+using System.Text;
 
 namespace ModBlackList
 {
@@ -166,6 +167,8 @@ namespace ModBlackList
 			if (whitelistUID.Contains(client.Uid)) return;
 			// bool hasMatch = parameters.Select(x => x.source).Intersect(myStrings).Any();
 			if (whitelistSGID.Intersect(client.ServerGroups).Any()) return;
+			// Check Version
+
 			if (!string.IsNullOrEmpty(client.Description))
 			{
 				var match = CheckSection("Description", client.Description);
@@ -317,11 +320,11 @@ namespace ModBlackList
 			if (banTime != null)
 			{
 				TS3FullClient.KickClientFromServer(clientId, reason);
-				Log.Info("Kicked client {} for {}", clientId, reason);
+				Log.Info("Kicked client {} for {} ({})", clientId, reason, found);
 			} else
 			{
 				TS3FullClient.BanClient(clientId, banTime, reason);
-				Log.Info("Banned client {} for {}", clientId, reason);
+				Log.Info("Kicked client {} for {} ({})", clientId, reason, found);
 			}
 			
 		}

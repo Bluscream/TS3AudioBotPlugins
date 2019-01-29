@@ -103,7 +103,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoDirectConnect", "NoDirect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroupOnConnect", "GroupOnConnect\GroupOnConnect.csproj", "{EB08D006-AC6D-4AEB-AB12-9B0355E7F530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BewerbungNotify", "BewerbungNotify\BewerbungNotify.csproj", "{9CA9A6CD-596C-4A35-B566-754731998E96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BewerbungNotify", "BewerbungNotify\BewerbungNotify.csproj", "{9CA9A6CD-596C-4A35-B566-754731998E96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersionVerify", "VersionVerify\VersionVerify.csproj", "{0E5D5427-7593-4F92-BEBE-B15677932BCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -297,6 +299,10 @@ Global
 		{9CA9A6CD-596C-4A35-B566-754731998E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CA9A6CD-596C-4A35-B566-754731998E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CA9A6CD-596C-4A35-B566-754731998E96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E5D5427-7593-4F92-BEBE-B15677932BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E5D5427-7593-4F92-BEBE-B15677932BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E5D5427-7593-4F92-BEBE-B15677932BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E5D5427-7593-4F92-BEBE-B15677932BCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
