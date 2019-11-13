@@ -4,31 +4,38 @@ using System.Linq;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
 using TS3Client.Messages;
-using TS3AudioBot.Commands;
 using TS3AudioBot.Helper;
 using TS3Client.Full;
 using TS3Client.Commands;
 using IniParser;
 using IniParser.Model;
 using ClientUidT = System.String;
-using ClientDbIdT = System.UInt64;
 using ClientIdT = System.UInt16;
-using ChannelIdT = System.UInt64;
 using ServerGroupIdT = System.UInt64;
-using ChannelGroupIdT = System.UInt64;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using TS3AudioBot.CommandSystem;
 
-namespace ISPValidator {
-
-	public class PluginInfo {
-		public static readonly string Name = typeof(PluginInfo).Namespace;
-		public const string Shortname = "ISPV";
-		public const string Description = "This script will autokick everyone not using a whitelisted ISP.";
-		public const string Url = "";
-		public const string Author = "Bluscream <admin@timo.de.vc>";
-		public const int Version = 1;
+namespace ISPValidator
+{
+	public class Utils
+	{
+	}
+	public static class PluginInfo
+	{
+		public static readonly string ShortName = "ISPV";
+		public static readonly string Name;
+		public static readonly string Description = "This script will autokick everyone not using a whitelisted ISP.";
+		public static readonly string Url;
+		public static readonly string Author = "Bluscream <admin@timo.de.vc>";
+		public static readonly Version Version = System.Reflection.Assembly.GetCallingAssembly().GetName().Version;
+		static PluginInfo()
+		{
+			ShortName = typeof(PluginInfo).Namespace;
+			var name = System.Reflection.Assembly.GetCallingAssembly().GetName().Name;
+			Name = string.IsNullOrEmpty(name) ? ShortName : name;
+		}
 	}
 
 	public class Client {
@@ -40,8 +47,10 @@ namespace ISPValidator {
 		public string CountryCode;
 	}
 
-	public class ISPValidator : ITabPlugin {
-		private MainBot bot;
+	public class ISPValidator : IBotPlugin
+	{
+		private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
+		private Bot bot;
 		private Ts3FullClient lib;
 		public TickWorker ClearCache;
 		private static IniData cfg;
@@ -54,16 +63,7 @@ namespace ISPValidator {
 		public List<string> whitelistUID = new List<string>();
 		public List<ServerGroupIdT> whitelistSGID = new List<ServerGroupIdT>();
 
-		public PluginInfo pluginInfo = new PluginInfo();
-
-		public void PluginLog(Log.Level logLevel, string Message) {
-			if (logLevel == Log.Level.Debug && cfg["General"]["debug"] != "true")
-				return;
-			Log.Write(logLevel, PluginInfo.Name + ": " + Message);
-		}
-
-		public void Initialize(MainBot mainBot) {
-			bot = mainBot;
+		public void Initialize() {
 			//var pluginPath = mainBot.ConfigManager.GetDataStruct<PluginManagerData>("PluginManager", true).PluginPath;
 			var pluginPath = "Plugins";
 			cfgfile = Path.Combine(pluginPath, $"{PluginInfo.Name}.cfg");
@@ -71,7 +71,7 @@ namespace ISPValidator {
 				if (File.Exists(cfgfile)) {
 					var parser = new FileIniDataParser();
 					cfg = parser.ReadFile(cfgfile);
-					PluginLog(Log.Level.Debug, $"cfgfile = {cfgfile}");
+					Log.Debug($"cfgfile = {cfgfile}");
 					if (cfg["Ignore"]["uids"].Contains(',')) {
 						whitelistUID = cfg["Ignore"]["uids"].Split(',').ToList();
 					} else {
@@ -88,18 +88,18 @@ namespace ISPValidator {
 				}
 			} catch (Exception ex) {
 				throw new Exception($"{PluginInfo.Name} Can't load \"{cfgfile}\"! Error:\n{ex}");
-				cfg = new IniData();
+				// cfg = new IniData();
 				//while (!Setup()) { }
 			}
 			ispfile = Path.Combine(pluginPath, "ISPs.txt");
-			PluginLog(Log.Level.Debug, $"ispfile = {ispfile}");
+			Log.Debug($"ispfile = {ispfile}");
 			if (File.Exists(ispfile))
 				isps = File.ReadAllLines(ispfile).ToList();
-			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
 			lib.OnClientEnterView += Lib_OnClientEnterView;
 			lib.OnConnected += Lib_OnConnected;
 			ClearCache = TickPool.RegisterTick(Tick, TimeSpan.FromMinutes(UInt64.Parse(cfg["General"]["clearcache"])), false);
-			Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
+			Enabled = true;
+			Log.Debug("Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
 		}
 
 		public void Tick() {
@@ -116,8 +116,8 @@ namespace ISPValidator {
 			var parser = new FileIniDataParser();
 			parser.WriteFile(cfgfile, cfg);
 			*/
-			PluginLog(Log.Level.Debug, $"Saved Settings to \"{cfgfile}\".");
-			PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
+			Log.Debug($"Saved Settings to \"{cfgfile}\".");
+			Log.Debug("Plugin " + PluginInfo.Name + " unloaded.");
 		}
 
 		#region Events
@@ -127,9 +127,9 @@ namespace ISPValidator {
 			if (cfg["General"]["clearcache"] != "0")
 				ClearCache.Active = true;
 			if (cfg["Events"]["bot_connnected"] != "true") return;
-			PluginLog(Log.Level.Debug, "Our client is now connected, setting channel commander :)");
+			Log.Debug("Our client is now connected, setting channel commander :)");
 			if (cfg["Events"]["bot_connnected"] == "true") {
-				foreach (var client in lib.ClientList()) {
+				foreach (var client in lib.ClientList().Value) {
 					checkClient(client.ClientId);
 				}
 			}
@@ -199,14 +199,14 @@ namespace ISPValidator {
 					try {
 						Message(client, parseMSG(cfg[section]["msg"], client));
 					} catch (Exception ex) {
-						PluginLog(Log.Level.Warning, $"Could not message {client.NickName}:\n{ex.Message}");
+						Log.Warn($"Could not message {client.NickName}:\n{ex.Message}");
 					}
 				}
 				if (!String.IsNullOrWhiteSpace(cfg[section]["poke"])) {
 					try {
 						Poke(client, parseMSG(cfg[section]["poke"], client));
 					} catch (Exception ex) {
-						PluginLog(Log.Level.Warning, $"Could not poke {client.NickName}:\n{ex.Message}");
+						Log.Warn($"Could not poke {client.NickName}:\n{ex.Message}");
 					}
 				}
 			}
@@ -221,7 +221,7 @@ namespace ISPValidator {
 						cmd.AppendParameter(new CommandParameter("reasonmsg", parseMSG(cfg[section]["reason"], client)));
 					lib.SendCommand<ResponseVoid>(cmd);
 				} catch (Exception ex) {
-					PluginLog(Log.Level.Warning, $"Could not kick {client.NickName}:\n{ex.Message}");
+					Log.Warn($"Could not kick {client.NickName}:\n{ex.Message}");
 				}
 			} else {
 				try { // banclient clid=1 time=0 banreason=text
@@ -233,7 +233,7 @@ namespace ISPValidator {
 						cmd.AppendParameter(new CommandParameter("banreason", parseMSG(cfg[section]["reason"], client)));
 					lib.SendCommand<ResponseVoid>(cmd);
 				} catch (Exception ex) {
-					PluginLog(Log.Level.Warning, $"Could not ban {client.NickName}:\n{ex.Message}");
+					Log.Warn($"Could not ban {client.NickName}:\n{ex.Message}");
 				}
 			}
 		}
@@ -270,7 +270,7 @@ namespace ISPValidator {
 		}
 
 		public string checkClient(ClientIdT clid, string ip = "") {
-			var _client = lib.ClientInfo(clid);
+			var _client = lib.ClientInfo(clid).Value;
 			if (clid == lib.ClientId || _client.ClientType == TS3Client.ClientType.Query || whitelistUID.Contains(_client.Uid) || whitelistSGID.Intersect(_client.ServerGroups).Any()) {
 				return "self or query or whitelisted";
 			}
@@ -279,11 +279,11 @@ namespace ISPValidator {
 				ip = _client.Ip;
 			ip = ip.Replace("[", "").Replace("]", "");
 			var isIP = IPAddress.TryParse(_client.Ip, out client.Ip);
-			if (!isIP) { PluginLog(Log.Level.Error, $"Unable to get ip of \"{_client.NickName}\" #{clid} (dbid:{_client.DatabaseId}). Make sure the bot has the b_client_remoteaddress_view permission!"); return "unresolvable"; }
+			if (!isIP) { Log.Error($"Unable to get ip of \"{_client.Name}\" #{clid} (dbid:{_client.DatabaseId}). Make sure the bot has the b_client_remoteaddress_view permission!"); return "unresolvable"; }
 			if (allowed.Contains(ip) || IsLocal(ip))
 				return "already allowed or local";
 			client.Id = clid;
-			client.NickName = _client.NickName;
+			client.NickName = _client.Name;
 			client.Uid = _client.Uid;
 			client.CountryCode = _client.CountryCode;
 			if (blocked.Contains(ip)) {
@@ -312,7 +312,7 @@ namespace ISPValidator {
 					}
 				}
 			}
-			PluginLog(Log.Level.Debug, $"Got ISP \"{client.Isp}\" for client \"{client.NickName}\" #{client.Id} (dbid:{_client.DatabaseId})");
+			Log.Debug($"Got ISP \"{client.Isp}\" for client \"{client.NickName}\" #{client.Id} (dbid:{_client.DatabaseId})");
 			if (client.Isp.ToLower() == "unknown" || client.Isp.ToLower() == "undefined") {
 				if (cfg["Unresolvable"]["enabled"] == "true" && cfg["General"]["learn"] != "true")
 					takeAction(client, "Unresolvable");
@@ -325,9 +325,9 @@ namespace ISPValidator {
 			using (WebClient client = new WebClient()) {
 				try {
 					string url = api.Replace("{ip}", ip);
-					PluginLog(Log.Level.Debug, url.ToString());
+					Log.Debug(url.ToString());
 					string isp = client.DownloadString(url);
-					PluginLog(Log.Level.Debug, $"Got ISP {isp}");
+					Log.Debug($"Got ISP {isp}");
 					//if (downloadString != "undefined" && !String.IsNullOrWhiteSpace(downloadString))
 					if (isp.StartsWith("AS"))
 						try {
@@ -337,7 +337,7 @@ namespace ISPValidator {
 						} catch { }
 					return isp;
 				} catch (Exception ex) {
-					PluginLog(Log.Level.Warning, $"Unable to resolve ISP: {ex}");
+					Log.Warn($"Unable to resolve ISP: {ex}");
 				}
 				return "unknown";
 			}
@@ -476,7 +476,7 @@ namespace ISPValidator {
 
 #region Commands
 
-		[Command("ispv toggle", PluginInfo.Description)]
+		[Command("ispv toggle", "Toggles ISPValidator")]
 		public string CommandToggle() {
 			Enabled = !Enabled;
 			return PluginInfo.Name + " is now " + Enabled;

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Bluscream</Authors>
+    <PackageProjectUrl>https://github.com/Splamy/TS3AudioBot</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Bluscream/TS3AudioBotPlugins</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TS3AudioBot\TS3AudioBot\TS3AudioBot.csproj" />
+    <ProjectReference Include="..\..\TS3AudioBot\TS3Client\TS3Client.csproj" />
+  </ItemGroup>
+
+</Project>

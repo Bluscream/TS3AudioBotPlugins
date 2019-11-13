@@ -8,7 +8,7 @@ namespace TestPlugin
 {
     public class TestPlugin : ITabPlugin
     {
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
 
         public class PluginInfo

@@ -5,25 +5,34 @@ using System.IO;
 using System.Linq;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.Commands;
+using TS3AudioBot.CommandSystem;
 using TS3Client.Full;
 using TS3Client.Messages;
 
-namespace RegistriertChannel {
-
+namespace RegistriertChannel
+{
     public class PluginInfo
     {
-        public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "Mainly for the GommeHD teamspeak.";
-        public const string Url = "";
-        public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 1;
+        public static readonly string ShortName = typeof(PluginInfo).Namespace;
+        public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        public static string Description = "";
+        public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+        public static string Author = "Bluscream <admin@timo.de.vc>";
+        public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        public PluginInfo()
+        {
+            var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            Description = versionInfo.FileDescription;
+            Author = versionInfo.CompanyName;
+        }
     }
-
-    public class RegistriertChannel : ITabPlugin
+    public class RegistriertChannel : IBotPlugin
     {
+        private static readonly PluginInfo PluginInfo = new PluginInfo();
+        private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
+
         private SQLiteConnection db;
-        private MainBot bot;
+        private Bot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
         public PluginInfo pluginInfo = new PluginInfo();
@@ -38,7 +47,7 @@ namespace RegistriertChannel {
                                    "3. Im Teamspeak Chat dem User [URL=client://0/serveradmin~Gomme-Bot]Gomme-Bot[/URL] deinen Minecraft Namen schreiben (Groß/Kleinschreibung beachten)\n" +
                                    "4. Wenn die Registrierung erfolgreich warst erhälst du die Server Gruppe \"Registriert\". Es kann eine Zeit lang dauern bis dein Minecraft Kopf hinter deinem Namen erscheint.";
 
-        public void Initialize(MainBot mainBot) {
+        public void Initialize(Core Core) {
             var dbpath = Path.Combine(Directory.GetCurrentDirectory(), "RegistriertChannel.db");
             var firstStart = File.Exists(dbpath);
             if (firstStart) SQLiteConnection.CreateFile(dbpath);
@@ -46,8 +55,8 @@ namespace RegistriertChannel {
             db.Open();
             if (firstStart) new SQLiteCommand("create table optout (uid varchar(28))", db).ExecuteNonQuery();
 
-			bot = mainBot;
-			lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+            bot = Core.Bots.GetBot(0);
+            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             lib.OnClientMoved += Lib_OnClientMoved;
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true; PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");

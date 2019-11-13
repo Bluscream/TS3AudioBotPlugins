@@ -3,26 +3,34 @@ using System.Linq;
 using PMRedirect.Properties;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.Commands;
+using TS3AudioBot.CommandSystem;
 using TS3Client;
 using TS3Client.Full;
 using TS3Client.Messages;
 
-namespace PMRedirect {
-
+namespace PMRedirect
+{
     public class PluginInfo
     {
-        public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "Redirects all private messages to all avaialable predefined clients.";
-        public const string Url = "";
-        public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 1;
+        public static readonly string ShortName = typeof(PluginInfo).Namespace;
+        public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        public static string Description = "";
+        public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+        public static string Author = "Bluscream <admin@timo.de.vc>";
+        public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        public PluginInfo()
+        {
+            var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            Description = versionInfo.FileDescription;
+            Author = versionInfo.CompanyName;
+        }
     }
+    public class PMRedirect : IBotPlugin
+    {
+        private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-    public class PMRedirect : ITabPlugin {
-
-        public PluginInfo pluginInfo = new PluginInfo();
-		private MainBot bot;
+        private Core core;
+		private Bot bot;
         private Ts3FullClient lib;
         public bool Enabled { get; private set; }
 
@@ -30,11 +38,12 @@ namespace PMRedirect {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot)
+        public void Initialize(Core Core)
         {
-			bot = mainBot;
+			core = Core;
+            bot = Core.Bots.GetBot(0);
             lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
-			mainBot.RightsManager.RegisterRights("PMRedirect.isowner");
+			Core.RightsManager.RegisterRights("PMRedirect.isowner");
             lib.OnTextMessageReceived += Lib_OnTextMessageReceived;
             Enabled = true;PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
         }
@@ -55,7 +64,7 @@ namespace PMRedirect {
                         clientbuffer = clientbuffer ?? lib.ClientList(ClientListOptions.uid).ToList();
                         foreach (var client in clientbuffer) {
                             if (client.Uid == msg.InvokerUid) continue;
-                            if (!bot.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
+                            if (!core.RightsManager.HasAllRights(new InvokerData(client.Uid), "PMRedirect.isowner")) continue;
                             // PluginLog(Log.Level.Debug, "Got PM from " + msg.InvokerUid + ". Redirecting to " + client.Uid);
                             bot.QueryConnection.SendMessage("Got PM from " + ParseInvoker(msg) + ": " + msg.Message, client.ClientId);
                         }
@@ -71,7 +80,7 @@ namespace PMRedirect {
 
         public void Dispose() {
             lib.OnTextMessageReceived -= Lib_OnTextMessageReceived;
-            bot.RightsManager.UnregisterRights("PMRedirect.isowner");
+            core.RightsManager.UnregisterRights("PMRedirect.isowner");
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " unloaded.");
         }
 

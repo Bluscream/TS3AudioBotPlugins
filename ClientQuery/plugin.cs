@@ -4,19 +4,10 @@ using ClientQuery.Properties;
 using TelnetServer;
 using TS3AudioBot;
 using TS3AudioBot.Plugins;
-using TS3AudioBot.Commands;
+using TS3AudioBot.CommandSystem;
 using TS3Client.Full;
 
 namespace ClientQuery {
-
-    public class PluginInfo
-    {
-        public static readonly string Name = typeof(PluginInfo).Namespace;
-        public const string Description = "TS3AudioBot alternative to the Teamspeak 3 ClientQuery Plugin.";
-        public const string Url = "";
-        public const string Author = "Bluscream <admin@timo.de.vc>";
-        public const int Version = 1;
-    }
 
     public static class Extension {
         public static bool IsNumeric(this string s) {
@@ -24,11 +15,27 @@ namespace ClientQuery {
             return float.TryParse(s, out output);
         }
     }
+    public class PluginInfo
+    {
+        public static readonly string ShortName = typeof(PluginInfo).Namespace;
+        public static readonly string Name = string.IsNullOrEmpty(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name) ? ShortName : System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        public static string Description = "";
+        public static string Url = $"https://github.com/Bluscream/TS3AudioBotPlugins/tree/develop/{ShortName}";
+        public static string Author = "Bluscream <admin@timo.de.vc>";
+        public static readonly Version Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        public PluginInfo()
+        {
+            var versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            Description = versionInfo.FileDescription;
+            Author = versionInfo.CompanyName;
+        }
+    }
+    public class ClientQuery : IBotPlugin
+    {
+        private static readonly PluginInfo PluginInfo = new PluginInfo();
+        private static NLog.Logger Log = NLog.LogManager.GetLogger($"TS3AudioBot.Plugins.{PluginInfo.ShortName}");
 
-    public class ClientQuery : ITabPlugin {
-
-        public PluginInfo pluginInfo = new PluginInfo();
-        private MainBot bot;
+        private Bot bot;
         private static Ts3FullClient lib;
         private static Server s;
 
@@ -37,9 +44,9 @@ namespace ClientQuery {
             Log.Write(logLevel, PluginInfo.Name + ": " + Message);
         }
 
-        public void Initialize(MainBot mainBot) {
-			bot = mainBot;
-            lib = mainBot.QueryConnection.GetLowLibrary<Ts3FullClient>();
+        public void Initialize(Core Core) {
+            bot = Core.Bots.GetBot(0);
+            lib = bot.QueryConnection.GetLowLibrary<Ts3FullClient>();
             //var PluginPath = Directory.GetCurrentDirectory();
             //Directory.CreateDirectory(Path.Combine(PluginPath, "ClientQuery"));
             PluginLog(Log.Level.Debug, "Plugin " + PluginInfo.Name + " v" + PluginInfo.Version + " by " + PluginInfo.Author + " loaded.");
